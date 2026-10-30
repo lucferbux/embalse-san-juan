@@ -1,0 +1,14 @@
+name: iOS
+
+# Manual on purpose: each macOS minute costs 10 from the private repo's free quota.
+on:
+  workflow_dispatch:
+
+jobs:
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install xcodegen
+      - run: make check-ios

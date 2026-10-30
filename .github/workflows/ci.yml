@@ -1,0 +1,29 @@
+name: CI
+
+# Backend only. macOS runners cost 10x the free minutes in a private repo, so iOS
+# runs locally with `make check` and on demand through ios.yml.
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "contract/**"
+      - ".github/workflows/ci.yml"
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+        working-directory: backend
+      - run: npm run check
+        working-directory: backend
+      - run: make scan-secrets

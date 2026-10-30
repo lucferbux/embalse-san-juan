@@ -1,0 +1,29 @@
+{
+  "name": "embalse-san-juan-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm test",
+    "ingest:hourly": "tsx src/jobs/ingest-hourly.ts",
+    "ingest:weekly": "tsx src/jobs/ingest-weekly.ts",
+    "backfill": "tsx src/jobs/backfill.ts",
+    "live-check": "tsx src/jobs/live-check.ts",
+    "generate-fixture": "tsx src/jobs/generate-fixture.ts"
+  },
+  "dependencies": {
+    "ajv": "^8.20.0",
+    "fflate": "^0.8.3",
+    "firebase-admin": "^14.5.0",
+    "mdb-reader": "^3.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-30T15:30:00Z",
+  "reservoir": {
+    "id": "san-juan",
+    "name": "San Juan",
+    "river": "Alberche",
+    "basin": "Tajo",
+    "province": "Madrid",
+    "municipality": "San Martín de Valdeiglesias",
+    "damType": "Gravedad",
+    "yearBuilt": 1955,
+    "surfaceHa": 650,
+    "uses": [
+      "Abastecimiento",
+      "Riego",
+      "Electricidad",
+      "Pesca",
+      "Navegación",
+      "Baño",
+      "Pícnic"
+    ]
+  },
+  "live": {
+    "observedAt": "2026-10-30T15:00:00Z",
+    "volumeHm3": 67.03,
+    "percent": 48.66,
+    "elevationM": 566.12,
+    "levelM": 40.86,
+    "trend24hHm3": 0.12,
+    "outflowM3s": 1.21,
+    "transferM3s": 5.71
+  },
+  "recent": [
+    {
+      "at": "2026-10-29T16:00:00Z",
+      "volumeHm3": 66.91,
+      "percent": 48.57,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-29T17:00:00Z",
+      "volumeHm3": 66.92,
+      "percent": 48.59,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-29T18:00:00Z",
+      "volumeHm3": 66.95,
+      "percent": 48.61,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-29T19:00:00Z",
+      "volumeHm3": 66.97,
+      "percent": 48.62,
+      "outflowM3s": 18.82
+    },
+    {
+      "at": "2026-10-29T20:00:00Z",
+      "volumeHm3": 66.95,
+      "percent": 48.6,
+      "outflowM3s": 18.76
+    },
+    {
+      "at": "2026-10-29T21:00:00Z",
+      "volumeHm3": 66.94,
+      "percent": 48.6,
+      "outflowM3s": 18.65
+    },
+    {
+      "at": "2026-10-29T22:00:00Z",
+      "volumeHm3": 66.97,
+      "percent": 48.62,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-29T23:00:00Z",
+      "volumeHm3": 67,
+      "percent": 48.64,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T00:00:00Z",
+      "volumeHm3": 67.01,
+      "percent": 48.65,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T01:00:00Z",
+      "volumeHm3": 66.99,
+      "percent": 48.64,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T02:00:00Z",
+      "volumeHm3": 66.97,
+      "percent": 48.62,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T03:00:00Z",
+      "volumeHm3": 66.96,
+      "percent": 48.61,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T04:00:00Z",
+      "volumeHm3": 66.94,
+      "percent": 48.6,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T05:00:00Z",
+      "volumeHm3": 66.92,
+      "percent": 48.59,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T06:00:00Z",
+      "volumeHm3": 66.94,
+      "percent": 48.6,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T07:00:00Z",
+      "volumeHm3": 66.97,
+      "percent": 48.62,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T08:00:00Z",
+      "volumeHm3": 67.02,
+      "percent": 48.66,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T09:00:00Z",
+      "volumeHm3": 67.06,
+      "percent": 48.69,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T10:00:00Z",
+      "volumeHm3": 67.09,
+      "percent": 48.71,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T11:00:00Z",
+      "volumeHm3": 67.08,
+      "percent": 48.7,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T12:00:00Z",
+      "volumeHm3": 67.06,
+      "percent": 48.69,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T13:00:00Z",
+      "volumeHm3": 67.05,
+      "percent": 48.68,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T14:00:00Z",
+      "volumeHm3": 67.02,
+      "percent": 48.66,
+      "outflowM3s": 1.21
+    },
+    {
+      "at": "2026-10-30T15:00:00Z",
+      "volumeHm3": 67.03,
+      "percent": 48.66,
+      "outflowM3s": 1.21
+    }
+  ],
+  "daily": [
+    {
+      "date": "2026-10-29",
+      "volumeHm3": 66.97
+    },
+    {
+      "date": "2026-10-30",
+      "volumeHm3": 67.03
+    }
+  ],
+  "weather": {
+    "observedAt": "2026-10-30T15:00:00Z",
+    "temperatureC": 22.48,
+    "windMs": 0.26,
+    "windDirectionDeg": 147.1,
+    "humidityPct": 49.83,
+    "pressureHpa": 945.86,
+    "solarWm2": 330.48,
+    "rain1hMm": 0,
+    "rain24hMm": 0
+  },
+  "weekly": {
+    "date": "2026-10-27",
+    "volumeHm3": 70,
+    "capacityHm3": 138,
+    "percent": 50.72,
+    "changeHm3": 0,
+    "lastYearHm3": 75,
+    "tenYearAvgHm3": 57.5
+  },
+  "neighbours": [
+    {
+      "code": "E_17",
+      "name": "Burguillo",
+      "position": "upstream",
+      "observedAt": "2026-10-30T16:00:00Z",
+      "volumeHm3": 74.86,
+      "percent": 37.87
+    }
+  ],
+  "rainGauges": [
+    {
+      "code": "P_37",
+      "name": "Santa Cruz de Pinares",
+      "observedAt": "2026-10-30T16:00:00Z",
+      "rain1hMm": 0,
+      "rain24hMm": 0
+    }
+  ],
+  "sources": [
+    {
+      "name": "SAIH Tajo",
+      "publisher": "Confederación Hidrográfica del Tajo",
+      "url": "https://saihtajo.chtajo.es/",
+      "note": "Datos en tiempo real, provisionales y sin validar."
+    },
+    {
+      "name": "Boletín Hidrológico",
+      "publisher": "Ministerio para la Transición Ecológica y el Reto Demográfico",
+      "url": "https://www.miteco.gob.es/es/agua/temas/evaluacion-de-los-recursos-hidricos/boletin-hidrologico.html",
+      "note": "Dato semanal y serie desde 1988, provisionales y sin validar."
+    }
+  ]
+}

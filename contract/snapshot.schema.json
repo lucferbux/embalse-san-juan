@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "embalse-san-juan/snapshot/1",
+  "title": "Embalse snapshot",
+  "description": "Payload of public/snapshot: everything the app and widgets need for a normal refresh.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "generatedAt", "reservoir", "live", "recent", "daily", "weather", "weekly", "neighbours", "rainGauges", "sources"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "generatedAt": { "$ref": "#/$defs/instant" },
+    "reservoir": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "river", "basin", "province", "municipality", "damType", "yearBuilt", "surfaceHa", "uses"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "river": { "type": "string" },
+        "basin": { "type": "string" },
+        "province": { "type": "string" },
+        "municipality": { "type": "string" },
+        "damType": { "type": "string" },
+        "yearBuilt": { "type": "integer" },
+        "surfaceHa": { "type": "number" },
+        "uses": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "live": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observedAt", "volumeHm3", "percent", "elevationM", "levelM", "trend24hHm3", "outflowM3s", "transferM3s"],
+      "properties": {
+        "observedAt": { "$ref": "#/$defs/instant" },
+        "volumeHm3": { "type": "number", "minimum": 0 },
+        "percent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "elevationM": { "$ref": "#/$defs/nullableNumber" },
+        "levelM": { "$ref": "#/$defs/nullableNumber" },
+        "trend24hHm3": { "type": "number" },
+        "outflowM3s": { "$ref": "#/$defs/nullableNumber" },
+        "transferM3s": { "$ref": "#/$defs/nullableNumber" }
+      }
+    },
+    "recent": {
+      "description": "Hourly readings, oldest first.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["at", "volumeHm3", "percent", "outflowM3s"],
+        "properties": {
+          "at": { "$ref": "#/$defs/instant" },
+          "volumeHm3": { "type": "number" },
+          "percent": { "type": "number" },
+          "outflowM3s": { "$ref": "#/$defs/nullableNumber" }
+        }
+      }
+    },
+    "daily": {
+      "description": "Last value of each Madrid calendar day, oldest first, up to 90 days.",
+      "type": "array",
+      "maxItems": 90,
+      "items": { "$ref": "#/$defs/dailyPoint" }
+    },
+    "weather": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observedAt", "temperatureC", "windMs", "windDirectionDeg", "humidityPct", "pressureHpa", "solarWm2", "rain1hMm", "rain24hMm"],
+      "properties": {
+        "observedAt": { "$ref": "#/$defs/instant" },
+        "temperatureC": { "$ref": "#/$defs/nullableNumber" },
+        "windMs": { "$ref": "#/$defs/nullableNumber" },
+        "windDirectionDeg": { "$ref": "#/$defs/nullableNumber" },
+        "humidityPct": { "$ref": "#/$defs/nullableNumber" },
+        "pressureHpa": { "$ref": "#/$defs/nullableNumber" },
+        "solarWm2": { "$ref": "#/$defs/nullableNumber" },
+        "rain1hMm": { "$ref": "#/$defs/nullableNumber" },
+        "rain24hMm": { "$ref": "#/$defs/nullableNumber" }
+      }
+    },
+    "weekly": {
+      "description": "MITECO weekly bulletin. Provisional and never mixed with the SAIH figures.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date", "volumeHm3", "capacityHm3", "percent", "changeHm3", "lastYearHm3", "tenYearAvgHm3"],
+      "properties": {
+        "date": { "$ref": "#/$defs/day" },
+        "volumeHm3": { "type": "number", "minimum": 0 },
+        "capacityHm3": { "type": "number", "exclusiveMinimum": 0 },
+        "percent": { "type": "number", "minimum": 0 },
+        "changeHm3": { "type": "number" },
+        "lastYearHm3": { "$ref": "#/$defs/nullableNumber" },
+        "tenYearAvgHm3": { "$ref": "#/$defs/nullableNumber" }
+      }
+    },
+    "neighbours": {
+      "description": "Reservoirs in the Alberche chain, upstream to downstream, excluding San Juan.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "name", "position", "observedAt", "volumeHm3", "percent"],
+        "properties": {
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "position": { "enum": ["upstream", "downstream"] },
+          "observedAt": { "$ref": "#/$defs/instant" },
+          "volumeHm3": { "type": "number" },
+          "percent": { "type": "number" }
+        }
+      }
+    },
+    "rainGauges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "name", "observedAt", "rain1hMm", "rain24hMm"],
+        "properties": {
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "observedAt": { "$ref": "#/$defs/instant" },
+          "rain1hMm": { "$ref": "#/$defs/nullableNumber" },
+          "rain24hMm": { "$ref": "#/$defs/nullableNumber" }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "publisher", "url", "note"],
+        "properties": {
+          "name": { "type": "string" },
+          "publisher": { "type": "string" },
+          "url": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "instant": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$" },
+    "day": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "nullableNumber": { "type": ["number", "null"] },
+    "dailyPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date", "volumeHm3"],
+      "properties": {
+        "date": { "$ref": "#/$defs/day" },
+        "volumeHm3": { "type": "number" }
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+# Embalse de San Juan
+
+Native iOS 27 app and widgets showing the live state of the San Juan reservoir, on the Alberche river in Madrid.
+
+**Status:** In progress.
+
+## How it works
+
+Scheduled GitHub Actions collect official data and publish it to Firestore. The app and widgets read it over REST.
+
+| Source | Publisher | Frequency | Provides |
+|---|---|---|---|
+| [SAIH Tajo](https://saihtajo.chtajo.es/) | Confederación Hidrográfica del Tajo | Hourly | Volume, level, flows, weather, rain |
+| [Boletín Hidrológico](https://www.miteco.gob.es/es/agua/temas/evaluacion-de-los-recursos-hidricos/boletin-hidrologico.html) | MITECO | Weekly | Weekly volume and the series since 1988 |
+
+All data is provisional. This project is not affiliated with or endorsed by these bodies.
+See [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
+
+## Run it
+
+Needs Xcode 27, Node 24 and XcodeGen (`brew install xcodegen`).
+
+```bash
+make check
+```
+
+```bash
+make generate && open ios/EmbalseSanJuan.xcodeproj
+```
+
+Installing on a real iPhone needs your Apple team set in `ios/project.yml`, to sign the App Group.
+
+## Backend setup
+
+The Firebase project runs on the free Spark plan. The GitHub secret `FIREBASE_SERVICE_ACCOUNT` holds a service account key.
+After setting it, run the **Backfill** workflow once. The scheduled jobs take over from there.
