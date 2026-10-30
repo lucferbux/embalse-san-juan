@@ -33,3 +33,7 @@ make generate && open ios/EmbalseSanJuan.xcodeproj
 
 The Firebase project runs on the free Spark plan. The GitHub secret `FIREBASE_SERVICE_ACCOUNT` holds a service account key.
 After setting it, run the **Backfill** workflow once. The scheduled jobs take over from there.
+
+## License
+
+[MIT](LICENSE). The data belongs to its sources, listed above.

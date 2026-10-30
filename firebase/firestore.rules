@@ -9,7 +9,7 @@ service cloud.firestore {
     }
 
     // Anonymous suggestions from the app: they can be sent but never read back. The limits match
-    // Suggestion in EmbalseKit. A daily job moves them to GitHub issues and deletes them.
+    // Suggestion in EmbalseKit. The owner reads them in the Firebase console.
     match /suggestions/{id} {
       allow create: if request.resource.data.keys().hasOnly(['kind', 'text', 'appVersion', 'createdAt'])
         && request.resource.data.keys().hasAll(['kind', 'text', 'appVersion', 'createdAt'])

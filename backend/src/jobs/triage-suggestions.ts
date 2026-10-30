@@ -9,6 +9,11 @@ const repo = process.env.GITHUB_REPOSITORY;
 const token = process.env.GITHUB_TOKEN;
 if (!repo || !token) throw new Error("GITHUB_REPOSITORY and GITHUB_TOKEN must be set");
 
+// Messages from strangers must never become public issues.
+const headers = { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "User-Agent": "embalse-san-juan" };
+const details = (await (await fetch(`https://api.github.com/repos/${repo}`, { headers })).json()) as { private?: boolean };
+if (details.private !== true) throw new Error(`${repo} is not private: refusing to publish suggestions as issues`);
+
 const db = connect();
 const pending = await db.collection("suggestions").orderBy("createdAt").limit(50).get();
 console.log(`${pending.size} pending suggestion(s)`);
@@ -18,7 +23,7 @@ for (const doc of pending.docs) {
   const issue = issueFor({ ...data, createdAt: data.createdAt.toDate() });
   const response = await fetch(`https://api.github.com/repos/${repo}/issues`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "User-Agent": "embalse-san-juan" },
+    headers,
     body: JSON.stringify(issue),
   });
   if (!response.ok) throw new Error(`GitHub returned HTTP ${response.status}: ${await response.text()}`);
