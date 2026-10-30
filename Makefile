@@ -20,7 +20,7 @@ check-ios: generate
 
 ## Fails if anything that looks like a credential is tracked or staged.
 scan-secrets:
-	@if git grep --cached -nE 'BEGIN (RSA )?PRIVATE KEY|"private_key"' -- . ':!Makefile' ':!.claude/hooks/guard-secrets.sh' ':!docs/*'; then \
+	@if git grep --cached -nE 'BEGIN (RSA )?PRIVATE KEY|"private_key"' -- . ':!Makefile' ':!scripts/claude-hooks/guard-secrets.sh' ':!docs/*'; then \
 		echo "Possible secret in the repo" >&2; exit 1; \
 	fi
 	@echo "No secrets found"
