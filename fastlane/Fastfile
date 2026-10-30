@@ -64,3 +64,40 @@ lane :builds do
   app = Spaceship::ConnectAPI::App.find("com.lucferbux.embalsesanjuan")
   app.get_builds.each { |build| UI.message("Build #{build.version}: #{build.processing_state}") }
 end
+
+desc "Push screenshots only, skipping deliver's metadata step"
+lane :screenshots_upload do
+  upload_to_app_store(
+    api_key: asc_key,
+    platform: "ios",
+    app_version: "1.0",
+    metadata_path: "./fastlane/metadata/ios",
+    screenshots_path: "./fastlane/screenshots",
+    skip_binary_upload: true,
+    skip_metadata: true,
+    skip_screenshots: false,
+    overwrite_screenshots: true,
+    submit_for_review: false,
+    force: true,
+    run_precheck_before_submit: false
+  )
+end
+
+# Deliver sets these last, after the review detail step that needs a phone number, so while there
+# isn't one this sets the app-level fields directly.
+desc "Set the name, subtitle, privacy URL and categories"
+lane :app_info do
+  key_id = ENV["ASC_KEY_ID"] || "KMSBU6865L"
+  Spaceship::ConnectAPI.token = Spaceship::ConnectAPI::Token.create(
+    key_id: key_id,
+    issuer_id: ENV["ASC_ISSUER_ID"] || "69a6de88-17cf-47e3-e053-5b8c7c11a4d1",
+    filepath: File.expand_path("~/.appstoreconnect/private_keys/AuthKey_#{key_id}.p8")
+  )
+  read = ->(name) { File.read("metadata/ios/es-ES/#{name}.txt").strip }
+  app = Spaceship::ConnectAPI::App.find("com.lucferbux.embalsesanjuan")
+  info = app.fetch_edit_app_info
+  info.update_categories(category_id_map: { primary_category_id: "WEATHER", secondary_category_id: "UTILITIES" })
+  localization = info.get_app_info_localizations.find { |l| l.locale == "es-ES" }
+  localization.update(attributes: { name: read.call("name"), subtitle: read.call("subtitle"), privacyPolicyUrl: read.call("privacy_url") })
+  UI.success("App info updated")
+end
