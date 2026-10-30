@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">San Juan</string>
+    <string name="widget_name">Embalse de San Juan</string>
+    <string name="widget_description">El nivel del embalse de un vistazo.</string>
+</resources>

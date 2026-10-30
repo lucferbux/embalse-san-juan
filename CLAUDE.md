@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-App iOS 27 and free backend showing the state of the San Juan reservoir (Alberche river, Madrid).
+iOS 27 and Android apps and a free backend showing the state of the San Juan reservoir (Alberche river, Madrid).
 [AGENTS.md](AGENTS.md) is the portable summary: **update both together.**
 
 ## Repo
@@ -13,8 +13,10 @@ Check `git rev-parse --show-toplevel` before committing. Commits: Conventional C
 
 | Command | What it does |
 |---|---|
-| `make check` | Secret scan, backend types and tests, iOS build and tests. **Run before saying work is done.** |
+| `make check` | Secret scan, backend types and tests, iOS and Android builds and tests. **Run before saying work is done.** |
 | `make check-backend` | Backend only, about 15 s. |
+| `make check-android` | Android unit tests, debug and release builds. |
+| `make run-android` | Installs and opens the debug build on the running emulator or device. |
 | `make live-check` | Calls the real sources without writing. Run after touching `backend/src/sources`. |
 | `make widgets` | Renders every widget to `build/widget-snapshots/`. Look at them after any widget change. |
 | `make fixture` | Rebuilds `contract/fixtures/snapshot.json`. |
@@ -28,12 +30,12 @@ Check `git rev-parse --show-toplevel` before committing. Commits: Conventional C
 
 ```
 SAIH Tajo (hourly) ─┐
-                    ├─ GitHub Actions ─ backend/ ─ Firestore public/* ─ REST ─ EmbalseKit ─ App + Widgets
-MITECO (weekly) ────┘
+                    ├─ GitHub Actions ─ backend/ ─ Firestore public/* ─ REST ─┬─ EmbalseKit ─ iOS app + widgets
+MITECO (weekly) ────┘                                                         └─ android/ ─ Android app + widget
 ```
 
 - `contract/snapshot.schema.json` is the contract. The backend validates against it before publishing,
-  and the Swift tests decode the same fixture. Changing it means changing both sides and `make fixture`.
+  and the Swift and Kotlin tests decode the same fixture. Changing it means changing all three and `make fixture`.
 - `backend/src/domain/validate.ts` is the guard: if a check fails, nothing is written and the workflow fails.
 - `ios/EmbalseKit` holds all logic and views. The app and widget targets stay thin.
 
@@ -45,6 +47,16 @@ Layout follows size classes only, never idiom, orientation or screen size:
 - **Regular** (iPad, iPhone Duo open): `DashboardColumns`, two columns of cards.
 - **iPhone Duo inner display:** the fold is in the gap between the columns, measured from `reservedRegions` because side bars make the safe area off-centre. Controls that would sit on the fold, like the history picker, stay on one side. iOS 27.1 ships only on iPhone Duo, so the deployment target stays 27.0 and 27.1 APIs need `#available`.
 - **Widgets** are one full-bleed surface with white text, so nothing gets cut at the waterline. Don't go back to splitting them into panels or two-tone text.
+
+## Android
+
+`android/` is Kotlin with Jetpack Compose and Material 3, not yet published. Details are in the `run-android` skill.
+
+- **Material You:** colours come from the wallpaper through dynamic colour, with a water blue before Android 12. Don't hardcode colours in the UI.
+- **Layout:** by available width only, never device type. Two columns from 720 dp.
+- **Widget:** one Glance widget that adapts when resized (small, medium, large). It follows the same one-surface rule as iOS: the water and the curve are a bitmap, because Glance can't draw freely, and text stays white.
+- **Refresh:** WorkManager, hourly, while a widget is placed.
+- **No tips yet:** in-app purchases would need Google Play Billing, and the app isn't on Play.
 
 ## Suggestions and tips
 
@@ -58,7 +70,7 @@ Layout follows size classes only, never idiom, orientation or screen size:
   the weekly block is MITECO. Always show the source and date.
 - **Only official sources.** Do not scrape embalses.net.
 - **Be polite to SAIH:** requests in series with a pause, no more often than hourly. See `docs/DATA_SOURCES.md`.
-- **No Firebase SDK in iOS:** widgets have tight memory limits. Clients use the Firestore REST API.
+- **No Firebase SDK in the apps:** widgets have tight memory limits. Clients use the Firestore REST API.
 - **Native first:** system components, SF Symbols, semantic colours, Dynamic Type, dark mode.
 - **Secrets:** the service account key lives only in the GitHub secret `FIREBASE_SERVICE_ACCOUNT`.
   Never write it to a file in this repo or print it. A hook blocks the obvious cases.
@@ -70,3 +82,4 @@ Layout follows size classes only, never idiom, orientation or screen size:
 - `verify`: full check before finishing work.
 - `debug-source`: what to do when a data source changes or a workflow fails.
 - `run-ios`: build, run and inspect the app and widgets in the simulator.
+- `run-android`: the same on the Android emulator.

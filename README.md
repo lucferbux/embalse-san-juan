@@ -1,6 +1,6 @@
 # Embalse de San Juan
 
-Native iOS 27 app, widgets and Apple Watch app showing the live state of the San Juan reservoir, on the Alberche river in Madrid.
+Native iOS 27 and Android apps, widgets and an Apple Watch app showing the live state of the San Juan reservoir, on the Alberche river in Madrid.
 
 **Status:** In progress.
 
@@ -18,7 +18,7 @@ See [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
 
 ## Run it
 
-Needs Xcode 27, Node 24 and XcodeGen (`brew install xcodegen`).
+Needs Xcode 27, Node 24, XcodeGen (`brew install xcodegen`), JDK 21 and the Android SDK.
 
 ```bash
 make check
@@ -26,6 +26,10 @@ make check
 
 ```bash
 make generate && open ios/EmbalseSanJuan.xcodeproj
+```
+
+```bash
+make run-android
 ```
 
 

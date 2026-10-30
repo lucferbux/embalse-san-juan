@@ -9,6 +9,7 @@ on:
     paths:
       - "backend/**"
       - "contract/**"
+      - "android/**"
       - ".github/workflows/ci.yml"
 
 permissions:
@@ -30,3 +31,15 @@ jobs:
       - run: npm run check
         working-directory: backend
       - run: make scan-secrets
+
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - run: ./gradlew --no-daemon testDebugUnitTest assembleDebug
+        working-directory: android

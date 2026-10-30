@@ -3,10 +3,10 @@ DESTINATION := platform=iOS Simulator,name=$(SIMULATOR)
 PROJECT := ios/EmbalseSanJuan.xcodeproj
 DERIVED := build/DerivedData
 
-.PHONY: firestore-check check check-backend check-ios scan-secrets live-check widgets generate fixture run-info
+.PHONY: firestore-check check check-backend check-ios check-android run-android scan-secrets live-check widgets generate fixture run-info
 
 ## The one command that says whether the project is healthy.
-check: scan-secrets check-backend check-ios
+check: scan-secrets check-backend check-ios check-android
 
 check-backend:
 	cd backend && npm run -s check
@@ -26,6 +26,15 @@ scan-secrets:
 		echo "Possible secret in the repo" >&2; exit 1; \
 	fi
 	@echo "No secrets found"
+
+## Unit tests, including the shared fixture, and both Android builds.
+check-android:
+	cd android && ./gradlew --quiet testDebugUnitTest assembleDebug assembleRelease
+
+## Installs and opens the debug build on the running emulator or device.
+run-android:
+	cd android && ./gradlew --quiet installDebug
+	adb shell am start -n com.lucferbux.embalsesanjuan/.MainActivity
 
 ## Calls the real sources, writing nothing.
 live-check:
