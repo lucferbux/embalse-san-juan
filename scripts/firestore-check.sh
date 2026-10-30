@@ -25,11 +25,18 @@ version='"appVersion":{"stringValue":"check"}'
 kind='"kind":{"stringValue":"other"}'
 long="$(printf 'a%.0s' $(seq 1 1001))"
 expect "suggestions can't be listed" 403 "$(status "$BASE/suggestions")"
-expect "a suggestion needs text" 403 "$(post "{\"fields\":{$kind,$version,$stamp}}")"
-expect "a suggestion can't be too long" 403 "$(post "{\"fields\":{$kind,$version,$stamp,\"text\":{\"stringValue\":\"$long\"}}}")"
-expect "a suggestion can't be too short" 403 "$(post "{\"fields\":{$kind,$version,$stamp,\"text\":{\"stringValue\":\"a\"}}}")"
-expect "a suggestion can't have an unknown kind" 403 "$(post "{\"fields\":{\"kind\":{\"stringValue\":\"spam\"},$version,$stamp,\"text\":{\"stringValue\":\"hola\"}}}")"
-expect "a suggestion can't have extra fields" 403 "$(post "{\"fields\":{$kind,$version,$stamp,\"text\":{\"stringValue\":\"hola\"},\"admin\":{\"booleanValue\":true}}}")"
+# Bodies are built outside $(...): macOS's bash 3.2 mangles escaped quotes inside it.
+text='"text":{"stringValue":"hola"}'
+no_text="{\"fields\":{$kind,$version,$stamp}}"
+too_long="{\"fields\":{$kind,$version,$stamp,\"text\":{\"stringValue\":\"$long\"}}}"
+too_short="{\"fields\":{$kind,$version,$stamp,\"text\":{\"stringValue\":\"a\"}}}"
+bad_kind="{\"fields\":{\"kind\":{\"stringValue\":\"spam\"},$version,$stamp,$text}}"
+extra_field="{\"fields\":{$kind,$version,$stamp,$text,\"admin\":{\"booleanValue\":true}}}"
+expect "a suggestion needs text" 403 "$(post "$no_text")"
+expect "a suggestion can't be too long" 403 "$(post "$too_long")"
+expect "a suggestion can't be too short" 403 "$(post "$too_short")"
+expect "a suggestion can't have an unknown kind" 403 "$(post "$bad_kind")"
+expect "a suggestion can't have extra fields" 403 "$(post "$extra_field")"
 
 # Firestore documents are limited to 1 MiB.
 size="$(curl -s "$BASE/public/history" | wc -c | tr -d ' ')"
