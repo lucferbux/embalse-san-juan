@@ -30,7 +30,6 @@ function tick() {
   else if (age > MAX_SNAPSHOT_AGE_HOURS) problems.push(`El dato publicado tiene ${age.toFixed(1)} horas.`);
 
   const workflows = ["ingest-hourly.yml"];
-  if (hour === 9) workflows.push("suggestions.yml");
   // MITECO publishes on Tuesdays. Wednesday is a retry, and the job does nothing if nothing changed.
   if (hour === 16 && (weekday === 2 || weekday === 3)) workflows.push("ingest-weekly.yml");
   workflows.forEach((workflow) => {
