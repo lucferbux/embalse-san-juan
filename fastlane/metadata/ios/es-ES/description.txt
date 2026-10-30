@@ -1,0 +1,29 @@
+¿Cómo está hoy el embalse de San Juan? Ábrela o míralo en un widget: el agua sube y baja con el nivel real del pantano.
+
+AHORA MISMO
+• Porcentaje de llenado, volumen en hm³ y tendencia de las últimas 24 horas.
+• Cota y nivel del agua, con la evolución hora a hora.
+• Caudal de salida al río y trasvase a Valmayor.
+
+COMPARA CON OTROS AÑOS
+• Boletín semanal: agua embalsada, variación, misma semana del año pasado y media de 10 años.
+• Histórico de 1 año, 5 años y desde 1988, con mínimos y máximos.
+
+ALREDEDOR DEL EMBALSE
+• Tiempo en la presa: temperatura, viento, humedad, presión, radiación solar y lluvia.
+• Río Alberche: Burguillo, San Juan y Picadas, de un vistazo.
+• Lluvia recogida en los pluviómetros de la cuenca.
+
+WIDGETS PARA TODO
+• Pequeño, mediano y grande en iPhone, y también extragrande en iPad.
+• Pantalla de bloqueo y StandBy.
+• Complicaciones y app propia en el Apple Watch, que funciona sin el iPhone cerca.
+
+HECHA PARA TUS DISPOSITIVOS
+Se adapta a iPhone, iPad y iPhone Duo, abierto o cerrado, con modo oscuro y texto grande.
+
+SIN CUENTAS NI SEGUIMIENTO
+No hace falta registrarse. La app no recoge datos personales ni muestra publicidad.
+
+FUENTES
+Los datos proceden del SAIH Tajo (Confederación Hidrográfica del Tajo) y del Boletín Hidrológico del Ministerio para la Transición Ecológica y el Reto Demográfico. Son datos provisionales y pueden no coincidir entre sí. Esta app es un proyecto personal, sin relación con estos organismos ni respaldada por ellos.

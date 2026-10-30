@@ -1,0 +1,50 @@
+# The App Store listing, as files. Binaries go through `scripts/release.sh`.
+# Nothing here submits for review: the version stays in Prepare for Submission.
+
+opt_out_usage
+skip_docs
+
+default_platform(:ios)
+
+# The App Store Connect API key. The .p8 never belongs in this repo.
+def asc_key
+  key_id    = ENV["ASC_KEY_ID"] || "KMSBU6865L"
+  issuer_id = ENV["ASC_ISSUER_ID"] || "69a6de88-17cf-47e3-e053-5b8c7c11a4d1"
+  key_path  = File.expand_path(ENV["ASC_KEY_PATH"] || "~/.appstoreconnect/private_keys/AuthKey_#{key_id}.p8")
+  UI.user_error!("No API key at #{key_path}") unless File.exist?(key_path)
+
+  app_store_connect_api_key(key_id: key_id, issuer_id: issuer_id, key_filepath: key_path, duration: 1200, in_house: false)
+end
+
+def deliver_options(skip_screenshots:)
+  {
+    api_key: asc_key,
+    platform: "ios",
+    app_version: "1.0",
+    metadata_path: "./fastlane/metadata/ios",
+    screenshots_path: "./fastlane/screenshots",
+    skip_binary_upload: true,
+    skip_screenshots: skip_screenshots,
+    overwrite_screenshots: true,
+    submit_for_review: false,
+    automatic_release: false,
+    force: true,
+    precheck_include_in_app_purchases: false,
+    run_precheck_before_submit: false
+  }
+end
+
+desc "Push the text and screenshots as a draft"
+lane :metadata do
+  upload_to_app_store(**deliver_options(skip_screenshots: false))
+end
+
+desc "Push the text only"
+lane :metadata_text do
+  upload_to_app_store(**deliver_options(skip_screenshots: true))
+end
+
+desc "Apple's own checks on the listing"
+lane :precheck_all do
+  check_app_store_metadata(api_key: asc_key, platform: "ios", default_rule_level: :warn, include_in_app_purchases: false)
+end

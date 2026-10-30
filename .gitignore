@@ -17,3 +17,7 @@ ios/*.xcodeproj/
 .env.*
 *service-account*.json
 *firebase-adminsdk*.json
+
+# Fastlane
+fastlane/report.xml
+fastlane/README.md

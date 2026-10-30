@@ -1,0 +1,7 @@
+No account is needed: the app opens straight on the current data.
+
+Data comes from public Spanish government sources (SAIH Tajo and MITECO's Boletín Hidrológico). A scheduled job collects it and publishes it to a read-only document, which the app reads over HTTPS.
+
+The app collects no personal data, and has no ads, tracking or in-app purchases.
+
+Widgets: add them from the home screen or lock screen. Apple Watch: the app and its complications install with the iPhone app.

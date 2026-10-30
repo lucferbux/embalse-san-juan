@@ -3,7 +3,7 @@ DESTINATION := platform=iOS Simulator,name=$(SIMULATOR)
 PROJECT := ios/EmbalseSanJuan.xcodeproj
 DERIVED := build/DerivedData
 
-.PHONY: check check-backend check-ios scan-secrets live-check widgets generate fixture run-info
+.PHONY: firestore-check check check-backend check-ios scan-secrets live-check widgets generate fixture run-info
 
 ## The one command that says whether the project is healthy.
 check: scan-secrets check-backend check-ios
@@ -43,3 +43,7 @@ widgets: generate
 		-destination '$(DESTINATION)' -derivedDataPath $(DERIVED) CODE_SIGNING_ALLOWED=NO \
 		-only-testing:EmbalseKitTests/WidgetSnapshotTests
 	@ls build/widget-snapshots
+
+## Checks the published data and the access rules from outside, with no credentials.
+firestore-check:
+	scripts/firestore-check.sh
