@@ -2,6 +2,9 @@
 # Archives the iOS app (with its widgets and Apple Watch app) and uploads it to App Store Connect.
 # Uploading can't be undone: a build number can never be used twice. Bump CURRENT_PROJECT_VERSION in
 # ios/project.yml first. Nothing here submits for review.
+#
+# Signing uses the account signed in to Xcode, which needs the Mac unlocked ("Failed to Use Accounts"
+# means it's locked). The App Store Connect API key can't do it: its App Manager role has no cloud signing.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
