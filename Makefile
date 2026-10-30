@@ -2,6 +2,8 @@ SIMULATOR ?= iPhone 18 Pro
 DESTINATION := platform=iOS Simulator,name=$(SIMULATOR)
 PROJECT := ios/EmbalseSanJuan.xcodeproj
 DERIVED := build/DerivedData
+# Homebrew keeps JDK 21 off the PATH, and Gradle needs it.
+export JAVA_HOME ?= /opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home
 
 .PHONY: firestore-check check check-backend check-ios check-android run-android scan-secrets live-check widgets generate fixture run-info
 
