@@ -8,6 +8,7 @@ struct EmbalseSanJuanApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(model: model)
+                .task { await TipJar.finishPendingTransactions() }
         }
     }
 }

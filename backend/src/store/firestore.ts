@@ -10,7 +10,7 @@ const MITECO_META = "meta/miteco";
 /** Firestore limits a batch by size, so large backfills are split up. */
 const MAX_BATCH_DOCS = 50;
 
-function connect(): Firestore {
+export function connect(): Firestore {
   const key = process.env.FIREBASE_SERVICE_ACCOUNT;
   if (!key) throw new Error("FIREBASE_SERVICE_ACCOUNT is not set");
   const app = initializeApp({ credential: cert(JSON.parse(key) as object) });

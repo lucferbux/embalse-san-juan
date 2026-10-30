@@ -23,7 +23,7 @@ HECHA PARA TUS DISPOSITIVOS
 Se adapta a iPhone, iPad y iPhone Duo, abierto o cerrado, con modo oscuro y texto grande.
 
 SIN CUENTAS NI SEGUIMIENTO
-No hace falta registrarse. La app no recoge datos personales ni muestra publicidad.
+No hace falta registrarse y no hay publicidad. Si quieres, puedes enviar sugerencias anónimas o dejar una propina voluntaria para ayudar con los gastos de mantenimiento.
 
 FUENTES
 Los datos proceden del SAIH Tajo (Confederación Hidrográfica del Tajo) y del Boletín Hidrológico del Ministerio para la Transición Ecológica y el Reto Demográfico. Son datos provisionales y pueden no coincidir entre sí. Esta app es un proyecto personal, sin relación con estos organismos ni respaldada por ellos.

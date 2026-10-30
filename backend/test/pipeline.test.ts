@@ -9,6 +9,7 @@ import { fetchStation, findStationPath, parseLongSeries, parseStation, type Fetc
 import { MAIN_STATION, NEIGHBOURS, RAIN_GAUGES } from "../src/config.js";
 import { runHourly } from "../src/jobs/run.js";
 import type { HourlyArchive, Store } from "../src/store/store.js";
+import { issueFor } from "../src/domain/suggestions.js";
 
 const fixture = (name: string): unknown =>
   JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), "utf8"));
@@ -253,5 +254,28 @@ describe("hourly job", () => {
 
   it("refuses to run without a snapshot", async () => {
     await expect(runHourly(memoryStore(), now, fetcher)).rejects.toThrow(/backfill/);
+  });
+});
+
+describe("suggestions", () => {
+  const createdAt = new Date("2026-10-30T19:00:00Z");
+
+  it("builds an issue with the message intact", () => {
+    const issue = issueFor({ kind: "bug", text: " Falla el gráfico\nen iPad ", appVersion: "1.0", createdAt });
+    expect(issue.title).toBe("[Algo no funciona] Falla el gráfico");
+    expect(issue.body).toContain("**Versión:** 1.0");
+    expect(issue.body).toContain("```\nFalla el gráfico\nen iPad\n```");
+  });
+
+  it("keeps a stranger's text from mentioning people or breaking out of its block", () => {
+    const issue = issueFor({ kind: "other", text: "@lucas #1 ``` **hola**", createdAt });
+    expect(issue.title).toBe("[Otra cosa] lucas 1  **hola**");
+    expect(issue.body).toContain("````\n@lucas #1 ``` **hola**\n````");
+  });
+
+  it("copes with unknown kinds, odd versions and long first lines", () => {
+    const issue = issueFor({ kind: "x", text: "a".repeat(80), appVersion: "<b>1</b>", createdAt });
+    expect(issue.title).toBe(`[Otra cosa] ${"a".repeat(60)}…`);
+    expect(issue.body).toContain("**Versión:** b1b");
   });
 });

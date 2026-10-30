@@ -1,0 +1,47 @@
+{
+  "identifier" : "7A3C1E52",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "6800000001",
+      "localizations" : [
+        { "description" : "Un café para el mantenimiento", "displayName" : "Propina pequeña", "locale" : "es_ES" }
+      ],
+      "productID" : "com.lucferbux.embalsesanjuan.tip.small",
+      "referenceName" : "Propina pequeña",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "6800000002",
+      "localizations" : [
+        { "description" : "Un mes de mantenimiento", "displayName" : "Propina mediana", "locale" : "es_ES" }
+      ],
+      "productID" : "com.lucferbux.embalsesanjuan.tip.medium",
+      "referenceName" : "Propina mediana",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "6800000003",
+      "localizations" : [
+        { "description" : "Varios meses de mantenimiento", "displayName" : "Propina grande", "locale" : "es_ES" }
+      ],
+      "productID" : "com.lucferbux.embalsesanjuan.tip.large",
+      "referenceName" : "Propina grande",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_compatibilityTimeRate" : { "3" : 6 },
+    "_locale" : "es_ES",
+    "_storefront" : "ESP",
+    "_storeKitErrors" : []
+  },
+  "subscriptionGroups" : [],
+  "version" : { "major" : 4, "minor" : 0 }
+}

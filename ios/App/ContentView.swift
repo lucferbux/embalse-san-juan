@@ -3,7 +3,7 @@ import EmbalseKit
 import SwiftUI
 
 enum Route: Hashable {
-    case history, about
+    case history, about, suggestions, tips
 }
 
 struct ContentView: View {
@@ -36,6 +36,8 @@ struct ContentView: View {
                         switch route {
                         case .history: HistoryView(weekly: snapshot.weekly)
                         case .about: AboutView(snapshot: snapshot)
+                        case .suggestions: SuggestionView()
+                        case .tips: TipJarView()
                         }
                     }
                 }
@@ -60,6 +62,8 @@ struct ContentView: View {
         switch UserDefaults.standard.string(forKey: "ScreenshotScene") {
         case "history": path = [.history]
         case "about": path = [.about]
+        case "suggestions": path = [.suggestions]
+        case "tips": path = [.tips]
         default: break
         }
     }
@@ -122,6 +126,16 @@ private struct ReservoirScreen: View {
 }
 
 private struct LinksSection: View {
+    /// Tips stay hidden until the App Store offers them, which needs the Paid Apps Agreement.
+    @State private var jar = TipJar()
+
+    private var showsTips: Bool {
+        #if DEBUG
+        if UserDefaults.standard.bool(forKey: "ScreenshotTips") { return true }
+        #endif
+        return jar.state == .ready
+    }
+
     var body: some View {
         DashboardSection {
             NavigationLink(value: Route.history) {
@@ -131,6 +145,17 @@ private struct LinksSection: View {
                 Label("Ficha y fuentes", systemImage: "info.circle")
             }
         }
+        DashboardSection("Ayuda a mejorarla", footer: showsTips ? "La app es gratuita. Las propinas son voluntarias y ayudan a cubrir los gastos de mantenimiento." : nil) {
+            NavigationLink(value: Route.suggestions) {
+                Label("Enviar una sugerencia", systemImage: "bubble.left.and.text.bubble.right")
+            }
+            if showsTips {
+                NavigationLink(value: Route.tips) {
+                    Label("Dejar una propina", systemImage: "cup.and.heat.waves")
+                }
+            }
+        }
+        .task { await jar.load() }
     }
 }
 

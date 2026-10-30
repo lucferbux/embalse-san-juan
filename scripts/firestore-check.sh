@@ -18,6 +18,19 @@ expect "public/snapshot can't be written" 403 "$(status -X PATCH -H 'Content-Typ
 expect "public/snapshot can't be deleted" 403 "$(status -X DELETE "$BASE/public/snapshot")"
 expect "new documents can't be created" 403 "$(status -X PATCH -H 'Content-Type: application/json' -d '{"fields":{}}' "$BASE/public/other")"
 
+# Suggestions can be sent, but only in the expected shape, and never read back.
+post() { curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d "$1" "$BASE/suggestions"; }
+stamp='"createdAt":{"timestampValue":"2026-10-30T19:00:00Z"}'
+version='"appVersion":{"stringValue":"check"}'
+kind='"kind":{"stringValue":"other"}'
+long="$(printf 'a%.0s' $(seq 1 1001))"
+expect "suggestions can't be listed" 403 "$(status "$BASE/suggestions")"
+expect "a suggestion needs text" 403 "$(post "{\"fields\":{$kind,$version,$stamp}}")"
+expect "a suggestion can't be too long" 403 "$(post "{\"fields\":{$kind,$version,$stamp,\"text\":{\"stringValue\":\"$long\"}}}")"
+expect "a suggestion can't be too short" 403 "$(post "{\"fields\":{$kind,$version,$stamp,\"text\":{\"stringValue\":\"a\"}}}")"
+expect "a suggestion can't have an unknown kind" 403 "$(post "{\"fields\":{\"kind\":{\"stringValue\":\"spam\"},$version,$stamp,\"text\":{\"stringValue\":\"hola\"}}}")"
+expect "a suggestion can't have extra fields" 403 "$(post "{\"fields\":{$kind,$version,$stamp,\"text\":{\"stringValue\":\"hola\"},\"admin\":{\"booleanValue\":true}}}")"
+
 # Firestore documents are limited to 1 MiB.
 size="$(curl -s "$BASE/public/history" | wc -c | tr -d ' ')"
 if [ "$size" -lt 1000000 ]; then echo "ok    public/history is $size bytes"; else echo "FAIL  public/history is $size bytes"; failed=1; fi

@@ -12,6 +12,7 @@
     "ingest:weekly": "tsx src/jobs/ingest-weekly.ts",
     "backfill": "tsx src/jobs/backfill.ts",
     "live-check": "tsx src/jobs/live-check.ts",
+    "triage-suggestions": "tsx src/jobs/triage-suggestions.ts",
     "generate-fixture": "tsx src/jobs/generate-fixture.ts"
   },
   "dependencies": {
