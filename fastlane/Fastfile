@@ -49,9 +49,8 @@ lane :precheck_all do
   check_app_store_metadata(api_key: asc_key, platform: "ios", default_rule_level: :warn, include_in_app_purchases: false)
 end
 
-# Shows the builds and tester groups, and creates the internal group if it's missing.
-desc "Set up internal TestFlight testing"
-lane :testflight_setup do
+desc "Show the builds App Store Connect has"
+lane :builds do
   key_id = ENV["ASC_KEY_ID"] || "KMSBU6865L"
   Spaceship::ConnectAPI.token = Spaceship::ConnectAPI::Token.create(
     key_id: key_id,
@@ -59,10 +58,5 @@ lane :testflight_setup do
     filepath: File.expand_path("~/.appstoreconnect/private_keys/AuthKey_#{key_id}.p8")
   )
   app = Spaceship::ConnectAPI::App.find("com.lucferbux.embalsesanjuan")
-  UI.message("App id: #{app.id}")
   app.get_builds.each { |build| UI.message("Build #{build.version}: #{build.processing_state}") }
-  groups = app.get_beta_groups
-  group = groups.find { |g| g.name == "Interno" } ||
-          app.create_beta_group(group_name: "Interno", is_internal_group: true, has_access_to_all_builds: true)
-  UI.message("Group #{group.name}")
 end

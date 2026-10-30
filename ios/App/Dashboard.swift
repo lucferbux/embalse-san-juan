@@ -3,22 +3,29 @@ import SwiftUI
 /// Where a fold can divide the dashboard: iPhone Duo's inner display folds down the middle.
 struct FoldGeometry: Equatable {
     var width: CGFloat = 0
-    /// Horizontal span to keep clear while a fold divides the view side by side, in its own coordinates.
+    /// Where a side-by-side fold is, in the view's own coordinates, even while the display lies flat.
+    var center: CGFloat?
+    /// Horizontal span to keep clear while the fold actually divides the view.
     var keepClear: ClosedRange<CGFloat>?
 
     init() {}
 
     init(_ proxy: GeometryProxy) {
         width = proxy.size.width
-        if #available(iOS 27.1, *),
-           let fold = proxy.reservedRegions(kind: .division).first(where: { $0.isActive && $0.frame.height > $0.frame.width }) {
-            keepClear = (fold.frame.minX - fold.margins.leading)...(fold.frame.maxX + fold.margins.trailing)
+        if #available(iOS 27.1, *) {
+            let isSideBySide = { (frame: CGRect) in frame.height > frame.width }
+            center = proxy.reservedRegions(kind: .division, options: .includeInactive)
+                .first { isSideBySide($0.frame) }?.frame.midX
+            if let fold = proxy.reservedRegions(kind: .division).first(where: { $0.isActive && isSideBySide($0.frame) }) {
+                keepClear = (fold.frame.minX - fold.margins.leading)...(fold.frame.maxX + fold.margins.trailing)
+            }
         }
     }
 }
 
-/// Two equal columns, so the fold always falls in the gap between them. While the device is half
-/// open the gap widens to cover it. Narrow regular widths, such as iPad splits, get one column.
+/// Two columns, with the fold always in the gap between them: on iPhone Duo the columns are measured
+/// from the fold, because its side bars make the safe area off-centre. While the device is half open
+/// the gap widens to cover the fold. Narrow regular widths, such as iPad splits, get one column.
 struct DashboardColumns<Leading: View, Trailing: View>: View {
     var fold: FoldGeometry
     @ViewBuilder var leading: Leading
@@ -35,6 +42,15 @@ struct DashboardColumns<Leading: View, Trailing: View>: View {
                 trailing
             }
             .padding(Self.margin)
+        } else if let center = fold.center {
+            HStack(alignment: .top, spacing: gap) {
+                VStack(spacing: 22) { leading }
+                    .frame(width: max(0, center - gap / 2 - Self.margin))
+                VStack(spacing: 22) { trailing }
+                    .frame(width: max(0, fold.width - center - gap / 2 - Self.margin))
+            }
+            .padding(Self.margin)
+            .frame(maxWidth: .infinity, alignment: .leading)
         } else {
             HStack(alignment: .top, spacing: gap) {
                 VStack(spacing: 22) { leading }
@@ -110,6 +126,7 @@ struct DashboardSection<Content: View>: View {
                     Text(footer)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, 16)
                 }
             }

@@ -1,6 +1,6 @@
 # Embalse de San Juan
 
-Native iOS 27 app and widgets showing the live state of the San Juan reservoir, on the Alberche river in Madrid.
+Native iOS 27 app, widgets and Apple Watch app showing the live state of the San Juan reservoir, on the Alberche river in Madrid.
 
 **Status:** In progress.
 
@@ -28,7 +28,6 @@ make check
 make generate && open ios/EmbalseSanJuan.xcodeproj
 ```
 
-Installing on a real iPhone needs your Apple team set in `ios/project.yml`, to sign the App Group.
 
 ## Backend setup
 

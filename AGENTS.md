@@ -7,4 +7,6 @@ Portable summary for coding agents. [CLAUDE.md](CLAUDE.md) has the detail: **upd
 - **Before finishing:** run `make check`. After changing sources, `make live-check`. After changing widgets, `make widgets` and look at the images.
 - **Contract:** `contract/snapshot.schema.json`. Changes touch backend, Swift models and `make fixture`.
 - **Xcode project:** generated from `ios/project.yml`. Never edit the `.xcodeproj`.
+- **Layout:** size classes only. On iPhone Duo the fold stays in the gap between columns.
+- **Release:** `scripts/release.sh`, then `fastlane metadata`. Nothing submits for review.
 - **Never:** mix SAIH and MITECO figures, scrape embalses.net, add the Firebase SDK to iOS, or commit credentials.

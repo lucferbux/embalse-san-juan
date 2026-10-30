@@ -1,8 +1,8 @@
 #!/bin/bash
 # Takes App Store screenshots from a Debug build, which opens each screen from launch arguments.
 #
-#   scripts/export-screenshots.sh              # iPhone 6.9", iPad 13", iPhone Duo outer, Apple Watch
-#   scripts/export-screenshots.sh --duo-inner  # only iPhone Duo's inner display (open it first, see below)
+#   scripts/export-screenshots.sh              # iPhone 6.9", iPad 13", Apple Watch
+#   scripts/export-screenshots.sh --duo-inner  # iPhone Duo's inner display (open it first, see below)
 #
 # Sizes App Store Connect accepts for these classes:
 #   iPhone 6.9"       1320x2868
@@ -12,6 +12,8 @@
 #
 # The iPhone Duo simulator boots closed. Only Device Hub can open it (Xcode > Open Developer Tool >
 # Device Hub): neither simctl nor XCTest can change the pose. Open it there, then run --duo-inner.
+# Duo shots go in fastlane/screenshots_duo, not the deliver folder: App Store Connect only requires them
+# from April 2027, and deliver doesn't recognise their sizes.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -83,24 +85,15 @@ shoot_set() {
 }
 
 if [ "${1:-}" = "--duo-inner" ]; then
+    # With the device open, the simulator's default display is the inner one.
     build_ios
     udid="$(udid_of "iPhone Duo")"
     prepare_ios "$udid"
-    # The inner display is the larger of the two the device reports.
-    port="$(xcrun simctl io "$udid" enumerate | /usr/bin/python3 -I -c "
-import re, sys
-text = sys.stdin.read()
-blocks = re.split(r'(?=Port:)', text)
-best = (0, '')
-for block in blocks:
-    port = re.search(r'UUID: ([0-9A-F-]{36})', block)
-    size = re.search(r'Default width: (\d+)', block) or re.search(r'width[:=] ?(\d+)', block)
-    if port and size and int(size.group(1)) > best[0]:
-        best = (int(size.group(1)), port.group(1))
-print(best[1])
-")"
-    echo "==> iPhone Duo inner (display $port)"
-    shoot_set "$udid" "duo-inner" "$port"
+    OUT="fastlane/screenshots_duo/es-ES"
+    mkdir -p "$OUT"
+    echo "==> iPhone Duo inner"
+    shoot "$udid" "$OUT/duo-inner-01-ahora.png" ""
+    shoot "$udid" "$OUT/duo-inner-04-historico.png" "" -ScreenshotScene history -HistoryRange all
     exit 0
 fi
 
@@ -117,13 +110,6 @@ prepare_ios "$udid"
 shoot "$udid" "$OUT/ipad-13-01-ahora.png" ""
 shoot "$udid" "$OUT/ipad-13-04-historico.png" "" -ScreenshotScene history -HistoryRange all
 shoot "$udid" "$OUT/ipad-13-05-ficha.png" "" -ScreenshotScene about
-
-echo "==> iPhone Duo outer"
-udid="$(ensure_device "iPhone Duo" com.apple.CoreSimulator.SimDeviceType.iPhone-Duo com.apple.CoreSimulator.SimRuntime.iOS-27-1)"
-prepare_ios "$udid"
-shoot "$udid" "$OUT/duo-outer-01-ahora.png" ""
-shoot "$udid" "$OUT/duo-outer-02-boletin.png" "" -ScreenshotScroll weekly
-shoot "$udid" "$OUT/duo-outer-04-historico.png" "" -ScreenshotScene history -HistoryRange all
 
 echo "==> Apple Watch"
 xcodebuild build -quiet -project "$PROJECT" -scheme EmbalseWatch -configuration Debug \

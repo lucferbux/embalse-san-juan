@@ -19,6 +19,10 @@ Check `git rev-parse --show-toplevel` before committing. Commits: Conventional C
 | `make widgets` | Renders every widget to `build/widget-snapshots/`. Look at them after any widget change. |
 | `make fixture` | Rebuilds `contract/fixtures/snapshot.json`. |
 | `make generate` | Regenerates the Xcode project from `ios/project.yml`. Never edit the `.xcodeproj`. |
+| `make firestore-check` | Checks the published data and the access rules from outside, with no credentials. |
+| `scripts/export-screenshots.sh` | App Store screenshots from a Debug build. `--duo-inner` needs iPhone Duo open in Device Hub. |
+| `scripts/release.sh` | Archives and uploads to App Store Connect. Bump `CURRENT_PROJECT_VERSION` first. |
+| `fastlane metadata` | Pushes the listing and screenshots as a draft. Never submits for review. |
 
 ## How it fits together
 
@@ -32,6 +36,15 @@ MITECO (weekly) ────┘
   and the Swift tests decode the same fixture. Changing it means changing both sides and `make fixture`.
 - `backend/src/domain/validate.ts` is the guard: if a check fails, nothing is written and the workflow fails.
 - `ios/EmbalseKit` holds all logic and views. The app and widget targets stay thin.
+
+## Layout
+
+Layout follows size classes only, never idiom, orientation or screen size:
+
+- **Compact** (iPhone, iPhone Duo closed, narrow iPad splits): `List`.
+- **Regular** (iPad, iPhone Duo open): `DashboardColumns`, two columns of cards.
+- **iPhone Duo inner display:** the fold is in the gap between the columns, measured from `reservedRegions` because side bars make the safe area off-centre. Controls that would sit on the fold, like the history picker, stay on one side. iOS 27.1 ships only on iPhone Duo, so the deployment target stays 27.0 and 27.1 APIs need `#available`.
+- **Widgets** are one full-bleed surface with white text, so nothing gets cut at the waterline. Don't go back to splitting them into panels or two-tone text.
 
 ## Rules
 
