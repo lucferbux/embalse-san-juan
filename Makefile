@@ -17,6 +17,8 @@ generate:
 check-ios: generate
 	xcodebuild test -quiet -project $(PROJECT) -scheme EmbalseSanJuan \
 		-destination '$(DESTINATION)' -derivedDataPath $(DERIVED) CODE_SIGNING_ALLOWED=NO
+	xcodebuild build -quiet -project $(PROJECT) -scheme EmbalseWatch \
+		-destination 'generic/platform=watchOS Simulator' -derivedDataPath $(DERIVED) CODE_SIGNING_ALLOWED=NO
 
 ## Fails if anything that looks like a credential is tracked or staged.
 scan-secrets:

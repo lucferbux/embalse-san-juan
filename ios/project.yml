@@ -1,9 +1,10 @@
 name: EmbalseSanJuan
 
 options:
-  bundleIdPrefix: es.lucferbux
+  bundleIdPrefix: com.lucferbux
   deploymentTarget:
     iOS: "27.0"
+    watchOS: "27.0"
   developmentLanguage: es
   createIntermediateGroups: true
   groupSortPosition: top
@@ -11,12 +12,12 @@ options:
 settings:
   base:
     SWIFT_VERSION: "6.0"
-    MARKETING_VERSION: "0.1.0"
+    # Keep these two in step across every target: bump them only here.
+    MARKETING_VERSION: "1.0"
     CURRENT_PROJECT_VERSION: "1"
-    TARGETED_DEVICE_FAMILY: "1"
     ENABLE_USER_SCRIPT_SANDBOXING: YES
-    # Set your Apple team here to install on a real iPhone. Simulators don't need it.
-    DEVELOPMENT_TEAM: ""
+    DEVELOPMENT_TEAM: 7Y2Y846R76
+    CODE_SIGN_STYLE: Automatic
 
 packages:
   EmbalseKit:
@@ -31,22 +32,35 @@ targets:
     dependencies:
       - package: EmbalseKit
       - target: EmbalseWidgets
+      - target: EmbalseWatch
     entitlements:
       path: App/EmbalseSanJuan.entitlements
       properties:
         com.apple.security.application-groups:
-          - group.es.lucferbux.embalsesanjuan
+          - group.com.lucferbux.embalsesanjuan
     info:
       path: App/Info.plist
       properties:
-        CFBundleDisplayName: San Juan
+        CFBundleDisplayName: Embalse San Juan
         CFBundleDevelopmentRegion: es
+        LSApplicationCategoryType: public.app-category.weather
+        ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
+        # iPhone Duo's outer display honours this list and its inner display ignores it, and Apple
+        # recommends landscape because people stand the device up like a tent.
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: es.lucferbux.embalsesanjuan
+        PRODUCT_BUNDLE_IDENTIFIER: com.lucferbux.embalsesanjuan
+        TARGETED_DEVICE_FAMILY: "1,2"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
 
@@ -63,17 +77,75 @@ targets:
       path: Widgets/EmbalseWidgets.entitlements
       properties:
         com.apple.security.application-groups:
-          - group.es.lucferbux.embalsesanjuan
+          - group.com.lucferbux.embalsesanjuan
     info:
       path: Widgets/Info.plist
       properties:
-        CFBundleDisplayName: San Juan
+        CFBundleDisplayName: Embalse San Juan
         CFBundleDevelopmentRegion: es
+        ITSAppUsesNonExemptEncryption: false
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: es.lucferbux.embalsesanjuan.widgets
+        PRODUCT_BUNDLE_IDENTIFIER: com.lucferbux.embalsesanjuan.widgets
+        TARGETED_DEVICE_FAMILY: "1,2"
+
+  EmbalseWatch:
+    type: application
+    platform: watchOS
+    sources:
+      - Watch
+    dependencies:
+      - package: EmbalseKit
+      - target: EmbalseWatchWidgets
+    entitlements:
+      path: Watch/EmbalseWatch.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.lucferbux.embalsesanjuan
+    info:
+      path: Watch/Info.plist
+      properties:
+        CFBundleDisplayName: San Juan
+        CFBundleDevelopmentRegion: es
+        ITSAppUsesNonExemptEncryption: false
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: com.lucferbux.embalsesanjuan
+        # It reads the data itself, so it works without the iPhone nearby.
+        WKRunsIndependentlyOfCompanionApp: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lucferbux.embalsesanjuan.watchkitapp
+        TARGETED_DEVICE_FAMILY: "4"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+
+  EmbalseWatchWidgets:
+    type: app-extension
+    platform: watchOS
+    sources:
+      - WatchWidgets
+    dependencies:
+      - package: EmbalseKit
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    entitlements:
+      path: WatchWidgets/EmbalseWatchWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.lucferbux.embalsesanjuan
+    info:
+      path: WatchWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: San Juan
+        CFBundleDevelopmentRegion: es
+        ITSAppUsesNonExemptEncryption: false
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lucferbux.embalsesanjuan.watchkitapp.widgets
+        TARGETED_DEVICE_FAMILY: "4"
 
 schemes:
   EmbalseSanJuan:
@@ -87,3 +159,12 @@ schemes:
       config: Debug
       targets:
         - package: EmbalseKit/EmbalseKitTests
+    archive:
+      config: Release
+  EmbalseWatch:
+    build:
+      targets:
+        EmbalseWatch: all
+        EmbalseWatchWidgets: all
+    run:
+      config: Debug

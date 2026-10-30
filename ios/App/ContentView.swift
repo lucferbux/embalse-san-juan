@@ -2,12 +2,17 @@ import Charts
 import EmbalseKit
 import SwiftUI
 
+enum Route: Hashable {
+    case history, about
+}
+
 struct ContentView: View {
     var model: ReservoirModel
+    @State private var path: [Route] = []
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             Group {
                 switch model.state {
                 case .loading:
@@ -24,8 +29,14 @@ struct ContentView: View {
                         .buttonStyle(.borderedProminent)
                     }
                 case .loaded(let snapshot, let origin):
-                    ReservoirList(snapshot: snapshot, origin: origin) {
+                    ReservoirScreen(snapshot: snapshot, origin: origin) {
                         await model.refresh(force: true)
+                    }
+                    .navigationDestination(for: Route.self) { route in
+                        switch route {
+                        case .history: HistoryView(weekly: snapshot.weekly)
+                        case .about: AboutView(snapshot: snapshot)
+                        }
                     }
                 }
             }
@@ -38,36 +49,88 @@ struct ContentView: View {
                 Task { await model.refresh() }
             }
         }
+        #if DEBUG
+        .task { openScreenshotScene() }
+        #endif
     }
+
+    #if DEBUG
+    /// `-ScreenshotScene history` opens a screen directly, for scripts/export-screenshots.sh.
+    private func openScreenshotScene() {
+        switch UserDefaults.standard.string(forKey: "ScreenshotScene") {
+        case "history": path = [.history]
+        case "about": path = [.about]
+        default: break
+        }
+    }
+    #endif
 }
 
-private struct ReservoirList: View {
+/// Layout follows size classes only, never idiom or orientation. That covers iPad, its splits, and
+/// iPhone Duo: its outer display is compact and its inner display is regular in both directions.
+private struct ReservoirScreen: View {
     var snapshot: Snapshot
     var origin: SnapshotRepository.Origin
     var refresh: @Sendable () async -> Void
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @State private var fold = FoldGeometry()
+
     var body: some View {
-        List {
-            HeroSection(snapshot: snapshot, origin: origin)
-            RealtimeSection(snapshot: snapshot)
-            OutflowSection(snapshot: snapshot)
-            WeeklySection(weekly: snapshot.weekly)
-            WeatherSection(weather: snapshot.weather)
-            AlbercheSection(snapshot: snapshot)
-            Section {
-                NavigationLink {
-                    HistoryView(weekly: snapshot.weekly)
-                } label: {
-                    Label("Histórico desde 1988", systemImage: "chart.xyaxis.line")
+        if horizontalSizeClass == .regular {
+            ScrollView {
+                DashboardColumns(fold: fold) {
+                    HeroSection(snapshot: snapshot, origin: origin)
+                    RealtimeSection(snapshot: snapshot)
+                    OutflowSection(snapshot: snapshot)
+                } trailing: {
+                    WeeklySection(weekly: snapshot.weekly)
+                    WeatherSection(weather: snapshot.weather)
+                    AlbercheSection(snapshot: snapshot)
+                    LinksSection()
                 }
-                NavigationLink {
-                    AboutView(snapshot: snapshot)
-                } label: {
-                    Label("Ficha y fuentes", systemImage: "info.circle")
+                .environment(\.dashboardStyle, .cards)
+            }
+            .background(Color(uiColor: .systemGroupedBackground))
+            .onGeometryChange(for: FoldGeometry.self) { FoldGeometry($0) } action: { fold = $0 }
+            .refreshable { await refresh() }
+        } else {
+            ScrollViewReader { proxy in
+                List {
+                    HeroSection(snapshot: snapshot, origin: origin)
+                    RealtimeSection(snapshot: snapshot)
+                    OutflowSection(snapshot: snapshot)
+                    WeeklySection(weekly: snapshot.weekly)
+                        .id("weekly")
+                    WeatherSection(weather: snapshot.weather)
+                    AlbercheSection(snapshot: snapshot)
+                        .id("alberche")
+                    LinksSection()
                 }
+                .refreshable { await refresh() }
+                #if DEBUG
+                .task {
+                    if let target = UserDefaults.standard.string(forKey: "ScreenshotScroll") {
+                        try? await Task.sleep(for: .milliseconds(300))
+                        proxy.scrollTo(target, anchor: .top)
+                    }
+                }
+                #endif
             }
         }
-        .refreshable { await refresh() }
+    }
+}
+
+private struct LinksSection: View {
+    var body: some View {
+        DashboardSection {
+            NavigationLink(value: Route.history) {
+                Label("Histórico desde 1988", systemImage: "chart.xyaxis.line")
+            }
+            NavigationLink(value: Route.about) {
+                Label("Ficha y fuentes", systemImage: "info.circle")
+            }
+        }
     }
 }
 
@@ -75,44 +138,66 @@ private struct HeroSection: View {
     var snapshot: Snapshot
     var origin: SnapshotRepository.Origin
     @ScaledMetric(relativeTo: .title) private var height = 280.0
+    @Environment(\.dashboardStyle) private var style
 
     var body: some View {
         let live = snapshot.live
         let trend = Trend(change: live.trend24hHm3)
-        Section {
-            AnimatedWater(percent: live.percent) { phase in
-                WaterlineText(percent: live.percent, phase: phase, amplitude: 6) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Spacer(minLength: 0)
-                        Text(Format.percent(live.percent))
-                            .font(.system(size: 64, weight: .bold, design: .rounded))
-                            .minimumScaleFactor(0.6)
-                            .lineLimit(1)
-                        Text("\(Format.hm3(live.volumeHm3, decimals: 2)) de \(Format.hm3(snapshot.weekly.capacityHm3, decimals: 0))")
-                            .font(.title3.weight(.semibold))
-                        HStack(spacing: 6) {
-                            Image(systemName: trend.symbol)
-                            Text("\(trend.label) · \(Format.signed(live.trend24hHm3)) hm³ en 24 h")
-                        }
-                        .font(.subheadline.weight(.medium))
+        let hero = AnimatedWater(percent: live.percent) { phase in
+            WaterlineText(percent: live.percent, phase: phase, amplitude: 6) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Spacer(minLength: 0)
+                    Text(Format.percent(live.percent))
+                        .font(.system(size: 64, weight: .bold, design: .rounded))
+                        .minimumScaleFactor(0.6)
+                        .lineLimit(1)
+                    Text("\(Format.hm3(live.volumeHm3, decimals: 2)) de \(Format.hm3(snapshot.weekly.capacityHm3, decimals: 0))")
+                        .font(.title3.weight(.semibold))
+                    HStack(spacing: 6) {
+                        Image(systemName: trend.symbol)
+                        Text("\(trend.label) · \(Format.signed(live.trend24hHm3)) hm³ en 24 h")
                     }
-                    .padding(20)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                    .font(.subheadline.weight(.medium))
                 }
+                .padding(20)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             }
-            .frame(height: height)
-            .listRowInsets(EdgeInsets())
-            .accessibilityElement(children: .combine)
-        } footer: {
-            VStack(alignment: .leading, spacing: 4) {
-                if snapshot.isStale() {
-                    Label("Este dato tiene más de 6 horas. La recogida puede estar fallando.", systemImage: "exclamationmark.triangle.fill")
-                        .foregroundStyle(.orange)
-                } else if origin == .cache {
-                    Label("Sin conexión. Mostrando el último dato guardado.", systemImage: "wifi.slash")
-                }
-                Text("SAIH Tajo, \(Format.dayMonthHour(live.observedAt)). Dato provisional.")
+        }
+        .frame(height: height)
+        .accessibilityElement(children: .combine)
+
+        switch style {
+        case .list:
+            Section {
+                hero.listRowInsets(EdgeInsets())
+            } footer: {
+                HeroFooter(snapshot: snapshot, origin: origin)
             }
+        case .cards:
+            VStack(alignment: .leading, spacing: 8) {
+                hero.clipShape(.rect(cornerRadius: 26, style: .continuous))
+                HeroFooter(snapshot: snapshot, origin: origin)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 16)
+            }
+        }
+    }
+}
+
+private struct HeroFooter: View {
+    var snapshot: Snapshot
+    var origin: SnapshotRepository.Origin
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            if snapshot.isStale() {
+                Label("Este dato tiene más de 6 horas. La recogida puede estar fallando.", systemImage: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+            } else if origin == .cache {
+                Label("Sin conexión. Mostrando el último dato guardado.", systemImage: "wifi.slash")
+            }
+            Text("SAIH Tajo, \(Format.dayMonthHour(snapshot.live.observedAt)). Dato provisional.")
         }
     }
 }
@@ -122,7 +207,7 @@ private struct RealtimeSection: View {
 
     var body: some View {
         let live = snapshot.live
-        Section("Tiempo real") {
+        DashboardSection("Tiempo real") {
             RecentChart(readings: snapshot.recent)
                 .frame(height: 150)
                 .padding(.vertical, 4)
@@ -184,7 +269,7 @@ private struct OutflowSection: View {
     var snapshot: Snapshot
 
     var body: some View {
-        Section("Caudal desembalsado") {
+        DashboardSection("Caudal desembalsado") {
             LabeledContent("Salida al río", value: Format.optional(snapshot.live.outflowM3s, decimals: 2, unit: "m³/s"))
             LabeledContent("Trasvase a Valmayor", value: Format.optional(snapshot.live.transferM3s, decimals: 2, unit: "m³/s"))
             let readings = snapshot.recent.filter { $0.outflowM3s != nil }
@@ -221,16 +306,12 @@ private struct WeeklySection: View {
     var weekly: Snapshot.Weekly
 
     var body: some View {
-        Section {
+        DashboardSection("Boletín semanal", footer: "MITECO, \(Format.dayMonth(weekly.day)). Es otra medición y no coincide con el dato en tiempo real.") {
             LabeledContent("Agua embalsada", value: "\(Format.hm3(weekly.volumeHm3, decimals: 0)) (\(Format.percent(weekly.percent)))")
             LabeledContent("Variación semanal", value: "\(Format.signed(weekly.changeHm3, decimals: 0)) hm³")
             LabeledContent("Capacidad", value: Format.hm3(weekly.capacityHm3, decimals: 0))
             LabeledContent("Misma semana del año pasado", value: weekly.lastYearHm3.map { Format.hm3($0, decimals: 0) } ?? "Sin dato")
             LabeledContent("Media de 10 años", value: weekly.tenYearAvgHm3.map { Format.hm3($0) } ?? "Sin dato")
-        } header: {
-            Text("Boletín semanal")
-        } footer: {
-            Text("MITECO, \(Format.dayMonth(weekly.day)). Es otra medición y no coincide con el dato en tiempo real.")
         }
     }
 }
@@ -239,7 +320,7 @@ private struct WeatherSection: View {
     var weather: Snapshot.Weather
 
     var body: some View {
-        Section {
+        DashboardSection("Tiempo en la presa", footer: "SAIH Tajo, \(Format.dayMonthHour(weather.observedAt)).") {
             WeatherRow("Temperatura", symbol: "thermometer.medium", value: Format.optional(weather.temperatureC, unit: "°C"))
             WeatherRow("Viento", symbol: "wind", value: windText)
             WeatherRow("Humedad", symbol: "humidity", value: Format.optional(weather.humidityPct, decimals: 0, unit: "%"))
@@ -247,10 +328,6 @@ private struct WeatherSection: View {
             WeatherRow("Radiación solar", symbol: "sun.max", value: Format.optional(weather.solarWm2, decimals: 0, unit: "W/m²"))
             WeatherRow("Lluvia en 1 h", symbol: "cloud.rain", value: Format.optional(weather.rain1hMm, unit: "mm"))
             WeatherRow("Lluvia en 24 h", symbol: "cloud.heavyrain", value: Format.optional(weather.rain24hMm, unit: "mm"))
-        } header: {
-            Text("Tiempo en la presa")
-        } footer: {
-            Text("SAIH Tajo, \(Format.dayMonthHour(weather.observedAt)).")
         }
     }
 
@@ -287,25 +364,17 @@ private struct AlbercheSection: View {
     var body: some View {
         let upstream = snapshot.neighbours.filter { $0.position == .upstream }
         let downstream = snapshot.neighbours.filter { $0.position == .downstream }
-        Section {
+        DashboardSection("Río Alberche", footer: "De aguas arriba a aguas abajo.") {
             ForEach(upstream) { ChainRow(name: $0.name, percent: $0.percent, volume: $0.volumeHm3, isCurrent: false) }
             ChainRow(name: snapshot.reservoir.name, percent: snapshot.live.percent, volume: snapshot.live.volumeHm3, isCurrent: true)
             ForEach(downstream) { ChainRow(name: $0.name, percent: $0.percent, volume: $0.volumeHm3, isCurrent: false) }
-        } header: {
-            Text("Río Alberche")
-        } footer: {
-            Text("De aguas arriba a aguas abajo.")
         }
 
         if !snapshot.rainGauges.isEmpty {
-            Section {
+            DashboardSection("Lluvia en la cuenca, 24 h", footer: "Pluviómetros del SAIH Tajo en la cuenca del Alberche.") {
                 ForEach(snapshot.rainGauges) { gauge in
                     LabeledContent(gauge.name, value: Format.optional(gauge.rain24hMm, unit: "mm"))
                 }
-            } header: {
-                Text("Lluvia en la cuenca, 24 h")
-            } footer: {
-                Text("Pluviómetros del SAIH Tajo en la cuenca del Alberche.")
             }
         }
     }
@@ -337,7 +406,7 @@ private struct ChainRow: View {
     }
 }
 
-private struct AboutView: View {
+struct AboutView: View {
     var snapshot: Snapshot
 
     var body: some View {
@@ -375,6 +444,14 @@ private struct AboutView: View {
                 Text("Fuentes")
             } footer: {
                 Text("App personal, sin relación con estos organismos ni respaldada por ellos. Todos los datos son provisionales.")
+            }
+            Section {
+                if let url = URL(string: "https://embalse-san-juan.web.app/privacy.html") {
+                    Link("Política de privacidad", destination: url)
+                }
+                if let url = URL(string: "https://embalse-san-juan.web.app/support.html") {
+                    Link("Soporte", destination: url)
+                }
             }
         }
         .navigationTitle("Ficha y fuentes")

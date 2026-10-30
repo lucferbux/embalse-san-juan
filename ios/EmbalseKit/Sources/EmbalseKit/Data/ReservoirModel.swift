@@ -1,18 +1,17 @@
-import EmbalseKit
 import Foundation
 import Observation
 import WidgetKit
 
 @MainActor
 @Observable
-final class ReservoirModel {
-    enum State {
+public final class ReservoirModel {
+    public enum State {
         case loading
         case loaded(Snapshot, SnapshotRepository.Origin)
         case failed
     }
 
-    private(set) var state: State = .loading
+    public private(set) var state: State = .loading
     private(set) var lastAttempt: Date?
 
     private let repository = SnapshotRepository()
@@ -20,13 +19,13 @@ final class ReservoirModel {
     /// New data arrives hourly, so reopening the app more often than this needs no request.
     private static let minimumRefreshInterval: TimeInterval = 15 * 60
 
-    init() {
+    public init() {
         if let cached = repository.cached() {
             state = .loaded(cached, .cache)
         }
     }
 
-    func refresh(force: Bool = false) async {
+    public func refresh(force: Bool = false) async {
         if !force, let lastAttempt, Date.now.timeIntervalSince(lastAttempt) < Self.minimumRefreshInterval {
             return
         }

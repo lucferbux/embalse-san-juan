@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.es.lucferbux.embalsesanjuan</string>
+		<string>group.com.lucferbux.embalsesanjuan</string>
 	</array>
 </dict>
 </plist>

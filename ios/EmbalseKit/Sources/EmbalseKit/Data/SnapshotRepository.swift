@@ -2,7 +2,7 @@ import Foundation
 
 /// Keeps the last good snapshot in the App Group, so the app and widgets share it and work offline.
 public struct SnapshotCache: Sendable {
-    public static let appGroup = "group.es.lucferbux.embalsesanjuan"
+    public static let appGroup = "group.com.lucferbux.embalsesanjuan"
 
     let fileURL: URL
 

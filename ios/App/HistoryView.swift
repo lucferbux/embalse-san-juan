@@ -24,8 +24,16 @@ struct HistoryView: View {
         case failed
     }
 
-    @State private var range: Range = .oneYear
+    @State private var range: Range = Self.initialRange
     @State private var state: LoadState = .loading
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    private static var initialRange: Range {
+        #if DEBUG
+        if UserDefaults.standard.string(forKey: "HistoryRange") == "all" { return .all }
+        #endif
+        return .oneYear
+    }
 
     var body: some View {
         List {
@@ -66,6 +74,9 @@ struct HistoryView: View {
                 ForEach(Range.allCases) { Text($0.rawValue).tag($0) }
             }
             .pickerStyle(.segmented)
+            // A centred control would sit on iPhone Duo's fold, so it stays on one side of it.
+            .frame(maxWidth: horizontalSizeClass == .regular ? 320 : .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets())
         }

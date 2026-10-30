@@ -1,3 +1,4 @@
+import EmbalseKit
 import SwiftUI
 
 @main
