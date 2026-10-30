@@ -43,6 +43,8 @@ targets:
       properties:
         CFBundleDisplayName: Embalse San Juan
         CFBundleDevelopmentRegion: es
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSApplicationCategoryType: public.app-category.weather
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
@@ -83,6 +85,8 @@ targets:
       properties:
         CFBundleDisplayName: Embalse San Juan
         CFBundleDevelopmentRegion: es
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         ITSAppUsesNonExemptEncryption: false
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
@@ -109,6 +113,8 @@ targets:
       properties:
         CFBundleDisplayName: San Juan
         CFBundleDevelopmentRegion: es
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         ITSAppUsesNonExemptEncryption: false
         WKApplication: true
         WKCompanionAppBundleIdentifier: com.lucferbux.embalsesanjuan
@@ -139,6 +145,8 @@ targets:
       properties:
         CFBundleDisplayName: San Juan
         CFBundleDevelopmentRegion: es
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         ITSAppUsesNonExemptEncryption: false
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
