@@ -20,9 +20,8 @@ cd "$(dirname "$0")/.."
 PROJECT="ios/EmbalseSanJuan.xcodeproj"
 DERIVED="build/DerivedData"
 OUT="fastlane/screenshots/es-ES"
-WATCH_OUT="fastlane/screenshots_watch/es-ES"
 BUNDLE="com.lucferbux.embalsesanjuan"
-mkdir -p "$OUT" "$WATCH_OUT"
+mkdir -p "$OUT"
 
 udid_of() {
     xcrun simctl list devices available -j | /usr/bin/python3 -I -c "
@@ -116,4 +115,4 @@ xcodebuild build -quiet -project "$PROJECT" -scheme EmbalseWatch -configuration 
     -destination 'generic/platform=watchOS Simulator' -derivedDataPath "$DERIVED" >/dev/null
 udid="$(ensure_device "Apple Watch Ultra 4 (49mm)" com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Ultra-4-49mm com.apple.CoreSimulator.SimRuntime.watchOS-27-0)"
 xcrun simctl install "$udid" "$DERIVED/Build/Products/Debug-watchsimulator/EmbalseWatch.app"
-BUNDLE="$BUNDLE.watchkitapp" shoot "$udid" "$WATCH_OUT/watch-01-ahora.png" ""
+BUNDLE="$BUNDLE.watchkitapp" shoot "$udid" "$OUT/watch-01-ahora.png" ""

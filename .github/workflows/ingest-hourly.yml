@@ -2,8 +2,8 @@ name: Ingest hourly
 
 on:
   schedule:
-    # Off the hour, when GitHub's scheduler is less congested.
-    - cron: "17 * * * *"
+    # Well off the hour, when GitHub's scheduler is less congested.
+    - cron: "41 * * * *"
   workflow_dispatch:
 
 concurrency:

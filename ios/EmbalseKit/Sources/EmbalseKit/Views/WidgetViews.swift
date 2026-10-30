@@ -437,10 +437,10 @@ public struct ReservoirProvider: TimelineProvider, Sendable {
         }
     }
 
-    /// New data lands a few minutes after the collector's :17 run, so aim for just after that.
+    /// New data lands a few minutes after the collector's :41 run, so aim for just after that.
     static func nextRefresh(after date: Date) -> Date {
         let calendar = Calendar(identifier: .gregorian)
-        return calendar.nextDate(after: date, matching: DateComponents(minute: 30), matchingPolicy: .nextTime)
+        return calendar.nextDate(after: date, matching: DateComponents(minute: 50), matchingPolicy: .nextTime)
             ?? date.addingTimeInterval(3600)
     }
 }

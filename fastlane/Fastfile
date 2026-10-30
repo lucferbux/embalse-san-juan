@@ -1,5 +1,9 @@
 # The App Store listing, as files. Binaries go through `scripts/release.sh`.
 # Nothing here submits for review: the version stays in Prepare for Submission.
+#
+# App Review contact details live in fastlane/review_information, outside metadata/, until there's a
+# contact phone number. Without one, deliver dies creating the review detail (fastlane #20538). Add
+# phone_number.txt and email_address.txt, then move the folder to metadata/ios/.
 
 opt_out_usage
 skip_docs
