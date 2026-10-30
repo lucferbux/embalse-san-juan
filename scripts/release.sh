@@ -24,14 +24,7 @@ cat >"$OUT/ExportOptions.plist" <<'PLIST'
 </dict></plist>
 PLIST
 
-# The API key, so uploads don't depend on Xcode's signed-in account.
-KEY_ID="${ASC_KEY_ID:-KMSBU6865L}"
-AUTH=(-allowProvisioningUpdates
-    -authenticationKeyID "$KEY_ID"
-    -authenticationKeyIssuerID "${ASC_ISSUER_ID:-69a6de88-17cf-47e3-e053-5b8c7c11a4d1}"
-    -authenticationKeyPath "${ASC_KEY_PATH:-$HOME/.appstoreconnect/private_keys/AuthKey_$KEY_ID.p8}")
-
 xcodebuild archive -quiet -project ios/EmbalseSanJuan.xcodeproj -scheme EmbalseSanJuan -configuration Release \
-    -destination 'generic/platform=iOS' -archivePath "$OUT/Embalse.xcarchive" "${AUTH[@]}"
+    -destination 'generic/platform=iOS' -archivePath "$OUT/Embalse.xcarchive" -allowProvisioningUpdates
 xcodebuild -exportArchive -archivePath "$OUT/Embalse.xcarchive" -exportOptionsPlist "$OUT/ExportOptions.plist" \
-    -exportPath "$OUT/export" "${AUTH[@]}" 2>&1 | grep -E 'Upload succeeded|EXPORT|error:'
+    -exportPath "$OUT/export" -allowProvisioningUpdates 2>&1 | grep -E 'Upload succeeded|EXPORT|error:'
