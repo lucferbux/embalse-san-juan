@@ -4,6 +4,9 @@ name: Live check
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   live-check:
     runs-on: ubuntu-latest

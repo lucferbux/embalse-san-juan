@@ -11,6 +11,9 @@ concurrency:
   group: ingest
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 jobs:
   ingest:
     runs-on: ubuntu-latest

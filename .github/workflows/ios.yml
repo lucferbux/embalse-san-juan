@@ -4,6 +4,9 @@ name: iOS
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   ios:
     runs-on: macos-latest

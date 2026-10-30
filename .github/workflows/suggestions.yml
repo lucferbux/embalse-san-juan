@@ -1,9 +1,8 @@
 name: Suggestions
 
-# Turns suggestions sent from the app into issues. Once a day is plenty, and GitHub emails each one.
+# Turns suggestions sent from the app into issues. Disabled while this repo is public, because
+# anyone could read them: the job refuses to run on a public repo. They stay in Firestore meanwhile.
 on:
-  schedule:
-    - cron: "23 8 * * *"
   workflow_dispatch:
 
 permissions:
