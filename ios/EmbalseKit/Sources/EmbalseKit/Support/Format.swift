@@ -40,10 +40,6 @@ public enum Format {
         "\(dayMonth(date)), \(hour(date))"
     }
 
-    public static func relative(_ date: Date, now: Date = .now) -> String {
-        date.formatted(Date.RelativeFormatStyle(presentation: .numeric, unitsStyle: .abbreviated, locale: locale).locale(locale))
-    }
-
     /// 16-point compass name for a direction in degrees.
     public static func compass(_ degrees: Double) -> String {
         let names = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSO", "SO", "OSO", "O", "ONO", "NO", "NNO"]
@@ -55,8 +51,8 @@ public enum Format {
 public enum Trend: Sendable, Equatable {
     case rising, falling, steady
 
-    /// Changes below this are sensor noise rather than a real movement in the reservoir.
-    static let threshold = 0.05
+    /// Wind moves the gauge by around ±0.1 hm³ in a day, so smaller changes aren't real movement.
+    static let threshold = 0.2
 
     public init(change: Double) {
         if change > Self.threshold {

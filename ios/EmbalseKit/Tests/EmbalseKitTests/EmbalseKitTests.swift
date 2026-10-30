@@ -70,9 +70,9 @@ final class BehaviourTests: XCTestCase {
     }
 
     func testTrendIgnoresSensorNoise() {
-        XCTAssertEqual(Trend(change: 0.12), .rising)
+        XCTAssertEqual(Trend(change: 0.3), .rising)
         XCTAssertEqual(Trend(change: -0.5), .falling)
-        XCTAssertEqual(Trend(change: 0.02), .steady)
+        XCTAssertEqual(Trend(change: 0.12), .steady)
     }
 
     func testStaleAfterSixHours() throws {

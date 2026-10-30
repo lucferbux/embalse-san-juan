@@ -68,7 +68,9 @@ struct HistoryView: View {
             .pickerStyle(.segmented)
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets())
+        }
 
+        Section {
             Chart {
                 ForEach(points) { point in
                     AreaMark(x: .value("Fecha", point.date), y: .value("Volumen", point.volume))
@@ -90,6 +92,7 @@ struct HistoryView: View {
             .chartYAxisLabel("hm³")
             .frame(height: 280)
             .padding(.vertical, 8)
+            .dynamicTypeSize(...DynamicTypeSize.xLarge)
             .accessibilityLabel("Evolución del volumen del embalse")
         } footer: {
             Text(range == .all ? "Boletín Hidrológico de MITECO, dato semanal." : "SAIH Tajo, último valor de cada día.")

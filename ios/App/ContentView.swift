@@ -31,6 +31,8 @@ struct ContentView: View {
             }
             .navigationTitle("San Juan")
         }
+        // Charts format their axes from the environment, so they follow the app's Spanish text.
+        .environment(\.locale, Locale(identifier: "es_ES"))
         .onChange(of: scenePhase, initial: true) { _, phase in
             if phase == .active {
                 Task { await model.refresh() }
@@ -72,6 +74,7 @@ private struct ReservoirList: View {
 private struct HeroSection: View {
     var snapshot: Snapshot
     var origin: SnapshotRepository.Origin
+    @ScaledMetric(relativeTo: .title) private var height = 280.0
 
     var body: some View {
         let live = snapshot.live
@@ -87,14 +90,17 @@ private struct HeroSection: View {
                             .lineLimit(1)
                         Text("\(Format.hm3(live.volumeHm3, decimals: 2)) de \(Format.hm3(snapshot.weekly.capacityHm3, decimals: 0))")
                             .font(.title3.weight(.semibold))
-                        Label("\(trend.label) · \(Format.signed(live.trend24hHm3)) hm³ en 24 h", systemImage: trend.symbol)
-                            .font(.subheadline.weight(.medium))
+                        HStack(spacing: 6) {
+                            Image(systemName: trend.symbol)
+                            Text("\(trend.label) · \(Format.signed(live.trend24hHm3)) hm³ en 24 h")
+                        }
+                        .font(.subheadline.weight(.medium))
                     }
                     .padding(20)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                 }
             }
-            .frame(height: 280)
+            .frame(height: height)
             .listRowInsets(EdgeInsets())
             .accessibilityElement(children: .combine)
         } footer: {
@@ -169,6 +175,7 @@ private struct RecentChart: View {
                 }
             }
         }
+        .dynamicTypeSize(...DynamicTypeSize.xLarge) // Axis labels can't reflow, so they stop growing here.
         .accessibilityLabel("Volumen en las últimas 24 horas")
     }
 }
@@ -203,6 +210,7 @@ private struct OutflowSection: View {
                 }
                 .frame(height: 110)
                 .padding(.vertical, 4)
+                .dynamicTypeSize(...DynamicTypeSize.xLarge)
                 .accessibilityLabel("Caudal de salida en las últimas 24 horas")
             }
         }
