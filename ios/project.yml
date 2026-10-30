@@ -1,0 +1,89 @@
+name: EmbalseSanJuan
+
+options:
+  bundleIdPrefix: es.lucferbux
+  deploymentTarget:
+    iOS: "27.0"
+  developmentLanguage: es
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1"
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    # Set your Apple team here to install on a real iPhone. Simulators don't need it.
+    DEVELOPMENT_TEAM: ""
+
+packages:
+  EmbalseKit:
+    path: EmbalseKit
+
+targets:
+  EmbalseSanJuan:
+    type: application
+    platform: iOS
+    sources:
+      - App
+    dependencies:
+      - package: EmbalseKit
+      - target: EmbalseWidgets
+    entitlements:
+      path: App/EmbalseSanJuan.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.es.lucferbux.embalsesanjuan
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: San Juan
+        CFBundleDevelopmentRegion: es
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: es.lucferbux.embalsesanjuan
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+
+  EmbalseWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Widgets
+    dependencies:
+      - package: EmbalseKit
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    entitlements:
+      path: Widgets/EmbalseWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.es.lucferbux.embalsesanjuan
+    info:
+      path: Widgets/Info.plist
+      properties:
+        CFBundleDisplayName: San Juan
+        CFBundleDevelopmentRegion: es
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: es.lucferbux.embalsesanjuan.widgets
+
+schemes:
+  EmbalseSanJuan:
+    build:
+      targets:
+        EmbalseSanJuan: all
+        EmbalseWidgets: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - package: EmbalseKit/EmbalseKitTests
