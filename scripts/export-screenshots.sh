@@ -2,6 +2,8 @@
 # Takes App Store screenshots from a Debug build, which opens each screen from launch arguments.
 #
 #   scripts/export-screenshots.sh              # iPhone 6.9", iPad 13", Apple Watch
+#   scripts/export-screenshots.sh --watch      # Apple Watch only
+#   scripts/export-screenshots.sh --duo-outer  # iPhone Duo's outer display
 #   scripts/export-screenshots.sh --duo-inner  # iPhone Duo's inner display (open it first, see below)
 #
 # Sizes App Store Connect accepts for these classes:
@@ -59,6 +61,9 @@ prepare_ios() {
     xcrun simctl status_bar "$udid" override --time "9:41" --batteryState charged --batteryLevel 100 \
         --cellularMode active --wifiMode active --wifiBars 3 2>/dev/null || true
     xcrun simctl ui "$udid" appearance light
+    # The first launch after installing can take longer than shoot() waits, which gives a blank shot.
+    xcrun simctl launch "$udid" "$BUNDLE" >/dev/null
+    /bin/sleep 15
 }
 
 shoot() {
@@ -82,6 +87,39 @@ shoot_set() {
     shoot "$udid" "$OUT/$prefix-03-alberche.png" "$display" -ScreenshotScroll alberche
     shoot "$udid" "$OUT/$prefix-04-historico.png" "$display" -ScreenshotScene history -HistoryRange all
 }
+
+shoot_watch() {
+    xcodebuild build -quiet -project "$PROJECT" -scheme EmbalseWatch -configuration Debug \
+        -destination 'generic/platform=watchOS Simulator' -derivedDataPath "$DERIVED" >/dev/null
+    local udid
+    udid="$(ensure_device "Apple Watch Ultra 4 (49mm)" com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Ultra-4-49mm com.apple.CoreSimulator.SimRuntime.watchOS-27-0)"
+    xcrun simctl install "$udid" "$DERIVED/Build/Products/Debug-watchsimulator/EmbalseWatch.app"
+    BUNDLE="$BUNDLE.watchkitapp" shoot "$udid" "$OUT/watch-01-ahora.png" ""
+    BUNDLE="$BUNDLE.watchkitapp" shoot "$udid" "$OUT/watch-02-curva.png" "" -ScreenshotPage 1
+    BUNDLE="$BUNDLE.watchkitapp" shoot "$udid" "$OUT/watch-03-datos.png" "" -ScreenshotPage 2
+}
+
+if [ "${1:-}" = "--watch" ]; then
+    make generate >/dev/null
+    echo "==> Apple Watch"
+    shoot_watch
+    exit 0
+fi
+
+if [ "${1:-}" = "--duo-outer" ]; then
+    # The simulator boots closed, which is the outer display.
+    build_ios
+    udid="$(udid_of "iPhone Duo")"
+    xcrun simctl boot "$udid" 2>/dev/null || true
+    xcrun simctl bootstatus "$udid" -b >/dev/null 2>&1 || true
+    prepare_ios "$udid"
+    OUT="fastlane/screenshots_duo/es-ES"
+    mkdir -p "$OUT"
+    echo "==> iPhone Duo outer"
+    # simctl numbers the displays: 1 is the outer one (1398x2034), 3 the inner one (2007x2853).
+    shoot_set "$udid" "duo-outer" 1
+    exit 0
+fi
 
 if [ "${1:-}" = "--duo-inner" ]; then
     # With the device open, the simulator's default display is the inner one.
@@ -111,8 +149,4 @@ shoot "$udid" "$OUT/ipad-13-04-historico.png" "" -ScreenshotScene history -Histo
 shoot "$udid" "$OUT/ipad-13-05-ficha.png" "" -ScreenshotScene about
 
 echo "==> Apple Watch"
-xcodebuild build -quiet -project "$PROJECT" -scheme EmbalseWatch -configuration Debug \
-    -destination 'generic/platform=watchOS Simulator' -derivedDataPath "$DERIVED" >/dev/null
-udid="$(ensure_device "Apple Watch Ultra 4 (49mm)" com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Ultra-4-49mm com.apple.CoreSimulator.SimRuntime.watchOS-27-0)"
-xcrun simctl install "$udid" "$DERIVED/Build/Products/Debug-watchsimulator/EmbalseWatch.app"
-BUNDLE="$BUNDLE.watchkitapp" shoot "$udid" "$OUT/watch-01-ahora.png" ""
+shoot_watch

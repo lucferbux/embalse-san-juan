@@ -22,7 +22,8 @@ Check `git rev-parse --show-toplevel` before committing. Commits: Conventional C
 | `make fixture` | Rebuilds `contract/fixtures/snapshot.json`. |
 | `make generate` | Regenerates the Xcode project from `ios/project.yml`. Never edit the `.xcodeproj`. |
 | `make firestore-check` | Checks the published data and the access rules from outside, with no credentials. |
-| `scripts/export-screenshots.sh` | App Store screenshots from a Debug build. `--duo-inner` needs iPhone Duo open in Device Hub. |
+| `scripts/export-screenshots.sh` | App Store screenshots from a Debug build. Also `--watch`, `--duo-outer` and `--duo-inner`, which needs iPhone Duo open in Device Hub. |
+| `swift scripts/make-creative-assets.swift` | Header and search results images in `fastlane/creative_assets`. Upload them and the Duo shots in App Store Connect: `fastlane` doesn't handle either. |
 | `scripts/release.sh` | Archives and uploads to App Store Connect. Bump `CURRENT_PROJECT_VERSION` first. |
 | `fastlane metadata` | Pushes the listing and screenshots as a draft. Never submits for review. |
 

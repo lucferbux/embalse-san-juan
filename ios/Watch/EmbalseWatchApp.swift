@@ -16,6 +16,7 @@ struct EmbalseWatchApp: App {
 struct WatchContentView: View {
     var model: ReservoirModel
     @Environment(\.scenePhase) private var scenePhase
+    @State private var page = 0
 
     var body: some View {
         Group {
@@ -31,12 +32,16 @@ struct WatchContentView: View {
                     }
                 }
             case .loaded(let snapshot, _):
-                TabView {
-                    WatchHeroPage(snapshot: snapshot)
-                    WatchChartPage(snapshot: snapshot)
-                    WatchDetailsPage(snapshot: snapshot)
+                TabView(selection: $page) {
+                    WatchHeroPage(snapshot: snapshot).tag(0)
+                    WatchChartPage(snapshot: snapshot).tag(1)
+                    WatchDetailsPage(snapshot: snapshot).tag(2)
                 }
                 .tabViewStyle(.verticalPage)
+                #if DEBUG
+                // `-ScreenshotPage 1` opens a page directly, for scripts/export-screenshots.sh.
+                .task { page = UserDefaults.standard.integer(forKey: "ScreenshotPage") }
+                #endif
             }
         }
         .onChange(of: scenePhase, initial: true) { _, phase in
