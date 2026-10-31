@@ -1,5 +1,5 @@
 /**
- * Starts the GitHub workflows on time, because GitHub's own `schedule` never fires on this repo.
+ * Starts the GitHub workflows on time, because GitHub's own `schedule` is too irregular on this repo.
  * It runs in Google Apps Script, in the owner's Google account. See docs/decisions/0002-external-scheduler.md.
  *
  * Setup: add a script property GITHUB_TOKEN holding a fine-grained token limited to this repository,

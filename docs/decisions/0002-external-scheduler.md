@@ -1,10 +1,10 @@
 # 2. Start the workflows from Google Apps Script
 
-**Status:** Accepted, 30 October 2026. Refines [ADR 1](0001-github-actions-and-firestore.md).
+**Status:** Proposed, 31 October 2026. Not active: GitHub's `schedule` started firing, and this is the fallback if it stays too irregular. Refines [ADR 1](0001-github-actions-and-firestore.md).
 
 ## Context
 
-GitHub's `schedule` trigger never fired on this repo: 0 scheduled runs in hours, while manual runs always worked. The workflows were active, on the default branch, and moving the cron minute and re-registering it changed nothing. [Community reports](https://github.com/orgs/community/discussions/210906) describe the same on private repos in 2026, and none confirms a fix. Making the repo public didn't help either: a test workflow on `*/5 * * * *` ran 0 times in 90 minutes.
+GitHub's `schedule` trigger is irregular on this repo. It ran 0 times while the repo was private, although the workflows were active and on the default branch. [Community reports](https://github.com/orgs/community/discussions/210906) describe the same on private repos in 2026. After the repo went public and the cron was re-registered, a test workflow on `*/5 * * * *` still ran 0 times in 90 minutes, but the hourly job then ran at 00:59 and 07:27 UTC on 31 October: 2 of about 10 expected runs, with a gap of 6.5 hours. The configuration is valid; GitHub documents that scheduled runs can be delayed or dropped.
 
 ## Decision
 
