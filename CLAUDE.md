@@ -75,7 +75,8 @@ Layout follows size classes only, never idiom, orientation or screen size:
 - **Native first:** system components, SF Symbols, semantic colours, Dynamic Type, dark mode.
 - **Secrets:** the service account key lives only in the GitHub secret `FIREBASE_SERVICE_ACCOUNT`.
   Never write it to a file in this repo or print it. A hook blocks the obvious cases.
-- **GitHub minutes:** the hourly cron uses about 720 of the 2,000 free minutes a month. Don't add
+- **Scheduling:** `scripts/heartbeat/Code.gs` starts the workflows from Apps Script, because GitHub's `schedule` is too irregular here (ADR 2). Don't add `schedule` back. After changing the script, paste it into the Apps Script project.
+- **GitHub minutes:** the hourly job uses about 720 of the 2,000 free minutes a month. Don't add
   scheduled jobs or macOS CI without working out the cost.
 
 ## Skills

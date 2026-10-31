@@ -1,9 +1,7 @@
 name: Ingest hourly
 
+# Started every hour by scripts/heartbeat/Code.gs: GitHub's own schedule is too irregular here (ADR 2).
 on:
-  schedule:
-    # Well off the hour, when GitHub's scheduler is less congested.
-    - cron: "37 * * * *"
   workflow_dispatch:
 
 concurrency:

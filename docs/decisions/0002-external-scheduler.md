@@ -1,6 +1,6 @@
 # 2. Start the workflows from Google Apps Script
 
-**Status:** Proposed, 31 October 2026. Not active: GitHub's `schedule` started firing, and this is the fallback if it stays too irregular. Refines [ADR 1](0001-github-actions-and-firestore.md).
+**Status:** Accepted, 31 October 2026. Refines [ADR 1](0001-github-actions-and-firestore.md).
 
 ## Context
 
@@ -10,7 +10,7 @@ GitHub's `schedule` trigger is irregular on this repo. It ran 0 times while the 
 
 An hourly Apps Script trigger in the owner's Google account calls `workflow_dispatch` for each job. The code is in `scripts/heartbeat/Code.gs`. It also checks the age of `public/snapshot` and emails the owner, at most once a day, if the data is over 3 hours old or GitHub refuses a dispatch.
 
-Once the script is running, the workflows drop `schedule`, so nothing can run twice.
+The workflows no longer use `schedule`, so nothing can run twice.
 
 Google Cloud Scheduler was ruled out because it needs the Blaze plan, and third-party cron services because they would hold the token.
 

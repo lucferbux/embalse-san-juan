@@ -6,7 +6,7 @@ Native iOS 27 and Android apps, widgets and an Apple Watch app showing the live 
 
 ## How it works
 
-Scheduled GitHub Actions collect official data and publish it to Firestore. The app and widgets read it over REST.
+GitHub Actions, started every hour by a Google Apps Script trigger, collect official data and publish it to Firestore. The app and widgets read it over REST.
 
 | Source | Publisher | Frequency | Provides |
 |---|---|---|---|
@@ -36,7 +36,7 @@ make run-android
 ## Backend setup
 
 The Firebase project runs on the free Spark plan. The GitHub secret `FIREBASE_SERVICE_ACCOUNT` holds a service account key.
-After setting it, run the **Backfill** workflow once. The scheduled jobs take over from there.
+After setting it, run the **Backfill** workflow once. The Apps Script trigger takes over from there: see [ADR 2](docs/decisions/0002-external-scheduler.md).
 
 ## License
 

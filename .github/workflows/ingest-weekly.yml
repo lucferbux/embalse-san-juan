@@ -1,10 +1,7 @@
 name: Ingest weekly
 
+# Started on Tuesdays and Wednesdays by scripts/heartbeat/Code.gs: GitHub's own schedule is too irregular here (ADR 2).
 on:
-  schedule:
-    # MITECO publishes on Tuesdays. Wednesday is a retry in case it is late;
-    # the job does nothing if the archive has not changed.
-    - cron: "43 14 * * 2,3"
   workflow_dispatch:
 
 concurrency:
