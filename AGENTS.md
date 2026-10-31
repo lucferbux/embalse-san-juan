@@ -3,6 +3,7 @@
 Portable summary for coding agents. [CLAUDE.md](CLAUDE.md) has the detail: **update both together.**
 
 - **What:** iOS 27 and Android apps and widgets for the San Juan reservoir, fed by GitHub Actions and Firestore.
+- **Scheduling:** `scripts/heartbeat/Code.gs` starts the workflows from Apps Script, because GitHub's `schedule` is too irregular here (ADR 2). Don't add `schedule` back.
 - **Repo:** own git repo, nested in the Tech monorepo and ignored by it.
 - **Before finishing:** run `make check`. After changing sources, `make live-check`. After changing widgets, `make widgets` and look at the images.
 - **Contract:** `contract/snapshot.schema.json`. Changes touch backend, Swift models, Kotlin models and `make fixture`.
