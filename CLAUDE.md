@@ -26,6 +26,8 @@ Check `git rev-parse --show-toplevel` before committing. Commits: Conventional C
 | `swift scripts/make-creative-assets.swift` | Header and search results images in `fastlane/creative_assets`. Upload them and the Duo shots in App Store Connect: `fastlane` doesn't handle either. |
 | `scripts/release.sh` | Archives and uploads to App Store Connect. Bump `CURRENT_PROJECT_VERSION` first. |
 | `fastlane metadata` | Pushes the listing and screenshots as a draft. Never submits for review. |
+| `scripts/release-android.sh` | Builds the signed bundle for Google Play. Bump `versionCode` first. Doesn't upload. |
+| `scripts/export-android-screenshots.sh` | Google Play screenshots from a debug build on the running emulator. The widget shot is taken by hand. |
 
 ## How it fits together
 
@@ -51,13 +53,16 @@ Layout follows size classes only, never idiom, orientation or screen size:
 
 ## Android
 
-`android/` is Kotlin with Jetpack Compose and Material 3, not yet published. Details are in the `run-android` skill.
+`android/` is Kotlin with Jetpack Compose and Material 3. It's on Google Play's internal testing track. Production needs a closed test first, with at least 12 testers for 14 days. Details are in the `run-android` skill.
+
+- **Signing:** the upload key is `~/.config/embalse-san-juan/upload.jks`, outside the repo, and its password is in the macOS Keychain. Never print either.
+- **Listing:** text and images are in `fastlane/metadata/android/es-ES`. They were uploaded by hand in Play Console, with the Data safety answers matching what `firebase/site/privacy.html` says.
 
 - **Material You:** colours come from the wallpaper through dynamic colour, with a water blue before Android 12. Don't hardcode colours in the UI.
 - **Layout:** by available width only, never device type. Two columns from 720 dp.
 - **Widget:** one Glance widget that adapts when resized (small, medium, large). It follows the same one-surface rule as iOS: the water and the curve are a bitmap, because Glance can't draw freely, and text stays white.
 - **Refresh:** WorkManager, hourly, while a widget is placed.
-- **No tips yet:** in-app purchases would need Google Play Billing, and the app isn't on Play.
+- **No tips yet:** in-app purchases would need Google Play Billing, which the app doesn't use.
 
 ## Suggestions and tips
 
