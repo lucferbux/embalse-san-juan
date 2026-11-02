@@ -21,8 +21,20 @@ android {
         buildConfig = true
     }
 
+    // Only scripts/release-android.sh sets these. Without them the release build stays unsigned, as in make check.
+    val keystore = System.getenv("UPLOAD_KEYSTORE")
+    if (keystore != null) {
+        signingConfigs.create("upload") {
+            storeFile = file(keystore)
+            storePassword = System.getenv("UPLOAD_KEYSTORE_PASSWORD")
+            keyAlias = "upload"
+            keyPassword = System.getenv("UPLOAD_KEYSTORE_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.findByName("upload")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")

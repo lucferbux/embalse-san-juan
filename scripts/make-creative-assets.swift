@@ -1,5 +1,6 @@
 #!/usr/bin/env swift
-// Draws the App Store header (3840x1646) and search results (3840x2560) images, with the icon's water.
+// Draws the App Store header (3840x1646) and search results (3840x2560) images, with the icon's water,
+// and Google Play's feature graphic (1024x500) and icon (512x512).
 // The search results image shows real screenshots, so run scripts/export-screenshots.sh first.
 // Usage: swift scripts/make-creative-assets.swift
 import AppKit
@@ -88,6 +89,20 @@ func render(_ name: String, width: Int, height: Int, draw: (CGContext) throws ->
 }
 
 try FileManager.default.createDirectory(at: output, withIntermediateDirectories: true)
+let play = "../metadata/android/es-ES/images"
+try FileManager.default.createDirectory(at: output.appending(path: play), withIntermediateDirectories: true)
+
+try render("\(play)/featureGraphic.png", width: 1024, height: 500) { context in
+    drawWater(context, width: 1024, height: 500, level: 0.56)
+    drawText("Cuánta agua hay en San Juan", size: 56, weight: .bold, color: .white, center: CGPoint(x: 512, y: 130), width: 900)
+}
+
+try render("\(play)/icon.png", width: 512, height: 512) { context in
+    guard let icon = NSImage(contentsOfFile: "ios/App/Assets.xcassets/AppIcon.appiconset/icon-light.png")?.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+        throw CocoaError(.fileNoSuchFile)
+    }
+    context.draw(icon, in: CGRect(x: 0, y: 0, width: 512, height: 512))
+}
 
 try render("header-3840x1646.png", width: 3840, height: 1646) { context in
     drawWater(context, width: 3840, height: 1646, level: 0.56)

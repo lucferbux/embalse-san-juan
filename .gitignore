@@ -22,6 +22,8 @@ ios/*.xcodeproj/
 .env.*
 *service-account*.json
 *firebase-adminsdk*.json
+*.jks
+*.keystore
 
 # App Review contact details: real personal data, kept on this Mac and in App Store Connect only
 fastlane/metadata/ios/review_information/phone_number.txt
