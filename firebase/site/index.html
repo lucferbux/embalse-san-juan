@@ -25,14 +25,18 @@
   </nav>
 </header>
 
+<main>
+
 <!-- The water in the hero rises to the reservoir's real level once the live data arrives. -->
 <section class="hero" id="top">
+  <div class="glow glow-a" aria-hidden="true"></div>
+  <div class="glow glow-b" aria-hidden="true"></div>
   <div class="hero-text">
     <p class="eyebrow">Río Alberche · Madrid</p>
-    <h1>Cuánta agua hay<br>en San Juan</h1>
-    <p class="lead">El nivel del embalse, ahora mismo. En tu iPhone, tu muñeca y tu pantalla de inicio.</p>
+    <h1>Cuánta agua hay<br><span class="ink">en San Juan</span></h1>
+    <p class="lead">El nivel del embalse, ahora mismo. En tu iPhone, en tu muñeca y en tu pantalla de inicio.</p>
     <div class="cta">
-      <a class="store" href="https://apps.apple.com/es/app/embalse-san-juan/id6828988892">
+      <a class="store" href="https://apps.apple.com/es/app/embalse-san-juan/id6828988892" data-store="apple">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.5-1-2.5-3.9zM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4z"/></svg>
         <span><small>Descárgala en el</small>App Store</span>
       </a>
@@ -41,63 +45,91 @@
         <span><small>Muy pronto en</small>Google Play</span>
       </span>
     </div>
-    <div class="live" aria-live="polite">
-      <div class="live-number"><span id="percent">48,5</span><span class="unit"> %</span></div>
-      <div class="live-detail">
-        <span id="volume">66,7 hm³ de 138 hm³</span>
-        <span id="updated" class="muted">Dato del SAIH Tajo</span>
-      </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="iphone hero-phone">
+      <div class="screen"><img src="img/iphone-01-ahora.jpg" alt="Pantalla principal de la app, con el porcentaje y la curva de las últimas 24 horas" width="828" height="1800"></div>
+    </div>
+    <div class="chip chip-live" aria-live="polite">
+      <span class="chip-label">Ahora</span>
+      <span class="chip-value"><span id="percent">48,5</span> %</span>
+      <span class="chip-sub" id="volume">66,7 hm³ de 138 hm³</span>
+    </div>
+    <div class="chip chip-trend">
+      <span class="chip-icon" id="trend-icon">↘</span>
+      <span><b id="trend">Bajando</b><br><span class="chip-sub" id="trend-detail">en las últimas 24 h</span></span>
+    </div>
+    <div class="chip chip-source">
+      <span class="dot" aria-hidden="true"></span>
+      <span class="chip-sub" id="updated">SAIH Tajo, cada hora</span>
     </div>
   </div>
-  <div class="hero-phone">
-    <div class="phone float"><img src="img/iphone-01-ahora.jpg" alt="Pantalla principal de la app: 48,5 % y la curva de las últimas 24 horas" width="1100" height="2390"></div>
-  </div>
+
   <svg class="water" id="water" viewBox="0 0 1440 400" preserveAspectRatio="none" aria-hidden="true">
     <path class="wave back" d="M-120 60 C 160 15 440 15 720 60 S 1280 105 1560 60 V400 H-120Z"/>
     <path class="wave front" d="M-120 80 C 160 125 440 125 720 80 S 1280 35 1560 80 V400 H-120Z"/>
   </svg>
 </section>
 
-<section class="intro reveal">
-  <p>Los datos oficiales del embalse están repartidos en webs técnicas. Esta app los junta en <strong>una sola pantalla</strong>, clara y rápida, con la fuente y la fecha de cada cifra.</p>
+<section class="intro">
+  <p class="reveal">Los datos oficiales del embalse están repartidos en webs técnicas.</p>
+  <p class="reveal">Esta app los junta en <strong>una sola pantalla</strong>, clara y rápida,</p>
+  <p class="reveal">con la fuente y la fecha de cada cifra.</p>
 </section>
 
 <!-- Scrollytelling: the phone stays put while the steps scroll past and swap its screen. -->
 <section class="story" id="app">
-  <div class="story-phone">
-    <div class="phone">
-      <img class="screen active" data-step="0" src="img/iphone-01-ahora.jpg" alt="El embalse ahora" loading="lazy">
-      <img class="screen" data-step="1" src="img/iphone-02-boletin.jpg" alt="Boletín semanal" loading="lazy">
-      <img class="screen" data-step="2" src="img/iphone-03-alberche.jpg" alt="El río Alberche" loading="lazy">
-      <img class="screen" data-step="3" src="img/iphone-04-historico.jpg" alt="Histórico desde 1988" loading="lazy">
+  <div class="story-visual">
+    <div class="story-glow" aria-hidden="true"></div>
+    <div class="iphone story-phone">
+      <div class="screen">
+        <img class="shot active" data-step="0" src="img/iphone-01-ahora.jpg" alt="El embalse ahora" width="828" height="1800">
+        <img class="shot" data-step="1" src="img/iphone-02-boletin.jpg" alt="Boletín semanal" width="828" height="1800" loading="lazy">
+        <img class="shot" data-step="2" src="img/iphone-03-alberche.jpg" alt="El río Alberche" width="828" height="1800" loading="lazy">
+        <img class="shot" data-step="3" src="img/iphone-04-historico.jpg" alt="Histórico desde 1988" width="828" height="1800" loading="lazy">
+      </div>
     </div>
+    <ol class="progress" aria-hidden="true"><li class="active"></li><li></li><li></li><li></li></ol>
   </div>
   <div class="steps">
-    <article class="step" data-step="0">
-      <div class="phone step-shot"><img src="img/iphone-01-ahora.jpg" alt="" loading="lazy"></div>
+    <article class="step active" data-step="0">
+      <div class="iphone step-phone"><div class="screen"><img src="img/iphone-01-ahora.jpg" alt="" width="828" height="1800" loading="lazy"></div></div>
+      <span class="step-number">01</span>
       <p class="eyebrow">Ahora</p>
       <h2>El embalse, de un vistazo</h2>
       <p>Porcentaje, volumen, cota y nivel, con la tendencia de las últimas 24 horas. Se actualiza cada hora con el SAIH Tajo.</p>
     </article>
     <article class="step" data-step="1">
-      <div class="phone step-shot"><img src="img/iphone-02-boletin.jpg" alt="" loading="lazy"></div>
+      <div class="iphone step-phone"><div class="screen"><img src="img/iphone-02-boletin.jpg" alt="" width="828" height="1800" loading="lazy"></div></div>
+      <span class="step-number">02</span>
       <p class="eyebrow">Boletín semanal</p>
       <h2>¿Más o menos que otros años?</h2>
       <p>El dato semanal de MITECO, comparado con la misma semana del año pasado y con la media de 10 años.</p>
     </article>
     <article class="step" data-step="2">
-      <div class="phone step-shot"><img src="img/iphone-03-alberche.jpg" alt="" loading="lazy"></div>
+      <div class="iphone step-phone"><div class="screen"><img src="img/iphone-03-alberche.jpg" alt="" width="828" height="1800" loading="lazy"></div></div>
+      <span class="step-number">03</span>
       <p class="eyebrow">Río Alberche</p>
       <h2>Todo el río, en orden</h2>
       <p>Burguillo, San Juan y Picadas, de arriba abajo. Con el caudal que sale al río, el trasvase y la lluvia en la cuenca.</p>
     </article>
     <article class="step" data-step="3">
-      <div class="phone step-shot"><img src="img/iphone-04-historico.jpg" alt="" loading="lazy"></div>
+      <div class="iphone step-phone"><div class="screen"><img src="img/iphone-04-historico.jpg" alt="" width="828" height="1800" loading="lazy"></div></div>
+      <span class="step-number">04</span>
       <p class="eyebrow">Histórico</p>
       <h2>Desde 1988</h2>
-      <p>Cada semana desde hace casi 40 años, con el mínimo de 2005 y el máximo de 1988. Para ver la sequía y la recuperación con perspectiva.</p>
+      <p>Cada semana desde hace casi 40 años, con el mínimo de 2005 y el máximo de 1988. La sequía y la recuperación, con perspectiva.</p>
     </article>
   </div>
+</section>
+
+<section class="stats" aria-label="El embalse en cifras">
+  <svg class="stats-wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40 C 360 0 720 80 1080 40 S 1440 20 1440 20 V80 H0Z"/></svg>
+  <div class="stat reveal"><span class="stat-value" data-count="138">138</span><span class="stat-unit">hm³</span><p>de capacidad</p></div>
+  <div class="stat reveal"><span class="stat-value" data-count="650">650</span><span class="stat-unit">ha</span><p>de superficie</p></div>
+  <div class="stat reveal"><span class="stat-value" data-count="1955">1955</span><p>año de la presa</p></div>
+  <div class="stat reveal"><span class="stat-value" data-count="24">24</span><p>lecturas al día</p></div>
 </section>
 
 <section class="widgets" id="widgets">
@@ -106,11 +138,13 @@
     <h2>El agua sube y baja<br>en tu pantalla de inicio</h2>
     <p>Cada widget dibuja el nivel real del embalse. Pequeño, mediano o grande, en la pantalla de bloqueo, en StandBy y en modo oscuro.</p>
   </div>
-  <div class="widget-grid">
-    <img class="widget w-small reveal" src="img/widget-small-light.png" alt="Widget pequeño" loading="lazy">
-    <img class="widget w-small reveal" src="img/widget-small-dark.png" alt="Widget pequeño en modo oscuro" loading="lazy">
-    <img class="widget w-medium reveal" src="img/widget-medium-light.png" alt="Widget mediano con la curva de 7 días" loading="lazy">
-    <img class="widget w-large reveal" src="img/widget-large-light.png" alt="Widget grande con la curva de 90 días" loading="lazy">
+  <div class="homescreen reveal">
+    <div class="widget-grid">
+      <img class="widget w-small" src="img/widget-small-light.png" alt="Widget pequeño" width="859" height="900" loading="lazy">
+      <img class="widget w-small" src="img/widget-small-dark.png" alt="Widget pequeño en modo oscuro" width="859" height="900" loading="lazy">
+      <img class="widget w-medium" src="img/widget-medium-light.png" alt="Widget mediano con la curva de 7 días" width="900" height="440" loading="lazy">
+      <img class="widget w-large" src="img/widget-large-light.png" alt="Widget grande con la curva de 90 días" width="900" height="900" loading="lazy">
+    </div>
   </div>
 </section>
 
@@ -122,19 +156,19 @@
   </div>
   <div class="device-row">
     <figure class="device reveal">
-      <div class="frame tablet"><img src="img/ipad.jpg" alt="La app en iPad, en dos columnas" loading="lazy"></div>
+      <div class="tablet"><div class="screen"><img src="img/ipad.jpg" alt="La app en iPad, en dos columnas" width="1350" height="1800" loading="lazy"></div></div>
       <figcaption><strong>iPad</strong> Dos columnas de tarjetas.</figcaption>
     </figure>
     <figure class="device reveal">
-      <div class="frame tablet wide"><img src="img/duo.jpg" alt="La app en iPhone Duo abierto" loading="lazy"></div>
+      <div class="tablet duo"><div class="screen"><img src="img/duo.jpg" alt="La app en iPhone Duo abierto" width="1800" height="1266" loading="lazy"></div></div>
       <figcaption><strong>iPhone Duo</strong> Abierto, el pliegue cae entre las columnas.</figcaption>
     </figure>
     <figure class="device reveal">
-      <div class="frame watch"><img src="img/watch.png" alt="La app en Apple Watch" loading="lazy"></div>
+      <div class="watch"><div class="screen"><img src="img/watch.png" alt="La app en Apple Watch" width="422" height="514" loading="lazy"></div></div>
       <figcaption><strong>Apple Watch</strong> Con complicaciones, sin el iPhone cerca.</figcaption>
     </figure>
     <figure class="device reveal">
-      <div class="frame phone-small"><img src="img/android.jpg" alt="La app en Android con Material You" loading="lazy"></div>
+      <div class="android"><div class="screen"><img src="img/android.jpg" alt="La app en Android con Material You" width="900" height="1600" loading="lazy"></div></div>
       <figcaption><strong>Android</strong> Material You, con los colores de tu fondo.</figcaption>
     </figure>
   </div>
@@ -154,14 +188,17 @@
   </div>
   <div class="sources">
     <article class="source reveal">
+      <span class="source-icon" aria-hidden="true">◷</span>
       <h3>SAIH Tajo</h3>
       <p>Confederación Hidrográfica del Tajo. Cada hora: volumen, cota, caudales, tiempo en la presa y lluvia.</p>
     </article>
     <article class="source reveal">
+      <span class="source-icon" aria-hidden="true">▤</span>
       <h3>Boletín Hidrológico</h3>
       <p>Ministerio para la Transición Ecológica. Cada semana: agua embalsada y la serie completa desde 1988.</p>
     </article>
     <article class="source reveal">
+      <span class="source-icon" aria-hidden="true">≠</span>
       <h3>Sin mezclar cifras</h3>
       <p>Las dos fuentes miden distinto. La app nunca las combina: cada número lleva su fuente y su fecha.</p>
     </article>
@@ -182,21 +219,28 @@
 </section>
 
 <section class="final">
+  <svg class="final-wave" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+    <path class="wave back" d="M-120 50 C 160 10 440 10 720 50 S 1280 90 1560 50 V120 H-120Z"/>
+    <path class="wave front" d="M-120 70 C 160 110 440 110 720 70 S 1280 30 1560 70 V120 H-120Z"/>
+  </svg>
   <div class="final-inner reveal">
-    <img src="img/icon.png" alt="" width="96" height="96" class="final-icon">
+    <img src="img/icon.png" alt="" width="104" height="104" class="final-icon">
     <h2>Mira cómo está San Juan</h2>
     <div class="cta">
-      <a class="store" href="https://apps.apple.com/es/app/embalse-san-juan/id6828988892">
+      <a class="store" href="https://apps.apple.com/es/app/embalse-san-juan/id6828988892" data-store="apple">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.5-1-2.5-3.9zM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4z"/></svg>
         <span><small>Descárgala en el</small>App Store</span>
       </a>
     </div>
   </div>
-  <footer>
-    <nav><a href="privacy.html">Privacidad</a><a href="support.html">Soporte</a><a href="https://github.com/lucferbux/embalse-san-juan">Código</a></nav>
-    <p>Datos del SAIH Tajo y del Boletín Hidrológico de MITECO. Son provisionales. Proyecto personal, sin relación con estos organismos ni respaldado por ellos.</p>
-  </footer>
 </section>
+
+</main>
+
+<footer class="footer">
+  <nav><a href="privacy.html">Privacidad</a><a href="support.html">Soporte</a><a href="https://github.com/lucferbux/embalse-san-juan">Código</a></nav>
+  <p>Datos del SAIH Tajo y del Boletín Hidrológico de MITECO. Son provisionales. Proyecto personal, sin relación con estos organismos ni respaldado por ellos.</p>
+</footer>
 
 <script src="landing.js" defer></script>
 </body>
