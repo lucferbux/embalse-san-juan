@@ -13,7 +13,8 @@
   const water = $("water");
   const setLevel = (percent) => { water.style.height = `${10 + percent * 0.3}%`; };
   setLevel(0);
-  requestAnimationFrame(() => setLevel(48.5));
+  // A placeholder rise while the data loads, unless the real level is already there.
+  requestAnimationFrame(() => { if (!document.documentElement.dataset.live) setLevel(48.5); });
 
   const countUp = (element, to, digits) => {
     if (still) { element.textContent = number(to, digits); return; }
@@ -60,6 +61,7 @@
     .then((document_) => showLive(JSON.parse(document_.fields.payload.stringValue)))
     .catch(() => {
       countUp($("percent"), 48.5, 1);
+      setLevel(48.5);
       document.documentElement.dataset.live = "fallback";
     });
 

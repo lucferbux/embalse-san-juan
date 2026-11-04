@@ -45,7 +45,7 @@ MITECO (weekly) ────┘                                                 
 - `backend/src/domain/validate.ts` is the guard: if a check fails, nothing is written and the workflow fails.
 - `ios/EmbalseKit` holds all logic and views. The app and widget targets stay thin.
 - **Product docs:** [docs/SPEC-v1.md](docs/SPEC-v1.md) is what 1.0 does, and [docs/ROADMAP.md](docs/ROADMAP.md) what could come next. Update the spec when behaviour changes.
-- **Web:** `firebase/site` is the landing page, with live figures from `public/snapshot`, plus privacy and support. Deploy with `make deploy-site`. Its images in `site/img` are copies of the raw screenshots and widget snapshots. Device frames (`.iphone`, `.tablet`, `.watch`, `.android`) are positioned boxes whose padding is the bezel, holding a `.screen` with the screenshot's aspect ratio: never place a screenshot with percentages of a frame's height. HTML, CSS and JS are served `no-cache` (`firebase/firebase.json`) so a deploy never mixes old and new files. Tests are in `firebase/e2e`.
+- **Web:** `firebase/site` is the landing page, with live figures from `public/snapshot`, plus privacy and support. Deploy with `make deploy-site`. Its images in `site/img` come from `swift scripts/make-site-images.swift`, which crops the widget snapshots to the widget with transparent corners. The only device frame is `.iphone`: a positioned box whose padding is the bezel, holding a `.screen` with the screenshot's aspect ratio. Never place a screenshot with percentages of a frame's height. Other devices are bare screenshots in the bento tiles. HTML, CSS and JS are served `no-cache` (`firebase/firebase.json`) so a deploy never mixes old and new files. Tests are in `firebase/e2e`.
 
 ## Layout
 
