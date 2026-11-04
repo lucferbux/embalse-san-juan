@@ -70,7 +70,7 @@ test.describe("landing page", () => {
   test("device screens sit inside their frames, with a bezel on every side", async ({ page }) => {
     await page.goto("/");
     await scrollThrough(page);
-    const frames = await page.$$eval(".iphone, .tablet, .watch, .android", (elements) =>
+    const frames = await page.$$eval(".iphone", (elements) =>
       elements
         .filter((frame) => frame.getClientRects().length > 0)
         .map((frame) => {
@@ -92,7 +92,7 @@ test.describe("landing page", () => {
           };
         }),
     );
-    expect(frames.length).toBeGreaterThan(3);
+    expect(frames.length).toBeGreaterThan(1);
     for (const frame of frames) {
       for (const side of frame.bezel) expect(side, `${frame.name}: bezel ${frame.bezel.join(", ")}`).toBeGreaterThan(2);
       for (const image of frame.images) {
@@ -108,7 +108,7 @@ test.describe("landing page", () => {
     await page.goto("/");
     await scrollThrough(page);
     await page.waitForLoadState("networkidle");
-    const distorted = await page.$$eval(".screen, .widget", (elements) =>
+    const distorted = await page.$$eval(".screen, .widget, .tile-shot", (elements) =>
       elements
         .filter((element) => element.getClientRects().length > 0)
         .map((element) => {
@@ -231,5 +231,26 @@ test("live: pages, styles and scripts are never served stale", async ({ request 
   for (const path of ["/", "/landing.css", "/landing.js", "/privacy.html"]) {
     const response = await request.get(path);
     expect(response.headers()["cache-control"], path).toBe("no-cache");
+  }
+});
+
+test("widgets are cut out cleanly, with transparent corners", async ({ page }) => {
+  await page.goto("/");
+  // Loads each file afresh: the page's own images are lazy and may not have loaded yet.
+  const corners = await page.$$eval(".widget", async (images) => Promise.all(images.map(async (image) => {
+    const source = new Image();
+    source.src = (image as HTMLImageElement).src;
+    await source.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = source.naturalWidth; canvas.height = source.naturalHeight;
+    const context = canvas.getContext("2d")!;
+    context.drawImage(source, 0, 0);
+    const alpha = (x: number, y: number) => context.getImageData(x, y, 1, 1).data[3];
+    const [w, h] = [canvas.width - 1, canvas.height - 1];
+    return { src: image.getAttribute("src"), corners: [alpha(0, 0), alpha(w, 0), alpha(0, h), alpha(w, h)], middle: alpha(w >> 1, h >> 1) };
+  })));
+  for (const widget of corners) {
+    expect(widget.corners, widget.src!).toEqual([0, 0, 0, 0]);
+    expect(widget.middle, widget.src!).toBe(255);
   }
 });
