@@ -1,6 +1,7 @@
 #!/bin/bash
 # Takes Google Play screenshots from a debug build on the running emulator, which opens screens from an intent extra.
 # The sizes keep the 9:16 Play asks for on phones and the two-column layout on tablets. Output is in
+# fastlane/screenshots_raw/android. swift scripts/make-creative-assets.swift frames them into
 # fastlane/metadata/android/es-ES/images, the layout supply uses.
 set -euo pipefail
 
@@ -8,7 +9,7 @@ cd "$(dirname "$0")/.."
 export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
 : "${JAVA_HOME:=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home}"
 export JAVA_HOME
-OUT="fastlane/metadata/android/es-ES/images"
+OUT="fastlane/screenshots_raw/android"
 APP="com.lucferbux.embalsesanjuan"
 
 (cd android && ./gradlew --quiet assembleDebug)

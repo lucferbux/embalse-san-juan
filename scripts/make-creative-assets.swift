@@ -1,12 +1,13 @@
 #!/usr/bin/env swift
 // Draws the App Store header (3840x1646) and search results (3840x2560) images, with the icon's water,
-// and Google Play's feature graphic (1024x500) and icon (512x512).
-// The search results image shows real screenshots, so run scripts/export-screenshots.sh first.
+// Google Play's feature graphic (1024x500) and icon (512x512), and the store screenshots: each raw shot
+// from fastlane/screenshots_raw on the same water, with a headline, at the size it was taken.
+// Run scripts/export-screenshots.sh and scripts/export-android-screenshots.sh first.
 // Usage: swift scripts/make-creative-assets.swift
 import AppKit
 import CoreGraphics
 
-let screenshots = "fastlane/screenshots/es-ES"
+let screenshots = "fastlane/screenshots_raw/ios"
 let output = URL(filePath: "fastlane/creative_assets", directoryHint: .isDirectory)
 
 func color(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat, _ a: CGFloat = 1) -> CGColor {
@@ -118,3 +119,80 @@ try render("search-results-3840x2560.png", width: 3840, height: 2560) { context 
     try drawScreenshot(context, file: "iphone-69-01-ahora.png", centerX: 1920, bottom: 90, height: height, radius: 130)
     try drawScreenshot(context, file: "iphone-69-04-historico.png", centerX: 3080, bottom: 90, height: height, radius: 130)
 }
+
+// MARK: - Store screenshots
+
+/// Headline and subtitle for each screen, keyed by the end of the file name.
+let captions: [String: (String, String)] = [
+    "01-ahora": ("El embalse, ahora", "Nivel, volumen y tendencia, cada hora"),
+    "02-boletin": ("¿Más o menos que otros años?", "El boletín semanal, con el año pasado y la media de 10 años"),
+    "03-alberche": ("Todo el Alberche", "Burguillo, San Juan y Picadas, y la lluvia en la cuenca"),
+    "04-historico": ("Desde 1988", "Cada semana del histórico, con mínimos y máximos"),
+    "05-ficha": ("Datos oficiales", "SAIH Tajo y MITECO, con su fuente y su fecha"),
+    "05-widget": ("Un vistazo, sin abrir la app", "Widgets que suben y bajan con el agua"),
+]
+
+func caption(for file: String) -> (String, String)? {
+    // Watch shots stay as they are: the store draws its own watch around them.
+    guard !file.hasPrefix("watch-") else { return nil }
+    return captions.first { file.hasSuffix("\($0.key).png") }?.value
+}
+
+/// The shot in a dark bezel, sinking below the bottom edge, with the headline in the sky above it.
+func frame(_ context: CGContext, shot: CGImage, width: CGFloat, height: CGFloat, title: String, subtitle: String) {
+    let wide = width / height > 0.62
+    // Text scales with the short side, so landscape shots (iPhone Duo open) don't get a giant headline.
+    let unit = min(width, height * 0.75)
+    let small = wide && width <= height
+    drawWater(context, width: width, height: height, level: 0.4)
+    let navy = NSColor(cgColor: color(0.01, 0.2, 0.5))!
+    drawText(title, size: unit * (small ? 0.058 : 0.074), weight: .bold, color: navy,
+             center: CGPoint(x: width / 2, y: height * 0.905), width: width * 0.88)
+    drawText(subtitle, size: unit * (small ? 0.03 : 0.04), weight: .medium, color: NSColor(cgColor: color(0.16, 0.33, 0.6))!,
+             center: CGPoint(x: width / 2, y: height * (width > height ? 0.83 : 0.845)), width: width * 0.84)
+
+    let screenWidth = width > height ? width * 0.7 : width * (wide ? 0.8 : 0.78)
+    let screenHeight = screenWidth * CGFloat(shot.height) / CGFloat(shot.width)
+    let screen = CGRect(x: (width - screenWidth) / 2, y: height * (width > height ? 0.76 : 0.79) - screenHeight, width: screenWidth, height: screenHeight)
+    let bezel = screenWidth * 0.022
+    let radius = screenWidth * (wide ? 0.04 : 0.11)
+    let body = screen.insetBy(dx: -bezel, dy: -bezel)
+    let bodyPath = CGPath(roundedRect: body, cornerWidth: radius + bezel, cornerHeight: radius + bezel, transform: nil)
+    context.saveGState()
+    context.setShadow(offset: CGSize(width: 0, height: -height * 0.01), blur: width * 0.06, color: color(0, 0.08, 0.25, 0.45))
+    context.addPath(bodyPath)
+    context.setFillColor(color(0.06, 0.08, 0.12))
+    context.fillPath()
+    context.restoreGState()
+    context.saveGState()
+    context.addPath(CGPath(roundedRect: screen, cornerWidth: radius, cornerHeight: radius, transform: nil))
+    context.clip()
+    context.draw(shot, in: screen)
+    context.restoreGState()
+}
+
+/// Frames every raw shot in `from` that has a caption into `to`, and copies the rest unchanged.
+/// `rename` maps a raw file to its folder and name under fastlane/.
+func frameAll(from: String, rename: (String) -> String) throws {
+    let files = try FileManager.default.subpathsOfDirectory(atPath: from).filter { $0.hasSuffix(".png") }.sorted()
+    for file in files {
+        let target = output.appending(path: "..").appending(path: rename(file))
+        try FileManager.default.createDirectory(at: target.deletingLastPathComponent(), withIntermediateDirectories: true)
+        guard let (title, subtitle) = caption(for: file),
+              let shot = NSImage(contentsOfFile: "\(from)/\(file)")?.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+            try? FileManager.default.removeItem(at: target)
+            try FileManager.default.copyItem(atPath: "\(from)/\(file)", toPath: target.path)
+            continue
+        }
+        try render("../\(rename(file))", width: shot.width, height: shot.height) { context in
+            frame(context, shot: shot, width: CGFloat(shot.width), height: CGFloat(shot.height), title: title, subtitle: subtitle)
+        }
+        print("   \(rename(file))")
+    }
+}
+
+// Duo shots go apart from the rest: deliver doesn't recognise their sizes.
+try frameAll(from: "fastlane/screenshots_raw/ios") { file in
+    file.hasPrefix("duo-") ? "screenshots_duo/es-ES/\(file)" : "screenshots/es-ES/\(file)"
+}
+try frameAll(from: "fastlane/screenshots_raw/android") { "metadata/android/es-ES/images/\($0)" }

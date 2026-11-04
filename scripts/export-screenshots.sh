@@ -14,14 +14,15 @@
 #
 # The iPhone Duo simulator boots closed. Only Device Hub can open it (Xcode > Open Developer Tool >
 # Device Hub): neither simctl nor XCTest can change the pose. Open it there, then run --duo-inner.
-# Duo shots go in fastlane/screenshots_duo, not the deliver folder: App Store Connect only requires them
+# Raw shots go in fastlane/screenshots_raw/ios. swift scripts/make-creative-assets.swift frames them for the
+# store: Duo shots into fastlane/screenshots_duo, not the deliver folder, because App Store Connect only requires them
 # from April 2027, and deliver doesn't recognise their sizes.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 PROJECT="ios/EmbalseSanJuan.xcodeproj"
 DERIVED="build/DerivedData"
-OUT="fastlane/screenshots/es-ES"
+OUT="fastlane/screenshots_raw/ios"
 BUNDLE="com.lucferbux.embalsesanjuan"
 mkdir -p "$OUT"
 
@@ -113,7 +114,7 @@ if [ "${1:-}" = "--duo-outer" ]; then
     xcrun simctl boot "$udid" 2>/dev/null || true
     xcrun simctl bootstatus "$udid" -b >/dev/null 2>&1 || true
     prepare_ios "$udid"
-    OUT="fastlane/screenshots_duo/es-ES"
+    OUT="fastlane/screenshots_raw/ios"
     mkdir -p "$OUT"
     echo "==> iPhone Duo outer"
     # simctl numbers the displays: 1 is the outer one (1398x2034), 3 the inner one (2007x2853).
@@ -126,7 +127,7 @@ if [ "${1:-}" = "--duo-inner" ]; then
     build_ios
     udid="$(udid_of "iPhone Duo")"
     prepare_ios "$udid"
-    OUT="fastlane/screenshots_duo/es-ES"
+    OUT="fastlane/screenshots_raw/ios"
     mkdir -p "$OUT"
     echo "==> iPhone Duo inner"
     shoot "$udid" "$OUT/duo-inner-01-ahora.png" ""
