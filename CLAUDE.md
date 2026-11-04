@@ -22,12 +22,12 @@ Check `git rev-parse --show-toplevel` before committing. Commits: Conventional C
 | `make fixture` | Rebuilds `contract/fixtures/snapshot.json`. |
 | `make generate` | Regenerates the Xcode project from `ios/project.yml`. Never edit the `.xcodeproj`. |
 | `make firestore-check` | Checks the published data and the access rules from outside, with no credentials. |
-| `scripts/export-screenshots.sh` | App Store screenshots from a Debug build. Also `--watch`, `--duo-outer` and `--duo-inner`, which needs iPhone Duo open in Device Hub. |
-| `swift scripts/make-creative-assets.swift` | Header and search results images in `fastlane/creative_assets`. Upload them and the Duo shots in App Store Connect: `fastlane` doesn't handle either. |
+| `scripts/export-screenshots.sh` | Raw App Store screenshots from a Debug build, into `fastlane/screenshots_raw/ios`. Also `--watch`, `--duo-outer` and `--duo-inner`, which needs iPhone Duo open in Device Hub. |
+| `swift scripts/make-creative-assets.swift` | Frames the raw screenshots on the icon's water with a headline, into the folders `fastlane` and Play use, and draws the header, search results and feature graphic. Upload the header, search results and Duo shots in App Store Connect: `fastlane` doesn't handle them. Headlines are in `captions`. |
 | `scripts/release.sh` | Archives and uploads to App Store Connect. Bump `CURRENT_PROJECT_VERSION` first. |
 | `fastlane metadata` | Pushes the listing and screenshots as a draft. Never submits for review. |
 | `scripts/release-android.sh` | Builds the signed bundle for Google Play. Bump `versionCode` first. Doesn't upload. |
-| `scripts/export-android-screenshots.sh` | Google Play screenshots from a debug build on the running emulator. The widget shot is taken by hand. |
+| `scripts/export-android-screenshots.sh` | Raw Google Play screenshots from a debug build on the running emulator, into `fastlane/screenshots_raw/android`. The widget shot is taken by hand. |
 
 ## How it fits together
 
@@ -41,6 +41,8 @@ MITECO (weekly) ────┘                                                 
   and the Swift and Kotlin tests decode the same fixture. Changing it means changing all three and `make fixture`.
 - `backend/src/domain/validate.ts` is the guard: if a check fails, nothing is written and the workflow fails.
 - `ios/EmbalseKit` holds all logic and views. The app and widget targets stay thin.
+- **Product docs:** [docs/SPEC-v1.md](docs/SPEC-v1.md) is what 1.0 does, and [docs/ROADMAP.md](docs/ROADMAP.md) what could come next. Update the spec when behaviour changes.
+- **Web:** `firebase/site` is the landing page, with live figures from `public/snapshot`, plus privacy and support. Deploy with `firebase deploy --only hosting`. Its images in `site/img` are copies of the raw screenshots and widget snapshots.
 
 ## Layout
 

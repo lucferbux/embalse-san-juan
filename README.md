@@ -2,7 +2,9 @@
 
 Native iOS 27 and Android apps, widgets and an Apple Watch app showing the live state of the San Juan reservoir, on the Alberche river in Madrid.
 
-**Status:** In progress.
+**Status:** 1.0 on the App Store; Android in internal testing. Website: https://embalse-san-juan.web.app
+
+What it does: [docs/SPEC-v1.md](docs/SPEC-v1.md). What could come next: [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## How it works
 
