@@ -4,21 +4,200 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Embalse San Juan</title>
-<link rel="stylesheet" href="style.css">
+<meta name="description" content="Cuánta agua hay en el embalse de San Juan, ahora mismo. App nativa para iPhone, iPad, Apple Watch y Android, con widgets que suben y bajan con el nivel real.">
+<meta property="og:title" content="Embalse San Juan">
+<meta property="og:description" content="Cuánta agua hay en San Juan, ahora mismo.">
+<meta property="og:image" content="https://embalse-san-juan.web.app/img/iphone-01-ahora.jpg">
+<meta name="theme-color" content="#0a4fb8">
+<link rel="icon" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<link rel="stylesheet" href="landing.css">
 </head>
 <body>
-<div class="wrap">
-<nav><a href="./">Embalse San Juan</a><a href="privacy.html">Privacidad</a><a href="support.html">Soporte</a></nav>
-<h1>Embalse San Juan</h1>
-<p class="lead">El estado del embalse de San Juan, en una app nativa para iPhone, iPad, iPhone Duo, Apple Watch y Android, con widgets que suben y bajan con el nivel real del agua.</p>
-<div class="card"><ul>
-<li>Porcentaje, volumen, cota y caudal, actualizados cada hora.</li>
-<li>Comparación con el año pasado y con la media de 10 años.</li>
-<li>Histórico desde 1988.</li>
-<li>Sin cuentas, sin publicidad y sin seguimiento.</li>
-<li>Sugerencias anónimas desde la app, y propinas voluntarias en iPhone y iPad.</li>
-</ul></div>
-<p class="muted">Datos del SAIH Tajo y del Boletín Hidrológico de MITECO. Proyecto personal, sin relación con estos organismos ni respaldado por ellos.</p>
-</div>
+
+<header class="bar">
+  <a class="brand" href="./"><img src="img/icon.png" alt="" width="28" height="28"> Embalse San Juan</a>
+  <nav>
+    <a href="#app">La app</a>
+    <a href="#widgets">Widgets</a>
+    <a href="#datos">Datos</a>
+    <a class="pill" href="https://apps.apple.com/es/app/embalse-san-juan/id6828988892">Descargar</a>
+  </nav>
+</header>
+
+<!-- The water in the hero rises to the reservoir's real level once the live data arrives. -->
+<section class="hero" id="top">
+  <div class="hero-text">
+    <p class="eyebrow">Río Alberche · Madrid</p>
+    <h1>Cuánta agua hay<br>en San Juan</h1>
+    <p class="lead">El nivel del embalse, ahora mismo. En tu iPhone, tu muñeca y tu pantalla de inicio.</p>
+    <div class="cta">
+      <a class="store" href="https://apps.apple.com/es/app/embalse-san-juan/id6828988892">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.5-1-2.5-3.9zM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4z"/></svg>
+        <span><small>Descárgala en el</small>App Store</span>
+      </a>
+      <span class="store soon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3.6 2.3 13.3 12l-9.7 9.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1zm10.8 10.8 2.5 2.5-11 6.3 8.5-8.8zm3.5-3.5 2.9 1.7c.8.5.8 1.6 0 2.1l-2.9 1.7-2.7-2.6 2.7-2.9zM5.9 2.1l11 6.3-2.5 2.5L5.9 2.1z"/></svg>
+        <span><small>Muy pronto en</small>Google Play</span>
+      </span>
+    </div>
+    <div class="live" aria-live="polite">
+      <div class="live-number"><span id="percent">48,5</span><span class="unit"> %</span></div>
+      <div class="live-detail">
+        <span id="volume">66,7 hm³ de 138 hm³</span>
+        <span id="updated" class="muted">Dato del SAIH Tajo</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-phone">
+    <div class="phone float"><img src="img/iphone-01-ahora.jpg" alt="Pantalla principal de la app: 48,5 % y la curva de las últimas 24 horas" width="1100" height="2390"></div>
+  </div>
+  <svg class="water" id="water" viewBox="0 0 1440 400" preserveAspectRatio="none" aria-hidden="true">
+    <path class="wave back" d="M-120 60 C 160 15 440 15 720 60 S 1280 105 1560 60 V400 H-120Z"/>
+    <path class="wave front" d="M-120 80 C 160 125 440 125 720 80 S 1280 35 1560 80 V400 H-120Z"/>
+  </svg>
+</section>
+
+<section class="intro reveal">
+  <p>Los datos oficiales del embalse están repartidos en webs técnicas. Esta app los junta en <strong>una sola pantalla</strong>, clara y rápida, con la fuente y la fecha de cada cifra.</p>
+</section>
+
+<!-- Scrollytelling: the phone stays put while the steps scroll past and swap its screen. -->
+<section class="story" id="app">
+  <div class="story-phone">
+    <div class="phone">
+      <img class="screen active" data-step="0" src="img/iphone-01-ahora.jpg" alt="El embalse ahora" loading="lazy">
+      <img class="screen" data-step="1" src="img/iphone-02-boletin.jpg" alt="Boletín semanal" loading="lazy">
+      <img class="screen" data-step="2" src="img/iphone-03-alberche.jpg" alt="El río Alberche" loading="lazy">
+      <img class="screen" data-step="3" src="img/iphone-04-historico.jpg" alt="Histórico desde 1988" loading="lazy">
+    </div>
+  </div>
+  <div class="steps">
+    <article class="step" data-step="0">
+      <div class="phone step-shot"><img src="img/iphone-01-ahora.jpg" alt="" loading="lazy"></div>
+      <p class="eyebrow">Ahora</p>
+      <h2>El embalse, de un vistazo</h2>
+      <p>Porcentaje, volumen, cota y nivel, con la tendencia de las últimas 24 horas. Se actualiza cada hora con el SAIH Tajo.</p>
+    </article>
+    <article class="step" data-step="1">
+      <div class="phone step-shot"><img src="img/iphone-02-boletin.jpg" alt="" loading="lazy"></div>
+      <p class="eyebrow">Boletín semanal</p>
+      <h2>¿Más o menos que otros años?</h2>
+      <p>El dato semanal de MITECO, comparado con la misma semana del año pasado y con la media de 10 años.</p>
+    </article>
+    <article class="step" data-step="2">
+      <div class="phone step-shot"><img src="img/iphone-03-alberche.jpg" alt="" loading="lazy"></div>
+      <p class="eyebrow">Río Alberche</p>
+      <h2>Todo el río, en orden</h2>
+      <p>Burguillo, San Juan y Picadas, de arriba abajo. Con el caudal que sale al río, el trasvase y la lluvia en la cuenca.</p>
+    </article>
+    <article class="step" data-step="3">
+      <div class="phone step-shot"><img src="img/iphone-04-historico.jpg" alt="" loading="lazy"></div>
+      <p class="eyebrow">Histórico</p>
+      <h2>Desde 1988</h2>
+      <p>Cada semana desde hace casi 40 años, con el mínimo de 2005 y el máximo de 1988. Para ver la sequía y la recuperación con perspectiva.</p>
+    </article>
+  </div>
+</section>
+
+<section class="widgets" id="widgets">
+  <div class="section-head reveal">
+    <p class="eyebrow">Widgets</p>
+    <h2>El agua sube y baja<br>en tu pantalla de inicio</h2>
+    <p>Cada widget dibuja el nivel real del embalse. Pequeño, mediano o grande, en la pantalla de bloqueo, en StandBy y en modo oscuro.</p>
+  </div>
+  <div class="widget-grid">
+    <img class="widget w-small reveal" src="img/widget-small-light.png" alt="Widget pequeño" loading="lazy">
+    <img class="widget w-small reveal" src="img/widget-small-dark.png" alt="Widget pequeño en modo oscuro" loading="lazy">
+    <img class="widget w-medium reveal" src="img/widget-medium-light.png" alt="Widget mediano con la curva de 7 días" loading="lazy">
+    <img class="widget w-large reveal" src="img/widget-large-light.png" alt="Widget grande con la curva de 90 días" loading="lazy">
+  </div>
+</section>
+
+<section class="devices">
+  <div class="section-head reveal">
+    <p class="eyebrow">En todas partes</p>
+    <h2>Hecha para cada pantalla</h2>
+    <p>Nativa en cada plataforma, con los componentes del sistema, modo oscuro y texto grande.</p>
+  </div>
+  <div class="device-row">
+    <figure class="device reveal">
+      <div class="frame tablet"><img src="img/ipad.jpg" alt="La app en iPad, en dos columnas" loading="lazy"></div>
+      <figcaption><strong>iPad</strong> Dos columnas de tarjetas.</figcaption>
+    </figure>
+    <figure class="device reveal">
+      <div class="frame tablet wide"><img src="img/duo.jpg" alt="La app en iPhone Duo abierto" loading="lazy"></div>
+      <figcaption><strong>iPhone Duo</strong> Abierto, el pliegue cae entre las columnas.</figcaption>
+    </figure>
+    <figure class="device reveal">
+      <div class="frame watch"><img src="img/watch.png" alt="La app en Apple Watch" loading="lazy"></div>
+      <figcaption><strong>Apple Watch</strong> Con complicaciones, sin el iPhone cerca.</figcaption>
+    </figure>
+    <figure class="device reveal">
+      <div class="frame phone-small"><img src="img/android.jpg" alt="La app en Android con Material You" loading="lazy"></div>
+      <figcaption><strong>Android</strong> Material You, con los colores de tu fondo.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="data" id="datos">
+  <div class="section-head reveal">
+    <p class="eyebrow">Datos oficiales</p>
+    <h2>Esta semana, comparada</h2>
+    <p id="weekly-caption">Boletín Hidrológico de MITECO.</p>
+  </div>
+  <div class="bars reveal" id="bars">
+    <div class="bar-row"><span>Esta semana</span><div class="track"><div class="fill now" data-key="volumeHm3"></div></div><b data-label="volumeHm3">70 hm³</b></div>
+    <div class="bar-row"><span>Hace un año</span><div class="track"><div class="fill" data-key="lastYearHm3"></div></div><b data-label="lastYearHm3">75 hm³</b></div>
+    <div class="bar-row"><span>Media de 10 años</span><div class="track"><div class="fill" data-key="tenYearAvgHm3"></div></div><b data-label="tenYearAvgHm3">57,5 hm³</b></div>
+    <p class="muted small">Sobre una capacidad de <span id="capacity">138</span> hm³.</p>
+  </div>
+  <div class="sources">
+    <article class="source reveal">
+      <h3>SAIH Tajo</h3>
+      <p>Confederación Hidrográfica del Tajo. Cada hora: volumen, cota, caudales, tiempo en la presa y lluvia.</p>
+    </article>
+    <article class="source reveal">
+      <h3>Boletín Hidrológico</h3>
+      <p>Ministerio para la Transición Ecológica. Cada semana: agua embalsada y la serie completa desde 1988.</p>
+    </article>
+    <article class="source reveal">
+      <h3>Sin mezclar cifras</h3>
+      <p>Las dos fuentes miden distinto. La app nunca las combina: cada número lleva su fuente y su fecha.</p>
+    </article>
+  </div>
+</section>
+
+<section class="privacy">
+  <div class="section-head reveal">
+    <p class="eyebrow">Privacidad</p>
+    <h2>Solo el embalse.<br>Nada sobre ti.</h2>
+  </div>
+  <div class="promises">
+    <div class="promise reveal"><span class="big">0</span><p>cuentas</p></div>
+    <div class="promise reveal"><span class="big">0</span><p>anuncios</p></div>
+    <div class="promise reveal"><span class="big">0</span><p>rastreadores</p></div>
+  </div>
+  <p class="center muted reveal">Gratis y completa. Si te es útil, puedes dejar una propina en iPhone y iPad.</p>
+</section>
+
+<section class="final">
+  <div class="final-inner reveal">
+    <img src="img/icon.png" alt="" width="96" height="96" class="final-icon">
+    <h2>Mira cómo está San Juan</h2>
+    <div class="cta">
+      <a class="store" href="https://apps.apple.com/es/app/embalse-san-juan/id6828988892">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.5-1-2.5-3.9zM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4z"/></svg>
+        <span><small>Descárgala en el</small>App Store</span>
+      </a>
+    </div>
+  </div>
+  <footer>
+    <nav><a href="privacy.html">Privacidad</a><a href="support.html">Soporte</a><a href="https://github.com/lucferbux/embalse-san-juan">Código</a></nav>
+    <p>Datos del SAIH Tajo y del Boletín Hidrológico de MITECO. Son provisionales. Proyecto personal, sin relación con estos organismos ni respaldado por ellos.</p>
+  </footer>
+</section>
+
+<script src="landing.js" defer></script>
 </body>
 </html>
