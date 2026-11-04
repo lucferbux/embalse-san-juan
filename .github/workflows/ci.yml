@@ -1,6 +1,6 @@
 name: CI
 
-# Backend only. macOS runners cost 10x the free minutes in a private repo, so iOS
+# Backend, Android and the website. macOS runners cost 10x the free minutes in a private repo, so iOS
 # runs locally with `make check` and on demand through ios.yml.
 on:
   pull_request:
@@ -10,6 +10,7 @@ on:
       - "backend/**"
       - "contract/**"
       - "android/**"
+      - "firebase/**"
       - ".github/workflows/ci.yml"
 
 permissions:
@@ -43,3 +44,25 @@ jobs:
           java-version: "21"
       - run: ./gradlew --no-daemon testDebugUnitTest assembleDebug
         working-directory: android
+
+  site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: firebase/e2e/package-lock.json
+      - run: npm ci --no-audit --no-fund
+        working-directory: firebase/e2e
+      # The tests use the system Chrome, which GitHub's Ubuntu image already has.
+      - run: npx playwright test
+        working-directory: firebase/e2e
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-traces
+          path: firebase/e2e/test-results
+          retention-days: 7

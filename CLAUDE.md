@@ -16,6 +16,9 @@ Check `git rev-parse --show-toplevel` before committing. Commits: Conventional C
 | `make check` | Secret scan, backend types and tests, iOS and Android builds and tests. **Run before saying work is done.** |
 | `make check-backend` | Backend only, about 15 s. |
 | `make check-android` | Android unit tests, debug and release builds. |
+| `make check-site` | The landing page end to end with Playwright in the system Chrome: four sizes, dark mode, live data from the shared fixture, device frames, images, links. |
+| `make deploy-site` | `check-site`, then deploys `firebase/site` to Firebase Hosting, then `make site-smoke`. **The only way to deploy the site.** |
+| `make site-smoke` | The same tests against production, plus the real Firestore data and the cache headers. |
 | `make run-android` | Installs and opens the debug build on the running emulator or device. |
 | `make live-check` | Calls the real sources without writing. Run after touching `backend/src/sources`. |
 | `make widgets` | Renders every widget to `build/widget-snapshots/`. Look at them after any widget change. |
@@ -42,7 +45,7 @@ MITECO (weekly) ────┘                                                 
 - `backend/src/domain/validate.ts` is the guard: if a check fails, nothing is written and the workflow fails.
 - `ios/EmbalseKit` holds all logic and views. The app and widget targets stay thin.
 - **Product docs:** [docs/SPEC-v1.md](docs/SPEC-v1.md) is what 1.0 does, and [docs/ROADMAP.md](docs/ROADMAP.md) what could come next. Update the spec when behaviour changes.
-- **Web:** `firebase/site` is the landing page, with live figures from `public/snapshot`, plus privacy and support. Deploy with `firebase deploy --only hosting`. Its images in `site/img` are copies of the raw screenshots and widget snapshots.
+- **Web:** `firebase/site` is the landing page, with live figures from `public/snapshot`, plus privacy and support. Deploy with `make deploy-site`. Its images in `site/img` are copies of the raw screenshots and widget snapshots. Device frames (`.iphone`, `.tablet`, `.watch`, `.android`) are positioned boxes whose padding is the bezel, holding a `.screen` with the screenshot's aspect ratio: never place a screenshot with percentages of a frame's height. HTML, CSS and JS are served `no-cache` (`firebase/firebase.json`) so a deploy never mixes old and new files. Tests are in `firebase/e2e`.
 
 ## Layout
 
