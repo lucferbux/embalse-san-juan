@@ -13,6 +13,8 @@ public struct Snapshot: Codable, Sendable, Equatable {
     public var neighbours: [Neighbour]
     public var rainGauges: [RainGauge]
     public var sources: [Source]
+    /// AEMET's forecast, added in 2.0 and absent whenever AEMET is unavailable (ADR 4).
+    public var forecast: Forecast?
 
     public struct Reservoir: Codable, Sendable, Equatable {
         public var id: String
@@ -94,6 +96,23 @@ public struct Snapshot: Codable, Sendable, Equatable {
         public var rain1hMm: Double?
         public var rain24hMm: Double?
         public var id: String { code }
+    }
+
+    /// A prediction, never mixed with the rain SAIH measures.
+    public struct Forecast: Codable, Sendable, Equatable {
+        public struct Day: Codable, Sendable, Equatable, Identifiable {
+            public var date: String
+            public var rainProbabilityPct: Double?
+            public var maxTemperatureC: Double?
+            public var minTemperatureC: Double?
+            public var id: String { date }
+            public var day: Date { EmbalseKit.Day.date(from: date) }
+        }
+
+        public var issuedAt: Date
+        public var fetchedAt: Date
+        public var source: Source
+        public var days: [Day]
     }
 
     public struct Source: Codable, Sendable, Equatable, Identifiable {

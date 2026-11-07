@@ -1,0 +1,83 @@
+{
+  "sourceLanguage" : "es",
+  "strings" : {
+    "Bajando" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Falling"
+          }
+        }
+      }
+    },
+    "Estable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steady"
+          }
+        }
+      }
+    },
+    "Sin dato" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No data"
+          }
+        }
+      }
+    },
+    "Subiendo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rising"
+          }
+        }
+      }
+    },
+    "de" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "of"
+          }
+        }
+      }
+    },
+    "en 24 h" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "in 24 h"
+          }
+        }
+      }
+    },
+    "semana del %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "week of %@"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

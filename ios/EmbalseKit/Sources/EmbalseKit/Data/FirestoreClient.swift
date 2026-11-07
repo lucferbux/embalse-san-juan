@@ -26,11 +26,12 @@ public struct FirestoreClient: Sendable {
         return snapshot
     }
 
-    public func fetchHistory() async throws -> History {
-        try await fetch("history")
+    public func fetchHistory(of reservoir: ReservoirID = .sanJuan) async throws -> History {
+        try Self.decodePayload(try await fetchDocument(reservoir.historyDocument))
     }
 
-    private func fetch<T: Decodable>(_ document: String) async throws -> T {
+    /// The raw document, so callers can keep it for offline use.
+    public func fetchDocument(_ document: String) async throws -> Data {
         var request = URLRequest(url: Self.baseURL.appending(path: document))
         request.cachePolicy = .reloadIgnoringLocalCacheData
         request.timeoutInterval = 20
@@ -38,7 +39,11 @@ public struct FirestoreClient: Sendable {
         if let status = (response as? HTTPURLResponse)?.statusCode, status != 200 {
             throw ClientError.badStatus(status)
         }
-        return try Self.decodePayload(data)
+        return data
+    }
+
+    private func fetch<T: Decodable>(_ document: String) async throws -> T {
+        try Self.decodePayload(try await fetchDocument(document))
     }
 
     /// Documents hold the contract JSON in one string field, `payload`.

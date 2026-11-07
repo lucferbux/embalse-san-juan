@@ -56,11 +56,11 @@ final class ContractTests: XCTestCase {
 
 final class BehaviourTests: XCTestCase {
     func testFormatsInSpanish() {
-        XCTAssertEqual(Format.percent(48.66), "48,7 %")
-        XCTAssertEqual(Format.hm3(67.03), "67,0 hm³")
-        XCTAssertEqual(Format.signed(0.12), "+0,12")
-        XCTAssertEqual(Format.signed(-5, decimals: 0), "−5")
-        XCTAssertEqual(Format.optional(nil, unit: "m"), "Sin dato")
+        XCTAssertEqual(Format.percent(48.66, in: Locale(identifier: "es_ES")), "48,7\u{00A0}%")
+        XCTAssertEqual(Format.hm3(67.03, in: Locale(identifier: "es_ES")), "67,0\u{00A0}hm³")
+        XCTAssertEqual(Format.signed(0.12, in: Locale(identifier: "es_ES")), "+0,12")
+        XCTAssertEqual(Format.signed(-5, decimals: 0, in: Locale(identifier: "es_ES")), "−5")
+        XCTAssertEqual(Format.optional(nil, unit: "m", in: Locale(identifier: "es_ES")), "Sin dato")
     }
 
     func testCompassWrapsAround() {
