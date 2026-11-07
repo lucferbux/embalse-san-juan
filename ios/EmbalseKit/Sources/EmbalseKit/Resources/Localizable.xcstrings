@@ -1,6 +1,28 @@
 {
   "sourceLanguage" : "es",
   "strings" : {
+    "Algo no funciona" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something is wrong"
+          }
+        }
+      }
+    },
+    "Año pasado" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last year"
+          }
+        }
+      }
+    },
     "Bajando" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -12,6 +34,28 @@
         }
       }
     },
+    "Esta semana" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This week"
+          }
+        }
+      }
+    },
+    "Esta semana %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This week %@"
+          }
+        }
+      }
+    },
     "Estable" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -19,6 +63,94 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Steady"
+          }
+        }
+      }
+    },
+    "Este año" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This year"
+          }
+        }
+      }
+    },
+    "Este año, el año pasado y la media de 10 años" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This year, last year and the 10-year average"
+          }
+        }
+      }
+    },
+    "Fecha" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date"
+          }
+        }
+      }
+    },
+    "Hace un año" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A year ago"
+          }
+        }
+      }
+    },
+    "Media 10 años" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10-year average"
+          }
+        }
+      }
+    },
+    "Otra cosa" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something else"
+          }
+        }
+      }
+    },
+    "Previsión" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forecast"
+          }
+        }
+      }
+    },
+    "Probabilidad de lluvia. Es una predicción, no una medida." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chance of rain. It is a forecast, not a measurement."
           }
         }
       }
@@ -45,6 +177,17 @@
         }
       }
     },
+    "Sugerencia" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestion"
+          }
+        }
+      }
+    },
     "de" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -67,6 +210,50 @@
         }
       }
     },
+    "hace %lld días" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld days ago"
+          }
+        }
+      }
+    },
+    "hace un año %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "a year ago %@"
+          }
+        }
+      }
+    },
+    "hoy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "today"
+          }
+        }
+      }
+    },
+    "media de 10 años %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10-year average %@"
+          }
+        }
+      }
+    },
     "semana del %@" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -74,6 +261,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "week of %@"
+          }
+        }
+      }
+    },
+    "semanal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "weekly"
+          }
+        }
+      }
+    },
+    "Últimos %lld días, de %@ a %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last %lld days, from %@ to %@"
           }
         }
       }

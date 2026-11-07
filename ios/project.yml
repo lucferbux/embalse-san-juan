@@ -48,6 +48,14 @@ targets:
         LSApplicationCategoryType: public.app-category.weather
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
+        # Local alerts (ADR 3): a background refresh checks the public snapshot.
+        UIBackgroundModes:
+          - fetch
+        BGTaskSchedulerPermittedIdentifiers:
+          - com.lucferbux.embalsesanjuan.refresh
+        CFBundleLocalizations:
+          - es
+          - en
         # iPhone Duo's outer display honours this list and its inner display ignores it, and Apple
         # recommends landscape because people stand the device up like a tent.
         UISupportedInterfaceOrientations:

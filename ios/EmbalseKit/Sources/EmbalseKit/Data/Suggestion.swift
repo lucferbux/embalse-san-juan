@@ -10,9 +10,9 @@ public struct Suggestion: Sendable, Equatable {
 
         public var label: String {
             switch self {
-            case .suggestion: "Sugerencia"
-            case .bug: "Algo no funciona"
-            case .other: "Otra cosa"
+            case .suggestion: String(localized: "Sugerencia", bundle: .module)
+            case .bug: String(localized: "Algo no funciona", bundle: .module)
+            case .other: String(localized: "Otra cosa", bundle: .module)
             }
         }
     }

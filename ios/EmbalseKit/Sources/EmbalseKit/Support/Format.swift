@@ -85,14 +85,40 @@ public enum Format {
 
     static let madrid = TimeZone(identifier: "Europe/Madrid")!
 
+    /// Fixed patterns per language, not the system's templates: a mixed region such as English with Spanish formats
+    /// (`en_US@rg=eszzzz`) turned "7 Nov, 12:00" into "Nov7," with them. Hours are always 24-hour, as the sources give.
+    nonisolated(unsafe) private static var formatters: [String: DateFormatter] = [:]
+    private static let formattersLock = NSLock()
+
+    private static func formatter(_ pattern: String, _ locale: Locale) -> DateFormatter {
+        let key = "\(Words.language(of: locale))|\(pattern)"
+        formattersLock.lock()
+        defer { formattersLock.unlock() }
+        if let formatter = formatters[key] { return formatter }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: Words.language(of: locale) == "en" ? "en_GB" : "es_ES")
+        formatter.timeZone = madrid
+        formatter.dateFormat = pattern
+        formatters[key] = formatter
+        return formatter
+    }
+
     public static func hour(_ date: Date, in locale: Locale = locale) -> String {
-        var style = Date.FormatStyle(locale: locale, timeZone: madrid).hour(.twoDigits(amPM: .omitted)).minute()
-        style.locale = locale
-        return date.formatted(style)
+        formatter("HH:mm", locale).string(from: date)
     }
 
     public static func dayMonth(_ date: Date, in locale: Locale = locale) -> String {
-        date.formatted(Date.FormatStyle(locale: locale, timeZone: madrid).day().month(.abbreviated))
+        formatter("d MMM", locale).string(from: date).replacingOccurrences(of: ".", with: "")
+    }
+
+    /// "sáb", "Sat"
+    public static func weekday(_ date: Date, in locale: Locale = locale) -> String {
+        formatter("EEE", locale).string(from: date).replacingOccurrences(of: ".", with: "")
+    }
+
+    /// "oct 2005", "Oct 2005"
+    public static func monthYear(_ date: Date, in locale: Locale = locale) -> String {
+        formatter("MMM yyyy", locale).string(from: date).replacingOccurrences(of: ".", with: "")
     }
 
     public static func dayMonthHour(_ date: Date, in locale: Locale = locale) -> String {

@@ -1,0 +1,996 @@
+{
+  "sourceLanguage" : "es",
+  "strings" : {
+    "%lld de %lld caracteres." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld of %lld characters."
+          }
+        }
+      }
+    },
+    "1 año" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 year"
+          }
+        }
+      }
+    },
+    "5 años" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5 years"
+          }
+        }
+      }
+    },
+    "Ahora" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Now"
+          }
+        }
+      }
+    },
+    "App personal, sin relación con estos organismos ni respaldada por ellos. Todos los datos son provisionales." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A personal app, not affiliated with or endorsed by these bodies. All figures are provisional."
+          }
+        }
+      }
+    },
+    "Avisarme" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alert me"
+          }
+        }
+      }
+    },
+    "Avisos" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alerts"
+          }
+        }
+      }
+    },
+    "Año de construcción" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Year built"
+          }
+        }
+      }
+    },
+    "Cada línea es el dato semanal de MITECO. La media necesita los 10 años anteriores completos." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each line is MITECO's weekly figure. The average needs all 10 previous years."
+          }
+        }
+      }
+    },
+    "Capacidad %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capacity %@"
+          }
+        }
+      }
+    },
+    "Caudal de salida en las últimas 24 horas" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outflow over the last 24 hours"
+          }
+        }
+      }
+    },
+    "Caudal desembalsado" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Released flow"
+          }
+        }
+      }
+    },
+    "Compartir" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share"
+          }
+        }
+      }
+    },
+    "Cota" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elevation"
+          }
+        }
+      }
+    },
+    "Cuando cruce el" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When it crosses"
+          }
+        }
+      }
+    },
+    "Cuando la salida al río se triplica y supera los %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When the outflow to the river triples and goes over %@."
+          }
+        }
+      }
+    },
+    "Cuenca" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Basin"
+          }
+        }
+      }
+    },
+    "De aguas arriba a aguas abajo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From upstream to downstream"
+          }
+        }
+      }
+    },
+    "De nada" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're welcome"
+          }
+        }
+      }
+    },
+    "Dejar una propina" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave a tip"
+          }
+        }
+      }
+    },
+    "Desde 1988" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Since 1988"
+          }
+        }
+      }
+    },
+    "Desembalse: la salida al río ha pasado de %@ a %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Release: the outflow to the river has gone from %@ to %@."
+          }
+        }
+      }
+    },
+    "Desembalses grandes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Big releases"
+          }
+        }
+      }
+    },
+    "El SAIH no ha dado una lectura de %@ en la última hora." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SAIH has not given a reading for %@ in the last hour."
+          }
+        }
+      }
+    },
+    "El iPhone comprueba el dato público cada cierto tiempo. iOS decide cuándo, así que un aviso puede llegar con retraso. No se envía nada desde el teléfono." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your iPhone checks the public figure from time to time. iOS decides when, so an alert can arrive late. Nothing is sent from the phone."
+          }
+        }
+      }
+    },
+    "El río" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The river"
+          }
+        }
+      }
+    },
+    "Enviar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send"
+          }
+        }
+      }
+    },
+    "Enviar otro" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send another"
+          }
+        }
+      }
+    },
+    "Enviar una sugerencia" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send a suggestion"
+          }
+        }
+      }
+    },
+    "Es anónimo: no incluyas datos personales. Si quieres respuesta, escribe desde la página de soporte." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It's anonymous: don't include personal details. If you want a reply, write from the support page."
+          }
+        }
+      }
+    },
+    "Es un pago único y voluntario, y no desbloquea nada. Lo gestiona Apple." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It's a one-off, voluntary payment and unlocks nothing. Apple handles it."
+          }
+        }
+      }
+    },
+    "Este año" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This year"
+          }
+        }
+      }
+    },
+    "Este año, el pasado y la media" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This year, last year and the average"
+          }
+        }
+      }
+    },
+    "Este dato es del %@. La recogida puede estar fallando." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This figure is from %@. Collection may be failing."
+          }
+        }
+      }
+    },
+    "Evolución del volumen" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume over time"
+          }
+        }
+      }
+    },
+    "Ficha" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facts"
+          }
+        }
+      }
+    },
+    "Ficha y fuentes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facts and sources"
+          }
+        }
+      }
+    },
+    "Fuentes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sources"
+          }
+        }
+      }
+    },
+    "Gracias por escribir" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thanks for writing"
+          }
+        }
+      }
+    },
+    "Histórico" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "History"
+          }
+        }
+      }
+    },
+    "Humedad" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Humidity"
+          }
+        }
+      }
+    },
+    "La app es gratuita y seguirá siéndolo. Si te resulta útil, una propina ayuda a cubrir los gastos de mantenimiento." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app is free and will stay free. If you find it useful, a tip helps cover running costs."
+          }
+        }
+      }
+    },
+    "La capacidad oficial ha cambiado: %@ al principio del periodo, %@ hoy." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The official capacity has changed: %@ at the start of the period, %@ today."
+          }
+        }
+      }
+    },
+    "Las notificaciones están desactivadas para la app en Ajustes." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications are turned off for the app in Settings."
+          }
+        }
+      }
+    },
+    "Las propinas no están disponibles ahora mismo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tips aren't available right now."
+          }
+        }
+      }
+    },
+    "Lluvia en 1 h" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rain in 1 h"
+          }
+        }
+      }
+    },
+    "Lluvia en 24 h" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rain in 24 h"
+          }
+        }
+      }
+    },
+    "Lluvia en la cuenca, 24 h" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rain in the basin, 24 h"
+          }
+        }
+      }
+    },
+    "Media" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mean"
+          }
+        }
+      }
+    },
+    "Municipio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Municipality"
+          }
+        }
+      }
+    },
+    "Más" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More"
+          }
+        }
+      }
+    },
+    "Máximo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximum"
+          }
+        }
+      }
+    },
+    "Mínimo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimum"
+          }
+        }
+      }
+    },
+    "Nivel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Level"
+          }
+        }
+      }
+    },
+    "No se ha podido cargar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't load"
+          }
+        }
+      }
+    },
+    "No se ha podido completar el pago." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The payment couldn't be completed."
+          }
+        }
+      }
+    },
+    "No se ha podido enviar. Revisa la conexión e inténtalo de nuevo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't send. Check your connection and try again."
+          }
+        }
+      }
+    },
+    "Periodo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Period"
+          }
+        }
+      }
+    },
+    "Pluviómetros del SAIH Tajo en la cuenca del Alberche. Es lluvia medida; la previsión está en Este año." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SAIH Tajo rain gauges in the Alberche basin. This is measured rain; the forecast is under This year."
+          }
+        }
+      }
+    },
+    "Política de privacidad" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy policy"
+          }
+        }
+      }
+    },
+    "Presión" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pressure"
+          }
+        }
+      }
+    },
+    "Provincia" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Province"
+          }
+        }
+      }
+    },
+    "Radiación solar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solar radiation"
+          }
+        }
+      }
+    },
+    "Reintentar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        }
+      }
+    },
+    "Revisa la conexión e inténtalo de nuevo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check your connection and try again."
+          }
+        }
+      }
+    },
+    "Río" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "River"
+          }
+        }
+      }
+    },
+    "Río Alberche · Madrid" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alberche river · Madrid"
+          }
+        }
+      }
+    },
+    "Salida al río" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outflow to the river"
+          }
+        }
+      }
+    },
+    "San Juan" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "San Juan"
+          }
+        }
+      }
+    },
+    "San Juan ha bajado del %@: está al %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "San Juan has dropped below %@: it's at %@."
+          }
+        }
+      }
+    },
+    "San Juan ha superado el %@: está al %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "San Juan has gone over %@: it's at %@."
+          }
+        }
+      }
+    },
+    "San Juan, %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "San Juan, %@"
+          }
+        }
+      }
+    },
+    "Sin conexión. Mostrando el último dato guardado." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline. Showing the last saved figure."
+          }
+        }
+      }
+    },
+    "Sin dato reciente" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No recent reading"
+          }
+        }
+      }
+    },
+    "Soporte" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Support"
+          }
+        }
+      }
+    },
+    "Sugerencias" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestions"
+          }
+        }
+      }
+    },
+    "Superficie" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Surface area"
+          }
+        }
+      }
+    },
+    "Temperatura" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temperature"
+          }
+        }
+      }
+    },
+    "Tiempo en la presa" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weather at the dam"
+          }
+        }
+      }
+    },
+    "Tipo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        }
+      }
+    },
+    "Tipo de presa" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dam type"
+          }
+        }
+      }
+    },
+    "Trasvase a Valmayor" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transfer to Valmayor"
+          }
+        }
+      }
+    },
+    "Tu mensaje" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your message"
+          }
+        }
+      }
+    },
+    "Tu mensaje ha llegado. Lo leeré, aunque no pueda responderte porque es anónimo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your message has arrived. I'll read it, even though I can't reply because it's anonymous."
+          }
+        }
+      }
+    },
+    "Tu propina ayuda a mantener la app en marcha." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your tip helps keep the app running."
+          }
+        }
+      }
+    },
+    "Usos" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uses"
+          }
+        }
+      }
+    },
+    "Viento" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wind"
+          }
+        }
+      }
+    },
+    "Volumen en las últimas 24 horas, de %@ a %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volume over the last 24 hours, from %@ to %@"
+          }
+        }
+      }
+    },
+    "Últimas 24 horas" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last 24 hours"
+          }
+        }
+      }
+    },
+    "Últimos 90 días" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last 90 days"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
