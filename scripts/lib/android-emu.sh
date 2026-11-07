@@ -17,10 +17,33 @@ demo_start() {
 
 reset() { adb shell wm size reset; adb shell wm density reset; adb shell cmd uimode night no; adb shell settings put system font_scale 1.0; demo exit; }
 
+# Waits until the app's window is in front and a capture of it is not a splash or a black frame, instead of a fixed
+# pause: a busy emulator can take far longer than usual. uiautomator can't help: it never sees an idle tree while
+# the hero's wave animates. Splash, blank and black frames compress to under 45 KB; the emptiest real screen, the suggestion form on a tablet, is about 65 KB.
+wait_for_app() {
+    local tries=0 probe
+    probe="$(mktemp -t window).png"
+    while [ "$tries" -lt 30 ]; do
+        if adb shell dumpsys window | grep "mCurrentFocus" | grep -q "$APP/"; then
+            adb exec-out screencap -p >"$probe"
+            if [ "$(wc -c <"$probe")" -gt 55000 ]; then
+                rm -f "$probe"
+                /bin/sleep 2 # let the hero's first frame and the charts settle
+                return 0
+            fi
+        fi
+        tries=$((tries + 1))
+        /bin/sleep 2
+    done
+    rm -f "$probe"
+    echo "The app never showed its content: is the emulator responsive?" >&2
+    return 1
+}
+
 open() {
     adb shell am force-stop "$APP"
     adb shell am start -n "$APP/.MainActivity" ${1:+--es screen "$1"} >/dev/null
-    /bin/sleep 7
+    wait_for_app
 }
 
 scroll() {

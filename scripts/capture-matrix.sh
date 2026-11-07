@@ -162,7 +162,9 @@ android_format() {
     for mode in light dark large; do
         adb shell cmd uimode night "$([ "$mode" = dark ] && echo yes || echo no)" >/dev/null
         adb shell settings put system font_scale "$([ "$mode" = large ] && echo 2.0 || echo 1.0)"
-        /bin/sleep 2
+        # A theme change restarts SystemUI, which drops demo mode and its 9:41 clock.
+        /bin/sleep 3
+        demo_start
         open; shoot "$dir/$mode-01-ahora.png"
         scroll "$height" "$swipes"; shoot "$dir/$mode-02-boletin.png"
         scroll "$height" "$swipes"; shoot "$dir/$mode-03-alberche.png"
