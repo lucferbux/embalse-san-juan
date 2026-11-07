@@ -1,0 +1,105 @@
+{
+  "sourceLanguage" : "es",
+  "strings" : {
+    "Abrir Embalse San Juan" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Embalse San Juan"
+          }
+        }
+      }
+    },
+    "El nivel del embalse de un vistazo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The reservoir level at a glance."
+          }
+        }
+      }
+    },
+    "El nivel del embalse en la esfera." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The reservoir level on the watch face."
+          }
+        }
+      }
+    },
+    "El nivel del embalse en la pantalla de bloqueo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The reservoir level on the Lock Screen."
+          }
+        }
+      }
+    },
+    "El nivel del embalse. Toca para abrir la app." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The reservoir level. Tap to open the app."
+          }
+        }
+      }
+    },
+    "Elige qué embalse del Alberche muestra el widget." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose which Alberche reservoir the widget shows."
+          }
+        }
+      }
+    },
+    "Embalse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reservoir"
+          }
+        }
+      }
+    },
+    "Embalse de San Juan" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "San Juan reservoir"
+          }
+        }
+      }
+    },
+    "San Juan" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "San Juan"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

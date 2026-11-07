@@ -16,6 +16,7 @@ CATALOGS = [
     "ios/App/Localizable.xcstrings",
     "ios/Widgets/Localizable.xcstrings",
     "ios/Watch/Localizable.xcstrings",
+    "ios/WatchWidgets/Localizable.xcstrings",
 ]
 
 

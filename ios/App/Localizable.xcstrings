@@ -34,6 +34,17 @@
         }
       }
     },
+    "Abrir Embalse San Juan" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Embalse San Juan"
+          }
+        }
+      }
+    },
     "Ahora" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -188,6 +199,17 @@
         }
       }
     },
+    "Cuánta agua hay en el embalse de San Juan ahora mismo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How much water is in the San Juan reservoir right now."
+          }
+        }
+      }
+    },
     "De aguas arriba a aguas abajo" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -283,6 +305,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The river"
+          }
+        }
+      }
+    },
+    "Elige qué embalse del Alberche muestra el widget." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose which Alberche reservoir the widget shows."
+          }
+        }
+      }
+    },
+    "Embalse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reservoir"
           }
         }
       }
@@ -595,6 +639,17 @@
         }
       }
     },
+    "Nivel del embalse" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reservoir level"
+          }
+        }
+      }
+    },
     "No se ha podido cargar" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -756,6 +811,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "San Juan"
+          }
+        }
+      }
+    },
+    "San Juan está al %@: %@. %@. %@." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "San Juan is at %@: %@. %@. %@."
           }
         }
       }

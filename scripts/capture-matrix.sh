@@ -53,13 +53,13 @@ ios_screens() {
     shift 4 || true
     local extra=("$@")
     shoot "$udid" "$dir/$mode-01-ahora.png" "$display" ${extra[@]+"${extra[@]}"}
-    shoot "$udid" "$dir/$mode-02-boletin.png" "$display" -ScreenshotScroll weekly ${extra[@]+"${extra[@]}"}
-    shoot "$udid" "$dir/$mode-03-alberche.png" "$display" -ScreenshotScroll alberche ${extra[@]+"${extra[@]}"}
-    shoot "$udid" "$dir/$mode-04-historico.png" "$display" -ScreenshotScene history ${extra[@]+"${extra[@]}"}
-    shoot "$udid" "$dir/$mode-05-historico-1988.png" "$display" -ScreenshotScene history -HistoryRange all ${extra[@]+"${extra[@]}"}
+    shoot "$udid" "$dir/$mode-02-este-ano.png" "$display" -ScreenshotTab year ${extra[@]+"${extra[@]}"}
+    shoot "$udid" "$dir/$mode-03-el-rio.png" "$display" -ScreenshotTab river ${extra[@]+"${extra[@]}"}
+    shoot "$udid" "$dir/$mode-04-burguillo.png" "$display" -ScreenshotTab river -ScreenshotScene burguillo ${extra[@]+"${extra[@]}"}
+    shoot "$udid" "$dir/$mode-05-historico-1988.png" "$display" -ScreenshotTab year -HistoryRange all ${extra[@]+"${extra[@]}"}
     shoot "$udid" "$dir/$mode-06-ficha.png" "$display" -ScreenshotScene about ${extra[@]+"${extra[@]}"}
-    shoot "$udid" "$dir/$mode-07-sugerencias.png" "$display" -ScreenshotScene suggestions ${extra[@]+"${extra[@]}"}
-    shoot "$udid" "$dir/$mode-08-propinas.png" "$display" -ScreenshotScene tips ${extra[@]+"${extra[@]}"}
+    shoot "$udid" "$dir/$mode-07-avisos.png" "$display" -ScreenshotScene alerts ${extra[@]+"${extra[@]}"}
+    shoot "$udid" "$dir/$mode-08-propinas.png" "$display" -ScreenshotScene tips -ScreenshotTips YES ${extra[@]+"${extra[@]}"}
 }
 
 ios_format() {

@@ -52,70 +52,75 @@ struct WatchContentView: View {
     }
 }
 
-/// The water fills the whole screen, with the reading on top of it.
+/// The water fills the whole screen at the real level, with the figure, its volume, the trend word and the source.
 private struct WatchHeroPage: View {
     var snapshot: Snapshot
+    @ScaledMetric(relativeTo: .largeTitle) private var figure = 40.0
 
     var body: some View {
         let live = snapshot.live
-        let trend = Trend(change: live.trend24hHm3)
-        ZStack {
-            WidgetWaterScene(percent: live.percent)
-                .ignoresSafeArea()
+        ZStack(alignment: .bottomLeading) {
+            WidgetWaterScene(percent: live.percent).ignoresSafeArea()
             VStack(alignment: .leading, spacing: 2) {
-                Text(snapshot.reservoir.name)
-                    .font(.headline)
-                Spacer(minLength: 0)
                 Text(Format.percent(live.percent))
-                    .font(.system(size: 42, weight: .bold, design: .rounded))
-                    .lineLimit(1)
+                    .font(.system(size: figure, weight: .bold, design: .rounded))
+                    .monospacedDigit()
                     .minimumScaleFactor(0.6)
-                HStack(spacing: 4) {
-                    Image(systemName: trend.symbol)
-                        .accessibilityLabel(trend.label)
-                    Text(Format.hm3(live.volumeHm3))
+                    .lineLimit(1)
+                Text(Format.hm3(live.volumeHm3)).font(.headline)
+                Label(Trend(change: live.trend24hHm3).label, systemImage: Trend(change: live.trend24hHm3).symbol)
+                    .font(.footnote.weight(.semibold))
+                Group {
+                    if snapshot.isStale() {
+                        Label(Format.dayMonthHour(live.observedAt), systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                    } else {
+                        Text(verbatim: "SAIH · \(Format.hour(live.observedAt))").foregroundStyle(.white.opacity(0.8))
+                    }
                 }
-                .font(.footnote.weight(.semibold))
-                Text(snapshot.isStale() ? "Dato antiguo: \(Format.dayMonthHour(live.observedAt))" : Format.hour(live.observedAt))
-                    .font(.caption2)
-                    .foregroundStyle(snapshot.isStale() ? .orange : .white.opacity(0.78))
+                .font(.caption2.weight(.medium))
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .padding(.horizontal, 6)
             .foregroundStyle(.white)
+            .padding(.horizontal, 8)
+            .padding(.bottom, 4)
+            .accessibilityElement(children: .combine)
         }
+        .navigationTitle("San Juan")
     }
 }
 
+/// Direction C on the watch: the last 90 days drawn as the water's surface, 0 to capacity, labelled at both ends.
 private struct WatchChartPage: View {
     var snapshot: Snapshot
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("Últimos 90 días")
-                .font(.footnote.weight(.semibold))
-            VolumeChart(points: snapshot.daily)
-                .frame(maxHeight: .infinity)
+        ZStack(alignment: .topLeading) {
+            Color.black.ignoresSafeArea()
+            SurfaceHistory(volumes: snapshot.daily.map(\.volumeHm3), capacityHm3: snapshot.weekly.capacityHm3)
+                .ignoresSafeArea(edges: .bottom)
+            Text("Últimos 90 días").font(.footnote.weight(.semibold)).padding(.horizontal, 8)
         }
-        .padding(.horizontal, 4)
-        .containerBackground(Color(red: 0.03, green: 0.20, blue: 0.48).gradient, for: .tabView)
     }
 }
 
+/// The main figures, each with its source: SAIH now, MITECO for the week.
 private struct WatchDetailsPage: View {
     var snapshot: Snapshot
 
     var body: some View {
         List {
-            Section("SAIH Tajo") {
-                LabeledContent("Caudal", value: Format.optional(snapshot.live.outflowM3s, unit: "m³/s"))
-                LabeledContent("Cota", value: Format.optional(snapshot.live.elevationM, unit: "m"))
+            Section {
+                LabeledContent("Salida al río", value: Format.optional(snapshot.live.outflowM3s, decimals: 2, unit: "m³/s"))
+                LabeledContent("Cota", value: Format.optional(snapshot.live.elevationM, decimals: 2, unit: "m"))
                 LabeledContent("Lluvia 24 h", value: Format.optional(snapshot.weather.rain24hMm, unit: "mm"))
+            } header: {
+                Text(verbatim: Format.saihSource(snapshot.live.observedAt))
             }
-            Section("Boletín semanal") {
-                LabeledContent("Agua", value: Format.hm3(snapshot.weekly.volumeHm3, decimals: 0))
-                LabeledContent("Hace un año", value: snapshot.weekly.lastYearHm3.map { Format.hm3($0, decimals: 0) } ?? "Sin dato")
-                LabeledContent("Media 10 años", value: snapshot.weekly.tenYearAvgHm3.map { Format.hm3($0) } ?? "Sin dato")
+            Section {
+                LabeledContent("Esta semana", value: Format.hm3(snapshot.weekly.volumeHm3, .mitecoVolume))
+                LabeledContent("Hace un año", value: snapshot.weekly.lastYearHm3.map { Format.hm3($0, .mitecoVolume) } ?? Format.optional(nil, unit: ""))
+                LabeledContent("Media 10 años", value: snapshot.weekly.tenYearAvgHm3.map { Format.hm3($0, .mitecoVolume) } ?? Format.optional(nil, unit: ""))
+            } header: {
+                Text(verbatim: Format.mitecoWeek(snapshot.weekly.day))
             }
         }
     }

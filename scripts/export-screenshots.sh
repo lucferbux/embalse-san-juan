@@ -32,9 +32,9 @@ source scripts/lib/ios-sim.sh
 shoot_set() {
     local udid="$1" prefix="$2" display="${3:-}"
     shoot "$udid" "$OUT/$prefix-01-ahora.png" "$display"
-    shoot "$udid" "$OUT/$prefix-02-boletin.png" "$display" -ScreenshotScroll weekly
-    shoot "$udid" "$OUT/$prefix-03-alberche.png" "$display" -ScreenshotScroll alberche
-    shoot "$udid" "$OUT/$prefix-04-historico.png" "$display" -ScreenshotScene history -HistoryRange all
+    shoot "$udid" "$OUT/$prefix-02-este-ano.png" "$display" -ScreenshotTab year
+    shoot "$udid" "$OUT/$prefix-03-el-rio.png" "$display" -ScreenshotTab river
+    shoot "$udid" "$OUT/$prefix-04-historico.png" "$display" -ScreenshotTab year -HistoryRange all
 }
 
 shoot_watch() {
@@ -78,7 +78,7 @@ if [ "${1:-}" = "--duo-inner" ]; then
     mkdir -p "$OUT"
     echo "==> iPhone Duo inner"
     shoot "$udid" "$OUT/duo-inner-01-ahora.png" ""
-    shoot "$udid" "$OUT/duo-inner-04-historico.png" "" -ScreenshotScene history -HistoryRange all
+    shoot "$udid" "$OUT/duo-inner-02-este-ano.png" "" -ScreenshotTab year
     exit 0
 fi
 
@@ -93,7 +93,7 @@ echo "==> iPad 13\""
 udid="$(ensure_device "iPad Pro 13-inch (M5)" com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5-12GB com.apple.CoreSimulator.SimRuntime.iOS-27-0)"
 prepare_ios "$udid"
 shoot "$udid" "$OUT/ipad-13-01-ahora.png" ""
-shoot "$udid" "$OUT/ipad-13-04-historico.png" "" -ScreenshotScene history -HistoryRange all
+shoot "$udid" "$OUT/ipad-13-02-este-ano.png" "" -ScreenshotTab year
 shoot "$udid" "$OUT/ipad-13-05-ficha.png" "" -ScreenshotScene about
 
 echo "==> Apple Watch"

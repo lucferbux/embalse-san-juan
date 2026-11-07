@@ -17,6 +17,7 @@ generate:
 	cd ios && xcodegen generate --quiet
 
 check-ios: generate
+	python3 -I scripts/l10n.py check
 	xcodebuild test -quiet -project $(PROJECT) -scheme EmbalseSanJuan \
 		-destination '$(DESTINATION)' -derivedDataPath $(DERIVED) CODE_SIGNING_ALLOWED=NO
 	xcodebuild build -quiet -project $(PROJECT) -scheme EmbalseWatch \

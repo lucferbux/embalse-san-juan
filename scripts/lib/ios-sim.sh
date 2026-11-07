@@ -67,6 +67,10 @@ shoot() {
     shift 3
     xcrun simctl terminate "$udid" "$BUNDLE" 2>/dev/null || true
     # A busy simulator sometimes fails a launch with "No such process"; the second try works.
+    # Spanish with Spain's region unless the caller asks for another language (CAPTURE_LANGUAGE=en).
+    local language="${CAPTURE_LANGUAGE:-es}" region
+    region="$([ "$language" = en ] && echo en_GB || echo es_ES)"
+    set -- "$@" -AppleLanguages "($language)" -AppleLocale "$region"
     xcrun simctl launch "$udid" "$BUNDLE" "$@" >/dev/null 2>&1 || { /bin/sleep 5; xcrun simctl launch "$udid" "$BUNDLE" "$@" >/dev/null; }
     /bin/sleep 6
     if [ -n "$display" ]; then
