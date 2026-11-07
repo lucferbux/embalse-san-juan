@@ -35,6 +35,26 @@ export function parseSaihTime(text: string, after?: Date): Date {
   const match = /^(\d{2})\/(\d{2})\/(\d{4})(?: (\d{2}):(\d{2}))?/.exec(text.trim());
   if (!match) throw new Error(`Unrecognised SAIH time: "${text}"`);
   const [, dd, mm, yyyy, hh = "12", min = "00"] = match;
+  return fromMadridWallClock(yyyy!, mm!, dd!, hh, min, text, after);
+}
+
+/** Parses a Madrid local ISO time with no offset ("2026-11-07T08:59:07", as AEMET gives it) into UTC. */
+export function parseMadridIsoTime(text: string): Date {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(text.trim());
+  if (!match) throw new Error(`Unrecognised local time: "${text}"`);
+  const [, yyyy, mm, dd, hh, min] = match;
+  return fromMadridWallClock(yyyy!, mm!, dd!, hh!, min!, text);
+}
+
+function fromMadridWallClock(
+  yyyy: string,
+  mm: string,
+  dd: string,
+  hh: string,
+  min: string,
+  text: string,
+  after?: Date,
+): Date {
   const wanted = `${yyyy}-${mm}-${dd} ${hh}:${min}`;
   const asUtc = Date.UTC(Number(yyyy), Number(mm) - 1, Number(dd), Number(hh), Number(min));
 

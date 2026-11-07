@@ -239,5 +239,59 @@
       "url": "https://www.miteco.gob.es/es/agua/temas/evaluacion-de-los-recursos-hidricos/boletin-hidrologico.html",
       "note": "Dato semanal y serie desde 1988, provisionales y sin validar."
     }
-  ]
+  ],
+  "forecast": {
+    "issuedAt": "2026-11-07T07:59:00Z",
+    "fetchedAt": "2026-11-07T09:30:00Z",
+    "source": {
+      "name": "AEMET OpenData",
+      "publisher": "Agencia Estatal de Meteorología",
+      "url": "https://www.aemet.es/es/eltiempo/prediccion/municipios/san-martin-de-valdeiglesias-id28133",
+      "note": "Predicción, no medida. © AEMET."
+    },
+    "days": [
+      {
+        "date": "2026-11-07",
+        "rainProbabilityPct": 0,
+        "maxTemperatureC": 19,
+        "minTemperatureC": 6
+      },
+      {
+        "date": "2026-11-08",
+        "rainProbabilityPct": 80,
+        "maxTemperatureC": 16,
+        "minTemperatureC": 8
+      },
+      {
+        "date": "2026-11-09",
+        "rainProbabilityPct": 100,
+        "maxTemperatureC": 17,
+        "minTemperatureC": 11
+      },
+      {
+        "date": "2026-11-10",
+        "rainProbabilityPct": 100,
+        "maxTemperatureC": 16,
+        "minTemperatureC": 11
+      },
+      {
+        "date": "2026-11-11",
+        "rainProbabilityPct": 100,
+        "maxTemperatureC": 17,
+        "minTemperatureC": 11
+      },
+      {
+        "date": "2026-11-12",
+        "rainProbabilityPct": 100,
+        "maxTemperatureC": 17,
+        "minTemperatureC": 10
+      },
+      {
+        "date": "2026-11-13",
+        "rainProbabilityPct": 100,
+        "maxTemperatureC": 15,
+        "minTemperatureC": 8
+      }
+    ]
+  }
 }

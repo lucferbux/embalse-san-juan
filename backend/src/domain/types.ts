@@ -76,9 +76,33 @@ export interface Snapshot {
     rain24hMm: number | null;
   }>;
   sources: Array<{ name: string; publisher: string; url: string; note: string }>;
+  /** Optional: absent when AEMET has no key or failed. Older apps ignore it. */
+  forecast?: Forecast;
 }
 
-/** Payload of public/history, in compact rows to keep the document small. */
+/** AEMET's municipal forecast. A prediction, never mixed with the SAIH rain that was measured. */
+export interface Forecast {
+  /** When AEMET made it. */
+  issuedAt: string;
+  /** When the backend fetched it. */
+  fetchedAt: string;
+  source: { name: string; publisher: string; url: string; note: string };
+  /** Today onwards, Madrid days, up to 7. */
+  days: ForecastDay[];
+}
+
+export interface ForecastDay {
+  date: string;
+  /** For the whole day, or the highest of the periods still ahead when AEMET leaves it blank. */
+  rainProbabilityPct: number | null;
+  maxTemperatureC: number | null;
+  minTemperatureC: number | null;
+}
+
+/**
+ * Payload of public/history (San Juan), public/history-burguillo and public/history-picadas,
+ * in compact rows to keep the documents small.
+ */
 export interface History {
   schemaVersion: 1;
   generatedAt: string;

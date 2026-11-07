@@ -1,16 +1,18 @@
 import { unzipSync } from "fflate";
 import MDBReader from "mdb-reader";
-import { MITECO_ZIP_URL, USER_AGENT } from "../config.js";
+import { HISTORY_RESERVOIRS, MITECO_ZIP_URL, USER_AGENT, type HistoryId } from "../config.js";
 import type { WeeklyRow, WeeklySummary } from "../domain/types.js";
 
-const RESERVOIR_NAME = "San Juan";
 const BASIN_NAME = "Tajo";
 const SAME_WEEK_TOLERANCE_DAYS = 3;
 const DAY_MS = 86_400_000;
 
 export interface MitecoDownload {
   lastModified: string | null;
+  /** San Juan's rows. */
   rows: WeeklyRow[];
+  /** Every reservoir in HISTORY_RESERVOIRS, San Juan included. */
+  byReservoir: Record<HistoryId, WeeklyRow[]>;
 }
 
 /** Returns null when the archive has not changed since `knownLastModified`. */
@@ -24,10 +26,11 @@ export async function downloadWeeklyRows(knownLastModified?: string | null): Pro
   const response = await fetch(MITECO_ZIP_URL, { headers, signal: AbortSignal.timeout(300_000) });
   if (!response.ok) throw new Error(`MITECO download returned HTTP ${response.status}`);
   const zip = new Uint8Array(await response.arrayBuffer());
-  return { lastModified, rows: parseArchive(zip) };
+  const byReservoir = parseArchive(zip);
+  return { lastModified, rows: byReservoir["san-juan"], byReservoir };
 }
 
-export function parseArchive(zip: Uint8Array): WeeklyRow[] {
+export function parseArchive(zip: Uint8Array): Record<HistoryId, WeeklyRow[]> {
   const entry = Object.entries(unzipSync(zip)).find(([name]) => name.toLowerCase().endsWith(".mdb"));
   if (!entry) throw new Error("MITECO archive has no .mdb file");
   const reader = new MDBReader(Buffer.from(entry[1]));
@@ -37,7 +40,13 @@ export function parseArchive(zip: Uint8Array): WeeklyRow[] {
   const records = reader
     .getTable(tableName)
     .getData({ columns: ["FECHA", "AMBITO_NOMBRE", "EMBALSE_NOMBRE", "AGUA_TOTAL", "AGUA_ACTUAL"] });
-  return rowsFromRecords(records);
+  return rowsByReservoir(records);
+}
+
+export function rowsByReservoir(records: ReadonlyArray<Record<string, unknown>>): Record<HistoryId, WeeklyRow[]> {
+  const result = {} as Record<HistoryId, WeeklyRow[]>;
+  for (const reservoir of HISTORY_RESERVOIRS) result[reservoir.id] = rowsFromRecords(records, reservoir.mitecoName);
+  return result;
 }
 
 /** MITECO stores numbers as text with a decimal comma ("138,00"). */
@@ -53,11 +62,10 @@ function toDay(value: unknown): string {
   return date.toISOString().slice(0, 10);
 }
 
-export function rowsFromRecords(records: ReadonlyArray<Record<string, unknown>>): WeeklyRow[] {
+export function rowsFromRecords(records: ReadonlyArray<Record<string, unknown>>, name = "San Juan"): WeeklyRow[] {
   return records
     .filter(
-      (record) =>
-        String(record.EMBALSE_NOMBRE).trim() === RESERVOIR_NAME && String(record.AMBITO_NOMBRE).trim() === BASIN_NAME,
+      (record) => String(record.EMBALSE_NOMBRE).trim() === name && String(record.AMBITO_NOMBRE).trim() === BASIN_NAME,
     )
     .map((record) => ({
       date: toDay(record.FECHA),

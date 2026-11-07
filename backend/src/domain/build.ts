@@ -10,7 +10,7 @@ import {
 } from "../config.js";
 import { madridDay, toInstant } from "../lib/time.js";
 import { signalOfType, signalWithTag, type Reading, type Signal, type Station } from "../sources/saih.js";
-import type { DailyPoint, RecentReading, Snapshot, WeeklySummary } from "./types.js";
+import type { DailyPoint, History, RecentReading, Snapshot, WeeklySummary } from "./types.js";
 
 export interface HourlyInput {
   main: Station;
@@ -56,6 +56,29 @@ export function mergeDaily(existing: readonly DailyPoint[], readings: readonly R
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([date, volumeHm3]) => ({ date, volumeHm3 }));
   return limit === undefined ? merged : merged.slice(-limit);
+}
+
+/**
+ * Adds every closed Madrid day (before today) found in `readings` to a history's daily rows,
+ * as the last reading of that day. Older days are never rewritten, so re-running is harmless,
+ * but the newest day already stored may still be refined: a late SAIH reading can arrive after
+ * the first run past midnight. The result is sorted, with one row per day.
+ */
+export function appendClosedDays(
+  daily: History["daily"],
+  readings: readonly Reading[],
+  now: Date,
+): History["daily"] {
+  const today = madridDay(now);
+  const byDay = new Map(daily);
+  const newest = [...byDay.keys()].sort().at(-1);
+  for (const point of mergeDaily([], readings)) {
+    if (point.date >= today) continue;
+    if (!byDay.has(point.date) || (newest !== undefined && point.date >= newest)) {
+      byDay.set(point.date, point.volumeHm3);
+    }
+  }
+  return [...byDay.entries()].sort(([a], [b]) => a.localeCompare(b));
 }
 
 export function buildSnapshot({ main, neighbours, gauges, weekly, previous, now }: HourlyInput): Snapshot {

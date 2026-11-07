@@ -1,6 +1,6 @@
 name: Backfill
 
-# One-off seed of the history. Safe to re-run.
+# Seeds public/history, public/history-burguillo and public/history-picadas. Safe to re-run.
 on:
   workflow_dispatch:
 

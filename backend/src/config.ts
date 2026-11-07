@@ -102,3 +102,38 @@ export const SOURCES: Snapshot["sources"] = [
 ];
 
 export const MAX_DAILY_POINTS = 90;
+
+export type HistoryId = "san-juan" | "burguillo" | "picadas";
+
+export interface HistoryReservoir {
+  id: HistoryId;
+  /** SAIH station whose volume feeds `daily`. */
+  stationCode: string;
+  /** `EMBALSE_NOMBRE` in MITECO's Tajo rows. Checked against the archive on 7 November 2026. */
+  mitecoName: string;
+}
+
+/** Each one has a `public/history*` document with the same shape. San Juan's comes first. */
+export const HISTORY_RESERVOIRS: readonly HistoryReservoir[] = [
+  { id: "san-juan", stationCode: "E_19", mitecoName: "San Juan" },
+  // MITECO reports Burguillo together with the small Puente Nuevo dam below it, so its figure
+  // is a little different from SAIH's E_17. Never mix the two.
+  { id: "burguillo", stationCode: "E_17", mitecoName: "Burguillo - Puente Nuevo" },
+  { id: "picadas", stationCode: "E_20", mitecoName: "Picadas" },
+];
+
+/** AEMET OpenData, municipal daily forecast. 28133 is San Martín de Valdeiglesias (INE). */
+export const AEMET_BASE = "https://opendata.aemet.es/opendata/api/";
+export const AEMET_MUNICIPALITY = "28133";
+/** The hourly job asks AEMET again only when its forecast is older than this. */
+export const FORECAST_REFRESH_MS = 3 * 3_600_000;
+/** A forecast that can't be refreshed is kept this long, then dropped. */
+export const FORECAST_MAX_AGE_MS = 24 * 3_600_000;
+export const FORECAST_DAYS = 7;
+
+export const FORECAST_SOURCE = {
+  name: "AEMET OpenData",
+  publisher: "Agencia Estatal de Meteorología",
+  url: "https://www.aemet.es/es/eltiempo/prediccion/municipios/san-martin-de-valdeiglesias-id28133",
+  note: "Predicción, no medida. © AEMET.",
+} as const;

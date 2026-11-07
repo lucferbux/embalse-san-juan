@@ -1,10 +1,15 @@
 import { cert, initializeApp } from "firebase-admin/app";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
+import type { HistoryId } from "../config.js";
 import type { History, Snapshot, WeeklyRow } from "../domain/types.js";
 import type { HourlyArchive, Store } from "./store.js";
 
 const SNAPSHOT = "public/snapshot";
-const HISTORY = "public/history";
+const HISTORY: Record<HistoryId, string> = {
+  "san-juan": "public/history",
+  burguillo: "public/history-burguillo",
+  picadas: "public/history-picadas",
+};
 const MITECO_META = "meta/miteco";
 
 /** Firestore limits a batch by size, so large backfills are split up. */
@@ -30,14 +35,14 @@ async function readPayload<T>(db: Firestore, path: string): Promise<T | undefine
 export function firestoreStore(db: Firestore = connect()): Store {
   return {
     readSnapshot: () => readPayload<Snapshot>(db, SNAPSHOT),
-    readHistory: () => readPayload<History>(db, HISTORY),
+    readHistory: (id = "san-juan") => readPayload<History>(db, HISTORY[id]),
 
     async writeSnapshot(snapshot) {
       await db.doc(SNAPSHOT).set({ payload: JSON.stringify(snapshot), generatedAt: snapshot.generatedAt });
     },
 
-    async writeHistory(history) {
-      await db.doc(HISTORY).set({ payload: JSON.stringify(history), generatedAt: history.generatedAt });
+    async writeHistory(history, id = "san-juan") {
+      await db.doc(HISTORY[id]).set({ payload: JSON.stringify(history), generatedAt: history.generatedAt });
     },
 
     async archiveReadings(archive: HourlyArchive) {

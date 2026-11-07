@@ -1,0 +1,173 @@
+[
+ {
+  "origen": {
+   "productor": "Agencia Estatal de Meteorología - AEMET. Gobierno de España",
+   "web": "https://www.aemet.es",
+   "enlace": "https://www.aemet.es/es/eltiempo/prediccion/municipios/san-martin-de-valdeiglesias-id28133",
+   "language": "es",
+   "copyright": "© AEMET. Autorizado el uso de la información y su reproducción citando a AEMET como autora de la misma.",
+   "notaLegal": "https://www.aemet.es/es/nota_legal"
+  },
+  "elaborado": "2026-11-07T08:59:07",
+  "nombre": "San Martín de Valdeiglesias",
+  "provincia": "Madrid",
+  "prediccion": {
+   "dia": [
+    {
+     "probPrecipitacion": [
+      {
+       "value": "",
+       "periodo": "00-24"
+      },
+      {
+       "value": "",
+       "periodo": "00-12"
+      },
+      {
+       "value": 0,
+       "periodo": "12-24"
+      },
+      {
+       "value": "",
+       "periodo": "00-06"
+      },
+      {
+       "value": 0,
+       "periodo": "06-12"
+      },
+      {
+       "value": 0,
+       "periodo": "12-18"
+      },
+      {
+       "value": 0,
+       "periodo": "18-24"
+      }
+     ],
+     "temperatura": {
+      "maxima": 19,
+      "minima": 6
+     },
+     "fecha": "2026-11-07T00:00:00"
+    },
+    {
+     "probPrecipitacion": [
+      {
+       "value": 80,
+       "periodo": "00-24"
+      },
+      {
+       "value": 5,
+       "periodo": "00-12"
+      },
+      {
+       "value": 80,
+       "periodo": "12-24"
+      },
+      {
+       "value": 0,
+       "periodo": "00-06"
+      },
+      {
+       "value": 5,
+       "periodo": "06-12"
+      },
+      {
+       "value": 5,
+       "periodo": "12-18"
+      },
+      {
+       "value": 80,
+       "periodo": "18-24"
+      }
+     ],
+     "temperatura": {
+      "maxima": 16,
+      "minima": 8
+     },
+     "fecha": "2026-11-08T00:00:00"
+    },
+    {
+     "probPrecipitacion": [
+      {
+       "value": 100,
+       "periodo": "00-24"
+      },
+      {
+       "value": 100,
+       "periodo": "00-12"
+      },
+      {
+       "value": 100,
+       "periodo": "12-24"
+      }
+     ],
+     "temperatura": {
+      "maxima": 17,
+      "minima": 11
+     },
+     "fecha": "2026-11-09T00:00:00"
+    },
+    {
+     "probPrecipitacion": [
+      {
+       "value": 100,
+       "periodo": "00-24"
+      },
+      {
+       "value": 100,
+       "periodo": "00-12"
+      },
+      {
+       "value": 100,
+       "periodo": "12-24"
+      }
+     ],
+     "temperatura": {
+      "maxima": 16,
+      "minima": 11
+     },
+     "fecha": "2026-11-10T00:00:00"
+    },
+    {
+     "probPrecipitacion": [
+      {
+       "value": 100
+      }
+     ],
+     "temperatura": {
+      "maxima": 17,
+      "minima": 11
+     },
+     "fecha": "2026-11-11T00:00:00"
+    },
+    {
+     "probPrecipitacion": [
+      {
+       "value": 100
+      }
+     ],
+     "temperatura": {
+      "maxima": 17,
+      "minima": 10
+     },
+     "fecha": "2026-11-12T00:00:00"
+    },
+    {
+     "probPrecipitacion": [
+      {
+       "value": 100
+      }
+     ],
+     "temperatura": {
+      "maxima": 15,
+      "minima": 8
+     },
+     "fecha": "2026-11-13T00:00:00"
+    }
+   ]
+  },
+  "id": 28133,
+  "version": 1.0
+ }
+]
