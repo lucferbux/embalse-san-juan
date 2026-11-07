@@ -86,7 +86,7 @@ It becomes the optional `forecast` field of `public/snapshot`: up to 7 days from
 
 AEMET allows reuse citing it as the author ("© AEMET"); see its [legal notice](https://www.aemet.es/es/nota_legal).
 
-The test fixture `backend/test/fixtures/aemet-28133-diaria.json` was transcribed on 7 November 2026 from AEMET's public XML for the same municipality (`www.aemet.es/xml/municipios/localidad_28133.xml`, same values) into the OpenData JSON layout, because no key was available yet. Once the key exists, record the real reply with `cd backend && read -rs AEMET_API_KEY && export AEMET_API_KEY && npm run live-check -- --record-aemet` (the key is typed, not echoed or kept in the shell history), then `make fixture` and the tests.
+The test fixture `backend/test/fixtures/aemet-28133-diaria.json` is AEMET's real reply of 7 November 2026. To record a new one: `cd backend && read -rs AEMET_API_KEY && export AEMET_API_KEY && npm run live-check -- --record-aemet` (the key is typed, not echoed or kept in the shell history), then `make fixture` and the tests.
 
 ## Why the figures differ
 
