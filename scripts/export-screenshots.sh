@@ -26,60 +26,8 @@ OUT="fastlane/screenshots_raw/ios"
 BUNDLE="com.lucferbux.embalsesanjuan"
 mkdir -p "$OUT"
 
-udid_of() {
-    xcrun simctl list devices available -j | /usr/bin/python3 -I -c "
-import json, sys
-name = sys.argv[1]
-for runtime, devices in json.load(sys.stdin)['devices'].items():
-    for device in devices:
-        if device['name'] == name:
-            print(device['udid'])
-            sys.exit(0)
-" "$1"
-}
-
-ensure_device() {
-    local name="$1" type="$2" runtime="$3"
-    local udid
-    udid="$(udid_of "$name")"
-    [ -n "$udid" ] || udid="$(xcrun simctl create "$name" "$type" "$runtime")"
-    xcrun simctl boot "$udid" 2>/dev/null || true
-    xcrun simctl bootstatus "$udid" -b >/dev/null 2>&1 || true
-    echo "$udid"
-}
-
-build_ios() {
-    echo "==> Building the iOS app"
-    make generate >/dev/null
-    xcodebuild build -quiet -project "$PROJECT" -scheme EmbalseSanJuan -configuration Debug \
-        -destination 'generic/platform=iOS Simulator' -derivedDataPath "$DERIVED" >/dev/null
-}
-
-prepare_ios() {
-    local udid="$1"
-    xcrun simctl install "$udid" "$DERIVED/Build/Products/Debug-iphonesimulator/EmbalseSanJuan.app"
-    # Apple's convention for marketing shots: full bars, full battery, 9:41.
-    xcrun simctl status_bar "$udid" override --time "9:41" --batteryState charged --batteryLevel 100 \
-        --cellularMode active --wifiMode active --wifiBars 3 2>/dev/null || true
-    xcrun simctl ui "$udid" appearance light
-    # The first launch after installing can take longer than shoot() waits, which gives a blank shot.
-    xcrun simctl launch "$udid" "$BUNDLE" >/dev/null
-    /bin/sleep 15
-}
-
-shoot() {
-    local udid="$1" file="$2" display="$3"
-    shift 3
-    xcrun simctl terminate "$udid" "$BUNDLE" 2>/dev/null || true
-    xcrun simctl launch "$udid" "$BUNDLE" "$@" >/dev/null
-    /bin/sleep 6
-    if [ -n "$display" ]; then
-        xcrun simctl io "$udid" screenshot --display="$display" "$file" 2>/dev/null
-    else
-        xcrun simctl io "$udid" screenshot "$file" 2>/dev/null
-    fi
-    printf '   %-34s %s\n' "$(basename "$file")" "$(sips -g pixelWidth -g pixelHeight "$file" | awk '/pixel/{printf "%s ", $2}')"
-}
+# shellcheck source=lib/ios-sim.sh
+source scripts/lib/ios-sim.sh
 
 shoot_set() {
     local udid="$1" prefix="$2" display="${3:-}"
@@ -90,8 +38,7 @@ shoot_set() {
 }
 
 shoot_watch() {
-    xcodebuild build -quiet -project "$PROJECT" -scheme EmbalseWatch -configuration Debug \
-        -destination 'generic/platform=watchOS Simulator' -derivedDataPath "$DERIVED" >/dev/null
+    build_watch
     local udid
     udid="$(ensure_device "Apple Watch Ultra 4 (49mm)" com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Ultra-4-49mm com.apple.CoreSimulator.SimRuntime.watchOS-27-0)"
     xcrun simctl install "$udid" "$DERIVED/Build/Products/Debug-watchsimulator/EmbalseWatch.app"
