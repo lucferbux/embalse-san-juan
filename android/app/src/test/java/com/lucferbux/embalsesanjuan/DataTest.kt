@@ -164,3 +164,22 @@ class SuggestionTest {
         assertEquals("2026-10-30T19:00:00Z", fields.getValue("createdAt").jsonObject.getValue("timestampValue").jsonPrimitive.content)
     }
 }
+
+class WidgetPlacementTest {
+    // usable = height - 34 dp of header room; water = usable * level.
+    @Test fun aUsualTwoByTwoAtHalfFullGoesInTheSky() {
+        val usable = 204f - 34f
+        assertEquals(false to false, com.lucferbux.embalsesanjuan.widget.WidgetPlacement.decide(usable, usable * 0.466f, 54f, 40f))
+    }
+
+    @Test fun nearlyFullGoesInTheWater() {
+        val usable = 204f - 34f
+        assertEquals(true to false, com.lucferbux.embalsesanjuan.widget.WidgetPlacement.decide(usable, usable * 0.97f, 54f, 40f))
+    }
+
+    @Test fun theSmallestSizeDropsTheSecondLine() {
+        val usable = 110f - 34f
+        assertEquals(true, com.lucferbux.embalsesanjuan.widget.WidgetPlacement.decide(usable, usable * 0.97f, 54f, 40f).second)
+        assertEquals(true, com.lucferbux.embalsesanjuan.widget.WidgetPlacement.decide(usable, usable * 0.08f, 54f, 40f).second)
+    }
+}

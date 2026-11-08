@@ -29,6 +29,8 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -120,9 +122,15 @@ fun WaterCard(
     val large = LocalDensity.current.fontScale >= 1.6f
     val showsYear = mode == CardMode.Year && surface != null
     val progress by animateFloatAsState(if (showsYear) 1f else 0f, tween(900), label = "year")
-    val phase by rememberInfiniteTransition(label = "water").animateFloat(
+    // Still water when the system's animations are off.
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val still = remember {
+        android.provider.Settings.Global.getFloat(context.contentResolver, android.provider.Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
+    }
+    val moving by rememberInfiniteTransition(label = "water").animateFloat(
         0f, 2 * PI.toFloat(), infiniteRepeatable(tween(6000, easing = LinearEasing), RepeatMode.Restart), label = "phase",
     )
+    val phase = if (still) 0.6f else moving
     val sky = Brush.verticalGradient(listOf(MaterialTheme.colorScheme.surfaceContainerHigh, MaterialTheme.colorScheme.surfaceContainerLow))
     val description = listOfNotNull(
         reading.id.displayName, Format.percent(reading.percent), Format.volumeOfCapacity(reading.volumeHm3, capacityHm3),
@@ -145,7 +153,9 @@ fun WaterCard(
 
     Box(modifier.clip(shape).background(sky)) {
         CardSurface(reading.percent, surface, progress, phase, topPad = TopPad, months = showsYear)
-        PlacedFigure(reading, capacityHm3, if (showsYear) null else trendHm3, surface, showsYear, figureSize, description)
+        // In the year view the surface is the subject: a smaller figure, and no trend.
+        PlacedFigure(reading, capacityHm3, if (showsYear) null else trendHm3, surface, showsYear,
+            if (showsYear) figureSize * 0.72f else figureSize, description)
         Controls(surface != null, showsYear, mode, onModeChange, stacked = false)
     }
 }
@@ -158,10 +168,10 @@ private fun Controls(hasYear: Boolean, showsYear: Boolean, mode: CardMode, onMod
     val legend = @Composable {
         Column {
             Text(stringResource(R.string.card_legend_title), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.size(14.dp, 2.dp).background(Water.lastYear))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Box(Modifier.size(14.dp, 2.dp).align(Alignment.CenterVertically).background(Water.lastYear))
                 Text(stringResource(R.string.card_legend_last_year), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Box(Modifier.size(12.dp, 9.dp).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)))
+                Box(Modifier.size(12.dp, 9.dp).align(Alignment.CenterVertically).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)))
                 Text(stringResource(R.string.card_legend_range), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
@@ -233,23 +243,30 @@ private fun PlacedFigure(
         val probe = subcompose("probe") { FigureBlock(reading, capacityHm3, trendHm3, true, figureSize) }.first().measure(loose)
         val topPad = TopPad.toPx()
         val usable = constraints.maxHeight - topPad
-        // The shallowest water under the block: today's level, or the lowest point of the year under its width.
-        val level = if (showsYear && surface != null) {
+        // The water under the block: today's level, or the year's lowest and highest points under its width.
+        // In the water the block needs the lowest point below it; in the sky, the highest point below it.
+        val under = if (showsYear && surface != null) {
             val share = ((probe.width + side * 2f) / constraints.maxWidth).coerceIn(0f, 1f)
-            surface.levels.take((surface.levels.lastIndex * share).toInt() + 2).min()
-        } else reading.percent / 100
-        val placement = Placement.decide(
-            usable, level * 100, Amplitude.toPx() * 1.45f, Clearance.toPx(), probe.height.toFloat(),
-            bottomInset = (if (showsYear) 30.dp else 14.dp).toPx(),
-        )
+            surface.levels.take((surface.levels.lastIndex * share).toInt() + 2)
+        } else listOf(reading.percent / 100)
+        val amplitude = Amplitude.toPx() * 1.45f
+        val clearance = Clearance.toPx()
+        val inset = (if (showsYear) 30.dp else 14.dp).toPx()
+        val inWater = Placement.decide(usable, under.min() * 100, amplitude, clearance, probe.height.toFloat(), inset)
+        val skyBottom = usable * (1 - under.max().toFloat().coerceIn(0f, 1f)) - amplitude - clearance
+        val placement = when {
+            inWater is Placement.InWater -> inWater
+            skyBottom >= probe.height -> Placement.InSky(skyBottom)
+            // Neither fits: the deeper side, at the bottom of the water. The caller gives the card room to avoid this.
+            else -> Placement.InWater(usable - inset - probe.height)
+        }
         val block = subcompose("block") {
             FigureBlock(reading, capacityHm3, trendHm3, placement is Placement.InWater, figureSize,
                 Modifier.semantics { contentDescription = description })
         }.first().measure(loose)
         val y = when (placement) {
             is Placement.InWater -> topPad + placement.top
-            // Never above the switch's band, even when the sky is short.
-            is Placement.InSky -> max(topPad + placement.bottom - block.height, topPad)
+            is Placement.InSky -> topPad + placement.bottom - block.height
         }
         layout(constraints.maxWidth, constraints.maxHeight) { block.place(side, y.toInt()) }
     }

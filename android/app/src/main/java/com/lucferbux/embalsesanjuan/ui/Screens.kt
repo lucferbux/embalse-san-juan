@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -161,7 +162,7 @@ fun HistoryScreen(snapshot: Snapshot, state: HistoryState?, onRetry: () -> Unit)
     val history = (state as? HistoryState.Loaded)?.history
     val comparison = remember(history) { history?.let(YearComparison::of) }
     BoxWithConstraints(Modifier.fillMaxSize()) {
-        val wide = maxWidth >= 840.dp
+        val wide = maxWidth >= 600.dp
         val column = @Composable { content: @Composable () -> Unit ->
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) { content() }
         }
@@ -239,6 +240,9 @@ private object ChartColors {
 fun ComparisonChart(comparison: YearComparison, modifier: Modifier, onWater: Boolean = false) {
     val band = if (onWater) Color.White.copy(alpha = 0.12f) else MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
     val grid = MaterialTheme.colorScheme.outlineVariant
+    val measurer = androidx.compose.ui.text.rememberTextMeasurer()
+    val labelStyle = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+    val todayLabel = stringResource(R.string.card_today).lowercase(Format.locale)
     val description = stringResource(
         R.string.chart_comparison,
         Format.hm3(comparison.thisYear.lastOrNull()?.volumeHm3 ?: 0.0, 0),
@@ -248,11 +252,23 @@ fun ComparisonChart(comparison: YearComparison, modifier: Modifier, onWater: Boo
     Canvas(modifier.semantics { contentDescription = description }) {
         val start = java.time.LocalDate.of(comparison.year, 1, 1).toEpochDay().toFloat()
         val end = java.time.LocalDate.of(comparison.year, 12, 31).toEpochDay().toFloat()
-        fun x(day: java.time.LocalDate) = (day.toEpochDay() - start) / (end - start) * size.width
-        fun y(value: Double) = size.height * (1 - (value / comparison.capacityHm3).toFloat().coerceIn(0f, 1.05f))
+        // Room for the hm³ labels on the left and the months below.
+        val left = 34.dp.toPx()
+        val bottom = 18.dp.toPx()
+        val plotWidth = size.width - left
+        val plotHeight = size.height - bottom
+        fun x(day: java.time.LocalDate) = left + (day.toEpochDay() - start) / (end - start) * plotWidth
+        fun y(value: Double) = plotHeight * (1 - (value / comparison.capacityHm3).toFloat().coerceIn(0f, 1.05f))
         listOf(0.0, 0.5, 1.0).forEach { share ->
             val gy = y(comparison.capacityHm3 * share)
-            drawLine(grid, Offset(0f, gy), Offset(size.width, gy), 1.dp.toPx())
+            drawLine(grid, Offset(left, gy), Offset(size.width, gy), 1.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(4f, 6f)))
+            val text = measurer.measure(Format.number(comparison.capacityHm3 * share, 0), labelStyle)
+            drawText(text, topLeft = Offset(0f, (gy - text.size.height / 2f).coerceIn(0f, plotHeight - text.size.height)))
+        }
+        listOf(1, 4, 7, 10).forEach { month ->
+            val day = java.time.LocalDate.of(comparison.year, month, 1)
+            val text = measurer.measure(Format.monthShort(day), labelStyle)
+            drawText(text, topLeft = Offset(x(day), plotHeight + 3.dp.toPx()))
         }
         if (comparison.range.size > 1) {
             val path = Path()
@@ -270,7 +286,12 @@ fun ComparisonChart(comparison: YearComparison, modifier: Modifier, onWater: Boo
         line(comparison.average, if (onWater) Color.White.copy(alpha = 0.6f) else ChartColors.average, 1.4f, dashed = true)
         line(comparison.lastYear, ChartColors.lastYear, 2f)
         line(comparison.thisYear, if (onWater) Color.White else ChartColors.thisYear, 3f)
-        comparison.thisYear.lastOrNull()?.let { drawCircle(if (onWater) Color.White else ChartColors.thisYear, 5.dp.toPx(), Offset(x(it.day), y(it.volumeHm3))) }
+        comparison.thisYear.lastOrNull()?.let {
+            val point = Offset(x(it.day), y(it.volumeHm3))
+            drawCircle(if (onWater) Color.White else ChartColors.thisYear, 5.dp.toPx(), point)
+            val text = measurer.measure(todayLabel, labelStyle.copy(color = ChartColors.thisYear, fontWeight = FontWeight.Bold))
+            drawText(text, topLeft = Offset(point.x - text.size.width / 2f, point.y + 8.dp.toPx()))
+        }
     }
 }
 
@@ -280,12 +301,17 @@ fun ComparisonLegend() {
         listOf(R.string.legend_this_year to ChartColors.thisYear, R.string.legend_last_year to ChartColors.lastYear, R.string.legend_average to ChartColors.average)
             .forEach { (label, color) ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.size(14.dp, 3.dp).background(color))
+                    if (label == R.string.legend_average) {
+                        // Dashed, like its line.
+                        Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) { repeat(3) { Box(Modifier.size(4.dp, 2.dp).background(color)) } }
+                    } else {
+                        Box(Modifier.size(14.dp, 3.dp).background(color))
+                    }
                     Text(stringResource(label), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(start = 4.dp))
                 }
             }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.size(12.dp, 9.dp).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)))
+            Box(Modifier.size(12.dp, 9.dp).background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)))
             Text(stringResource(R.string.legend_since_1988), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(start = 4.dp))
         }
     }
@@ -402,7 +428,7 @@ fun RiverScreen(snapshot: Snapshot, onOpenReservoir: (ReservoirId) -> Unit) {
             Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(if (wide) 24.dp else 16.dp).widthIn(max = 1100.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Panel(stringResource(R.string.river_chain), null) {
+            Panel(stringResource(R.string.river_chain), Format.saihSource(snapshot.chain.maxOf { it.observedAt })) {
                 Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                     snapshot.chain.forEach { reading ->
                         Tank(reading, reading.id == ReservoirId.SanJuan, if (wide) 200.dp else 140.dp,

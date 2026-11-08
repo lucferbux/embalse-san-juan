@@ -115,17 +115,17 @@ class ReservoirWidget : GlanceAppWidget() {
         val tall = size.height >= LargeSize.height
         val stale = snapshot.isStale()
         val top = topRoom(size.height.value, stale)
-        val block = when {
-            tall -> 112f
-            wide -> 58f
-            else -> 54f
-        }
-        // Where the block goes: the same rule as the app, in dp.
+        // Text is in sp, so the block grows with the font scale.
+        val scale = context.resources.configuration.fontScale
+        val full = (if (tall) 112f else if (wide) 58f else 54f) * scale
+        val compactBlock = (if (tall) 64f else 40f) * scale
+        // Where the block goes: the same rule as the app, in dp. In the water it needs the waterline's crest and 12 dp
+        // above it and 10 dp below; in the sky, the same above the crest. A compact block drops the second line.
         val usable = size.height.value - top
         val water = usable * (snapshot.live.percent / 100).toFloat().coerceIn(0f, 1f)
-        val inWater = water >= block + 12f + 6f + 10f
+        val (inWater, compact) = WidgetPlacement.decide(usable, water, full, compactBlock)
         val color = if (inWater) White else labelColor(context)
-        val bottomGap = if (inWater) 12f else (water + 14f).coerceAtMost(usable - block)
+        val bottomGap = if (inWater) 10f else water + 16f
 
         Box(modifier) {
             Image(
@@ -135,18 +135,20 @@ class ReservoirWidget : GlanceAppWidget() {
                 modifier = GlanceModifier.fillMaxSize(),
             )
             Column(GlanceModifier.fillMaxSize().padding(horizontal = 14.dp).padding(top = 12.dp)) {
-                Header(context, snapshot, stale, if (wide) "SAIH Tajo · " else "")
+                Header(context, snapshot, stale, if (wide) "SAIH Tajo · " else "SAIH ")
                 Spacer(GlanceModifier.defaultWeight())
                 Row(GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
                     Column(GlanceModifier.defaultWeight()) {
                         Text(Format.percent(snapshot.live.percent), maxLines = 1,
-                            style = TextStyle(color = color, fontSize = (if (tall) 46 else if (wide) 34 else 30).sp, fontWeight = FontWeight.Bold))
-                        Text(
-                            if (wide) Trend.sentence(snapshot.live.trend24hHm3) else "${Trend.of(snapshot.live.trend24hHm3).arrow} ${Trend.of(snapshot.live.trend24hHm3).label}",
-                            maxLines = 1, style = TextStyle(color = color, fontSize = 12.sp, fontWeight = FontWeight.Medium),
-                        )
+                            style = TextStyle(color = color, fontSize = (if (tall) 46 else if (compact) 26 else if (wide) 34 else 30).sp, fontWeight = FontWeight.Bold))
+                        if (!compact) {
+                            Text(
+                                if (wide) Trend.sentence(snapshot.live.trend24hHm3) else "${Trend.of(snapshot.live.trend24hHm3).arrow} ${Trend.of(snapshot.live.trend24hHm3).label}",
+                                maxLines = 1, style = TextStyle(color = color, fontSize = 12.sp, fontWeight = FontWeight.Medium),
+                            )
+                        }
                     }
-                    if (wide) {
+                    if (wide && !compact) {
                         Column(horizontalAlignment = Alignment.End) {
                             Text(Format.volumeOfCapacity(snapshot.live.volumeHm3, snapshot.weekly.capacityHm3), maxLines = 1,
                                 style = TextStyle(color = color, fontSize = 12.sp, fontWeight = FontWeight.Medium))
@@ -216,7 +218,7 @@ class YearWidget : GlanceAppWidget() {
             return
         }
         val tall = size.height >= LargeSize.height
-        val floor = if (tall) 86f else 56f
+        val floor = (if (tall) 86f else 56f) * context.resources.configuration.fontScale
         Box(modifier) {
             Image(
                 provider = ImageProvider(yearBitmap(context, size.width.value, size.height.value, surface, snapshot.live.percent, floor)),
@@ -236,6 +238,25 @@ class YearWidget : GlanceAppWidget() {
                     )
                 }
             }
+        }
+    }
+}
+
+/**
+ * Where a widget's block goes, in dp: in the water it needs 12 dp above the crest (4 dp) and 10 dp below; in the sky,
+ * the same above the crest. It tries the full block, then a compact one without its second line, and when neither
+ * fits, the compact one goes wherever there is more room. Returns (in water, compact).
+ */
+object WidgetPlacement {
+    fun decide(usable: Float, water: Float, full: Float, compact: Float): Pair<Boolean, Boolean> {
+        fun fitsWater(block: Float) = water >= block + 12f + 4f + 10f
+        fun fitsSky(block: Float) = usable - water - 12f - 4f >= block
+        return when {
+            fitsWater(full) -> true to false
+            fitsSky(full) -> false to false
+            fitsWater(compact) -> true to true
+            fitsSky(compact) -> false to true
+            else -> (water >= usable - water) to true
         }
     }
 }

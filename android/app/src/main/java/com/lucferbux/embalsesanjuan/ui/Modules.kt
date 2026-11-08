@@ -229,7 +229,7 @@ private fun Elevation(snapshot: Snapshot, source: String, modifier: Modifier, on
 
 @Composable
 private fun River(snapshot: Snapshot, onOpenReservoir: (ReservoirId) -> Unit) {
-    ModuleTile(stringResource(R.string.module_river), Icons.Outlined.Route, "SAIH Tajo", Modifier.fillMaxWidth()) {
+    ModuleTile(stringResource(R.string.module_river), Icons.Outlined.Route, Format.saihSource(snapshot.chain.maxOf { it.observedAt }), Modifier.fillMaxWidth()) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             snapshot.chain.forEach { reading ->
                 Tank(reading, isCurrent = reading.id == ReservoirId.SanJuan, height = 72.dp,
