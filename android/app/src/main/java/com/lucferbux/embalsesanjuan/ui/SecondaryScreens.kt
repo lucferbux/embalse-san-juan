@@ -33,6 +33,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.lucferbux.embalsesanjuan.R
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -71,7 +73,7 @@ private fun SecondaryScaffold(
                 title = { Text(title) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 },
                 actions = { actions() },
@@ -82,112 +84,27 @@ private fun SecondaryScaffold(
     }
 }
 
-private enum class HistoryRange(val label: String) {
-    OneYear("1 año"),
-    FiveYears("5 años"),
-    All("Desde 1988"),
-}
-
-@Composable
-fun HistoryScreen(capacityHm3: Double, onBack: () -> Unit) {
-    var history by remember { mutableStateOf<History?>(null) }
-    var failed by remember { mutableStateOf(false) }
-    var attempt by remember { mutableStateOf(0) }
-    var range by rememberSaveable { mutableStateOf(HistoryRange.OneYear) }
-
-    LaunchedEffect(attempt) {
-        failed = false
-        try {
-            history = FirestoreClient.fetchHistory()
-        } catch (_: IOException) {
-            failed = true
-        }
-    }
-
-    SecondaryScaffold("Histórico", onBack) { modifier ->
-        val loaded = history
-        when {
-            loaded != null -> {
-                val points: List<HistoryPoint> = when (range) {
-                    HistoryRange.All -> loaded.weekly
-                    HistoryRange.FiveYears -> loaded.daily
-                    HistoryRange.OneYear -> loaded.daily.takeLast(365)
-                }
-                Column(
-                    modifier.verticalScroll(rememberScrollState()).padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                ) {
-                    // Half width on wide screens, so a centred control doesn't sit on a foldable's hinge.
-                    val pickerModifier = if (LocalConfiguration.current.screenWidthDp >= 600) Modifier.fillMaxWidth(0.45f) else Modifier.fillMaxWidth()
-                    SingleChoiceSegmentedButtonRow(pickerModifier) {
-                        HistoryRange.entries.forEachIndexed { index, option ->
-                            SegmentedButton(
-                                selected = range == option,
-                                onClick = { range = option },
-                                shape = SegmentedButtonDefaults.itemShape(index, HistoryRange.entries.size),
-                                label = { Text(option.label, maxLines = 1) },
-                            )
-                        }
-                    }
-                    SectionCard(
-                        null,
-                        footer = if (range == HistoryRange.All) "Boletín Hidrológico de MITECO, dato semanal." else "SAIH Tajo, último valor de cada día.",
-                    ) {
-                        val first = points.first().day
-                        val last = points.last().day
-                        LineChart(
-                            points = points.map { ChartPoint(it.day.toEpochDay().toFloat(), it.volumeHm3.toFloat()) },
-                            description = "Evolución del volumen del embalse",
-                            yLabel = { Format.number(it.toDouble(), 0) },
-                            xLabels = listOf(
-                                first.toEpochDay().toFloat() to Format.monthYear(first),
-                                last.toEpochDay().toFloat() to Format.monthYear(last),
-                            ),
-                            yMin = 0f,
-                            yMax = (maxOf(capacityHm3, points.maxOf { it.volumeHm3 }) * 1.1).toFloat(),
-                            reference = capacityHm3.toFloat() to "Capacidad",
-                            modifier = Modifier.fillMaxWidth().height(300.dp).padding(horizontal = 16.dp, vertical = 8.dp),
-                        )
-                    }
-                    val low = points.minBy { it.volumeHm3 }
-                    val high = points.maxBy { it.volumeHm3 }
-                    SectionCard("En este periodo") {
-                        ValueRow("Mínimo", "${Format.hm3(low.volumeHm3)}, ${Format.monthYear(low.day)}")
-                        ValueRow("Máximo", "${Format.hm3(high.volumeHm3)}, ${Format.monthYear(high.day)}")
-                        ValueRow("Media", Format.hm3(points.map { it.volumeHm3 }.average()))
-                    }
-                }
-            }
-            failed -> Column(modifier, Arrangement.Center, Alignment.CenterHorizontally) {
-                Text("No se ha podido cargar", style = MaterialTheme.typography.titleMedium)
-                TextButton(onClick = { attempt++ }) { Text("Reintentar") }
-            }
-            else -> Box(modifier, Alignment.Center) { CircularProgressIndicator() }
-        }
-    }
-}
-
 @Composable
 fun AboutScreen(snapshot: Snapshot, onBack: () -> Unit) {
     val reservoir = snapshot.reservoir
     val context = LocalContext.current
     fun open(url: String) = context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
 
-    SecondaryScaffold("Ficha y fuentes", onBack) { modifier ->
+    SecondaryScaffold(stringResource(R.string.about_title), onBack) { modifier ->
         Column(
             modifier.verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            SectionCard("Ficha") {
-                ValueRow("Río", reservoir.river)
-                ValueRow("Cuenca", reservoir.basin)
-                ValueRow("Provincia", reservoir.province)
-                ValueRow("Municipio", reservoir.municipality)
-                ValueRow("Tipo de presa", reservoir.damType)
-                ValueRow("Año de construcción", reservoir.yearBuilt.toString())
-                ValueRow("Superficie", "${Format.number(reservoir.surfaceHa, 0)} ha")
+            SectionCard(stringResource(R.string.about_card)) {
+                ValueRow(stringResource(R.string.about_river), reservoir.river)
+                ValueRow(stringResource(R.string.about_basin), reservoir.basin)
+                ValueRow(stringResource(R.string.about_province), reservoir.province)
+                ValueRow(stringResource(R.string.about_municipality), reservoir.municipality)
+                ValueRow(stringResource(R.string.about_dam_type), reservoir.damType)
+                ValueRow(stringResource(R.string.about_year_built), reservoir.yearBuilt.toString())
+                ValueRow(stringResource(R.string.about_surface), Format.value(reservoir.surfaceHa, "ha", 0))
             }
-            SectionCard("Usos") {
+            SectionCard(stringResource(R.string.about_uses)) {
                 Text(
                     reservoir.uses.joinToString(" · "),
                     style = MaterialTheme.typography.bodyLarge,
@@ -195,8 +112,8 @@ fun AboutScreen(snapshot: Snapshot, onBack: () -> Unit) {
                 )
             }
             SectionCard(
-                "Fuentes",
-                footer = "App personal, sin relación con estos organismos ni respaldada por ellos. Todos los datos son provisionales.",
+                stringResource(R.string.about_sources),
+                footer = stringResource(R.string.about_disclaimer),
             ) {
                 snapshot.sources.forEach { source ->
                     Column(
@@ -213,10 +130,10 @@ fun AboutScreen(snapshot: Snapshot, onBack: () -> Unit) {
             }
             SectionCard(null) {
                 TextButton(onClick = { open("https://embalse-san-juan.web.app/privacy.html") }, modifier = Modifier.padding(horizontal = 4.dp)) {
-                    Text("Política de privacidad")
+                    Text(stringResource(R.string.about_privacy))
                 }
                 TextButton(onClick = { open("https://embalse-san-juan.web.app/support.html") }, modifier = Modifier.padding(horizontal = 4.dp)) {
-                    Text("Soporte")
+                    Text(stringResource(R.string.about_support))
                 }
             }
         }
@@ -246,12 +163,12 @@ fun SuggestionScreen(onBack: () -> Unit) {
     }
 
     SecondaryScaffold(
-        "Sugerencias",
+        stringResource(R.string.suggestions_title),
         onBack,
         actions = {
             if (status != SendStatus.Sent) {
                 IconButton(onClick = ::send, enabled = suggestion.isValid && status != SendStatus.Sending) {
-                    Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Enviar")
+                    Icon(Icons.AutoMirrored.Filled.Send, contentDescription = stringResource(R.string.suggestions_send))
                 }
             }
         },
@@ -259,9 +176,9 @@ fun SuggestionScreen(onBack: () -> Unit) {
         if (status == SendStatus.Sent) {
             Column(modifier.padding(32.dp), Arrangement.Center, Alignment.CenterHorizontally) {
                 Icon(Icons.Filled.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.height(48.dp))
-                Text("Gracias por escribir", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
+                Text(stringResource(R.string.suggestions_thanks), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(top = 16.dp))
                 Text(
-                    "Tu mensaje ha llegado. Lo leeré, aunque no pueda responderte porque es anónimo.",
+                    stringResource(R.string.suggestions_thanks_detail),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 8.dp),
                 )
@@ -271,7 +188,7 @@ fun SuggestionScreen(onBack: () -> Unit) {
                         status = SendStatus.Editing
                     },
                     modifier = Modifier.padding(top = 24.dp),
-                ) { Text("Enviar otro") }
+                ) { Text(stringResource(R.string.suggestions_another)) }
             }
         } else {
             Column(
@@ -280,27 +197,27 @@ fun SuggestionScreen(onBack: () -> Unit) {
             ) {
                 androidx.compose.foundation.layout.Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Suggestion.Kind.entries.forEach { option ->
-                        FilterChip(selected = kind == option, onClick = { kind = option }, label = { Text(option.label) })
+                        FilterChip(selected = kind == option, onClick = { kind = option }, label = { Text(stringResource(when (option) { Suggestion.Kind.Suggestion -> R.string.suggestion_kind_suggestion; Suggestion.Kind.Bug -> R.string.suggestion_kind_bug; Suggestion.Kind.Other -> R.string.suggestion_kind_other })) })
                     }
                 }
                 OutlinedTextField(
                     value = text,
                     onValueChange = { text = it },
-                    label = { Text("Tu mensaje") },
+                    label = { Text(stringResource(R.string.suggestions_message)) },
                     modifier = Modifier.fillMaxWidth().heightIn(min = 180.dp),
                     isError = suggestion.trimmedText.length > Suggestion.MAXIMUM_LENGTH,
                     supportingText = {
-                        Text("${suggestion.trimmedText.length} de ${Suggestion.MAXIMUM_LENGTH} caracteres.")
+                        Text(stringResource(R.string.suggestions_count, suggestion.trimmedText.length, Suggestion.MAXIMUM_LENGTH))
                     },
                 )
                 Text(
-                    "Es anónimo: no incluyas datos personales. Si quieres respuesta, escribe desde la página de soporte.",
+                    stringResource(R.string.suggestions_anonymous),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 if (status == SendStatus.Failed) {
                     Text(
-                        "No se ha podido enviar. Revisa la conexión e inténtalo de nuevo.",
+                        stringResource(R.string.suggestions_failed),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.error,
                     )

@@ -4,13 +4,22 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.lucferbux.embalsesanjuan.EmbalseApplication
+import com.lucferbux.embalsesanjuan.data.History
+import com.lucferbux.embalsesanjuan.data.ReservoirId
 import com.lucferbux.embalsesanjuan.data.Snapshot
 import com.lucferbux.embalsesanjuan.data.SnapshotRepository
 import com.lucferbux.embalsesanjuan.widget.ReservoirWidget
 import java.io.IOException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+sealed interface HistoryState {
+    data object Loading : HistoryState
+    data object Failed : HistoryState
+    data class Loaded(val history: History) : HistoryState
+}
 
 sealed interface UiState {
     data object Loading : UiState
@@ -26,6 +35,30 @@ class ReservoirViewModel(application: Application) : AndroidViewModel(applicatio
 
     val state: StateFlow<UiState> = _state
     val refreshing: StateFlow<Boolean> = _refreshing
+
+    private val historyRepository = (application as EmbalseApplication).histories
+    private val _histories = MutableStateFlow<Map<ReservoirId, HistoryState>>(emptyMap())
+    val histories: StateFlow<Map<ReservoirId, HistoryState>> = _histories
+
+    /** Loads a reservoir's history once, showing the saved copy first. */
+    fun loadHistory(id: ReservoirId) {
+        if (_histories.value[id] is HistoryState.Loaded) return
+        historyRepository.cached(id)?.let { cached -> _histories.update { it + (id to HistoryState.Loaded(cached)) } }
+            ?: _histories.update { it + (id to HistoryState.Loading) }
+        viewModelScope.launch {
+            try {
+                val history = historyRepository.load(id)
+                _histories.update { it + (id to HistoryState.Loaded(history)) }
+            } catch (_: IOException) {
+                if (_histories.value[id] !is HistoryState.Loaded) _histories.update { it + (id to HistoryState.Failed) }
+            }
+        }
+    }
+
+    fun retryHistory(id: ReservoirId) {
+        _histories.update { it - id }
+        loadHistory(id)
+    }
 
     init {
         repository.cached()?.let { _state.value = UiState.Loaded(it, SnapshotRepository.Origin.Cache) }

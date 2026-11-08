@@ -28,10 +28,11 @@ object FirestoreClient {
         return snapshot to payload
     }
 
-    suspend fun fetchHistory(): History {
-        val payload = payloadOf(get("$BASE_URL/public/history"))
-        return History.parse(contractJson.parseToJsonElement(payload).jsonObject)
-    }
+    suspend fun fetchHistoryPayload(id: ReservoirId = ReservoirId.SanJuan): String =
+        payloadOf(get("$BASE_URL/public/${id.historyDocument}"))
+
+    suspend fun fetchHistory(id: ReservoirId = ReservoirId.SanJuan): History =
+        History.parse(contractJson.parseToJsonElement(fetchHistoryPayload(id)).jsonObject)
 
     /** Documents hold the contract JSON in one string field, `payload`. */
     fun payloadOf(document: String): String =
@@ -77,6 +78,43 @@ class SnapshotRepository(cacheDirectory: File) {
     } catch (error: IOException) {
         val cached = withContext(Dispatchers.IO) { cached() } ?: throw error
         cached to Origin.Cache
+    }
+}
+
+/**
+ * Every reservoir's history, kept on disk so the app and widgets have it offline. New days land daily and new weeks
+ * weekly, so an hour-old copy is as good as a new one.
+ */
+class HistoryRepository(private val directory: File) {
+    private fun file(id: ReservoirId) = File(directory, "${id.historyDocument}.json")
+
+    fun cached(id: ReservoirId): History? = runCatching {
+        History.parse(contractJson.parseToJsonElement(file(id).readText()).jsonObject)
+    }.getOrNull()
+
+    suspend fun load(
+        id: ReservoirId,
+        now: Long = System.currentTimeMillis(),
+        fetch: suspend (ReservoirId) -> String = FirestoreClient::fetchHistoryPayload,
+    ): History {
+        val file = file(id)
+        if (file.exists() && now - file.lastModified() < FRESH_FOR_MS) cached(id)?.let { return it }
+        return try {
+            val payload = fetch(id)
+            val history = History.parse(contractJson.parseToJsonElement(payload).jsonObject)
+            withContext(Dispatchers.IO) {
+                val temporary = File(directory, "${file.name}.tmp")
+                temporary.writeText(payload)
+                temporary.renameTo(file)
+            }
+            history
+        } catch (error: IOException) {
+            withContext(Dispatchers.IO) { cached(id) } ?: throw error
+        }
+    }
+
+    private companion object {
+        const val FRESH_FOR_MS = 3_600_000L
     }
 }
 

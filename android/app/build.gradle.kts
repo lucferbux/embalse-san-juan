@@ -12,8 +12,8 @@ android {
         applicationId = "com.lucferbux.embalsesanjuan"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0"
     }
 
     buildFeatures {
@@ -47,14 +47,15 @@ android {
     }
 
     androidResources {
-        // The app's text is only in Spanish.
-        localeFilters += "es"
+        // Spanish is the base language; English is the translation (values-en).
+        localeFilters += listOf("es", "en")
     }
 }
 
 dependencies {
     implementation(platform("androidx.compose:compose-bom:2026.09.00"))
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material3:material3-adaptive-navigation-suite")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.core:core-ktx:1.17.0")

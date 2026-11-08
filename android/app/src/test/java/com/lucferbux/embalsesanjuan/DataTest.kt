@@ -67,9 +67,13 @@ class ContractTest {
 }
 
 class BehaviourTest {
+    init {
+        Format.locale = Format.resolve(java.util.Locale.forLanguageTag("es-ES"))
+    }
+
     @Test fun formatsInSpanish() {
-        assertEquals("48,7 %", Format.percent(48.66))
-        assertEquals("67,0 hm³", Format.hm3(67.03))
+        assertEquals("48,7\u00A0%", Format.percent(48.66))
+        assertEquals("67,0\u00A0hm³", Format.hm3(67.03))
         assertEquals("+0,12", Format.signed(0.12))
         assertEquals("−5", Format.signed(-5.0, 0))
         assertEquals("Sin dato", Format.optional(null, "m"))
@@ -77,6 +81,17 @@ class BehaviourTest {
 
     @Test fun formatsTimesInTheGivenZone() {
         assertEquals("16:00", Format.hour(Instant.parse("2026-10-30T16:00:00Z"), ZoneOffset.UTC))
+    }
+
+    @Test fun formatsInEnglish() {
+        Format.locale = Format.resolve(java.util.Locale.UK)
+        try {
+            assertEquals("48.7\u00A0%", Format.percent(48.66))
+            assertEquals("Steady · +0.12\u00A0hm³ in 24 h", Trend.sentence(0.12))
+            assertEquals("No data", Format.optional(null, "m"))
+        } finally {
+            Format.locale = Format.resolve(java.util.Locale.forLanguageTag("es-ES"))
+        }
     }
 
     @Test fun compassWrapsAround() {

@@ -72,9 +72,9 @@ Layout follows size classes and the window's size, never the device or its orien
 - **Signing:** the upload key is `~/.config/embalse-san-juan/upload.jks`, outside the repo, and its password is in the macOS Keychain. Never print either.
 - **Listing:** text and images are in `fastlane/metadata/android/es-ES`. They were uploaded by hand in Play Console, with the Data safety answers matching what `firebase/site/privacy.html` says.
 
-- **Material You:** colours come from the wallpaper through dynamic colour, with a water blue before Android 12. Don't hardcode colours in the UI.
-- **Layout:** by available width only, never device type. Two columns from 720 dp.
-- **Widget:** one Glance widget that adapts when resized (small, medium, large). It follows the same one-surface rule as iOS: the water and the curve are a bitmap, because Glance can't draw freely, and text stays white.
+- **Material You:** the chrome takes its colours from the wallpaper through dynamic colour, with a water blue before Android 12. The one exception is the water itself (`Water` in `ui/WaterCard.kt`), fixed like the data it shows.
+- **Layout:** the same three sections and water card as iOS, in `NavigationSuiteScaffold` (bottom bar on phones, rail from 600 dp). By window size only, never device type: the card is a pane beside the modules when the window is at least 700 dp wide and not taller than wide, a band otherwise. Strings are in `values` (Spanish) and `values-en`.
+- **Widgets:** "Ahora" (resizable) and "Último año", in Glance with `SizeMode.Exact`, because the gap that keeps the figure off the waterline is in dp of the real size. Sky and water are a bitmap, because Glance can't draw freely; the figure goes in the water (white) or in the sky (label colour), as on iOS.
 - **Refresh:** WorkManager, hourly, while a widget is placed.
 - **No tips yet:** in-app purchases would need Google Play Billing, which the app doesn't use.
 

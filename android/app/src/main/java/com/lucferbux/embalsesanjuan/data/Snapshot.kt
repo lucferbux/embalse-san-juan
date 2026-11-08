@@ -8,6 +8,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.double
+import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -25,7 +26,20 @@ data class Snapshot(
     val neighbours: List<Neighbour>,
     val rainGauges: List<RainGauge>,
     val sources: List<Source>,
+    /** AEMET's forecast, optional in the contract (ADR 0004). A prediction, shown apart from measured rain. */
+    val forecast: Forecast? = null,
 ) {
+    /** San Juan and its neighbours in river order: Burguillo upstream, Picadas downstream. */
+    val chain: List<ReservoirReading>
+        get() = ReservoirId.entries.mapNotNull { reading(it) }
+
+    fun reading(id: ReservoirId): ReservoirReading? = when (id) {
+        ReservoirId.SanJuan -> ReservoirReading(id, Instant.parse(live.observedAt), live.volumeHm3, live.percent)
+        else -> neighbours.firstOrNull { it.code == id.station }?.let {
+            ReservoirReading(id, Instant.parse(it.observedAt), it.volumeHm3, it.percent)
+        }
+    }
+
     /** Readings are hourly, so 6 hours without one means collection is failing. */
     fun isStale(now: Instant = Instant.now()): Boolean =
         Duration.between(Instant.parse(live.observedAt), now) > Duration.ofHours(6)
@@ -120,7 +134,32 @@ data class RainGauge(
 @Serializable
 data class Source(val name: String, val publisher: String, val url: String, val note: String)
 
-data class HistoryPoint(val day: LocalDate, val volumeHm3: Double)
+@Serializable
+data class Forecast(val issuedAt: String, val fetchedAt: String, val source: Source, val days: List<ForecastDay>)
+
+@Serializable
+data class ForecastDay(
+    val date: String,
+    val rainProbabilityPct: Double? = null,
+    val maxTemperatureC: Double? = null,
+    val minTemperatureC: Double? = null,
+) {
+    val day: LocalDate get() = LocalDate.parse(date)
+}
+
+/** The three reservoirs of the Alberche chain, upstream first, with their SAIH station and history document. */
+enum class ReservoirId(val station: String, val displayName: String, val historyDocument: String) {
+    Burguillo("E_17", "Burguillo", "history-burguillo"),
+    SanJuan("E_19", "San Juan", "history"),
+    Picadas("E_20", "Picadas", "history-picadas"),
+}
+
+data class ReservoirReading(val id: ReservoirId, val observedAt: Instant, val volumeHm3: Double, val percent: Double) {
+    val capacityHm3: Double get() = if (percent > 0) volumeHm3 / percent * 100 else 0.0
+}
+
+/** `capacityHm3` comes with MITECO's weekly rows: it was revised from 148 to 138 hm³. */
+data class HistoryPoint(val day: LocalDate, val volumeHm3: Double, val capacityHm3: Double? = null)
 
 /** Payload of public/history, sent as compact rows to keep the document small. */
 data class History(val weekly: List<HistoryPoint>, val daily: List<HistoryPoint>) {
@@ -128,7 +167,11 @@ data class History(val weekly: List<HistoryPoint>, val daily: List<HistoryPoint>
         fun parse(json: JsonObject): History {
             fun rows(name: String) = (json.getValue(name) as JsonArray).map { row ->
                 val cells = row.jsonArray
-                HistoryPoint(LocalDate.parse(cells[0].jsonPrimitive.content), cells[1].jsonPrimitive.double)
+                HistoryPoint(
+                    LocalDate.parse(cells[0].jsonPrimitive.content),
+                    cells[1].jsonPrimitive.double,
+                    cells.getOrNull(2)?.jsonPrimitive?.doubleOrNull,
+                )
             }
             return History(weekly = rows("weekly"), daily = rows("daily"))
         }
