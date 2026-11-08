@@ -42,3 +42,19 @@ reservoirs; the same band and modules reflow into columns. Android shares the IA
 Expressive shapes, dynamic colour for the chrome, a navigation suite and a collapsing hero.
 
 The visual proposal with mockups is published as an artifact; see the owner's conversation.
+
+## Owner decisions (8 Nov 2026)
+
+The owner approved the direction, with two changes:
+
+- **The card opens on today, always.** The default view is today's level with the moving water, the app's signature.
+  A "Hoy | Año" switch on the card turns the same surface into the last 12 months (SAIH, fixed 0-to-capacity scale,
+  last year and the 5-year range behind it), with an animated transition. The choice is not remembered: every launch
+  starts on today.
+- **Widgets are redesigned.** The 1.0 navy look goes. Widgets use the card's light sky (dark in dark mode) and the
+  honest level. The figure goes wholly in the water (white) or wholly in the sky (label colour), never across the
+  waterline: the same rule as the app, replacing the "always white text" rule. The name and time sit at the top,
+  always in the sky. New history widgets: the last year as a surface (SAIH) and the year comparison (MITECO), each
+  with its source. Lock Screen: ring, rectangular with a bar, inline. Android gets the same set in Glance.
+
+WidgetKit cannot animate continuously: the wave's phase changes with each timeline entry, with a transition.
