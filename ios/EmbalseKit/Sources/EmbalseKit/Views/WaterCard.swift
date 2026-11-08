@@ -269,7 +269,7 @@ private struct YearMarks: View {
                     context.fill(Path(ellipseIn: CGRect(x: today.x - 5.5, y: today.y - 5.5, width: 11, height: 11)), with: .color(.white))
                     context.stroke(Path(ellipseIn: CGRect(x: today.x - 5.5, y: today.y - 5.5, width: 11, height: 11)), with: .color(Palette.waterTop), lineWidth: 2.5)
                 }
-                Text("hoy", bundle: .module)
+                Text(String(localized: "Hoy", bundle: .module).lowercased(with: Format.locale))
                     .font(.caption.weight(.semibold))
                     .position(x: x(count - 1) - 24, y: y(surface.levels.last ?? 0) - 16)
                 ForEach(monthStarts, id: \.index) { month in
@@ -309,7 +309,7 @@ private struct YearLegend: View {
             HStack(spacing: 10) {
                 HStack(spacing: 5) {
                     Capsule().fill(Palette.lastYear).frame(width: 14, height: 2)
-                    Text("hace un año", bundle: .module)
+                    Text(String(localized: "Hace un año", bundle: .module).lowercased(with: Format.locale))
                 }
                 HStack(spacing: 5) {
                     RoundedRectangle(cornerRadius: 2).fill(.secondary.opacity(0.3)).frame(width: 12, height: 9)

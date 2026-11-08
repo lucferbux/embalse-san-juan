@@ -364,17 +364,6 @@
         }
       }
     },
-    "hace un año" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "a year ago"
-          }
-        }
-      }
-    },
     "hace un año %@" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -382,17 +371,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "a year ago %@"
-          }
-        }
-      }
-    },
-    "hoy" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "today"
           }
         }
       }

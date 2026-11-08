@@ -323,7 +323,7 @@ public struct YearComparisonChart: View {
                     .symbolSize(compact ? 40 : 70)
                     .annotation(position: .top, alignment: .trailing) {
                         if !compact {
-                            Text("hoy", bundle: .module).font(.caption2.weight(.bold)).foregroundStyle(Self.thisYearColor)
+                            Text(String(localized: "Hoy", bundle: .module).lowercased(with: Format.locale)).font(.caption2.weight(.bold)).foregroundStyle(Self.thisYearColor)
                         }
                     }
             }
@@ -471,7 +471,7 @@ public struct SurfaceHistory: View {
                     HStack(alignment: .top) {
                         label(String(localized: "hace \(volumes.count) días", bundle: .module), first)
                         Spacer()
-                        label(String(localized: "hoy", bundle: .module), last).multilineTextAlignment(.trailing)
+                        label(String(localized: "Hoy", bundle: .module).lowercased(with: Format.locale), last).multilineTextAlignment(.trailing)
                     }
                     .padding(.horizontal, 12)
                     .frame(height: proxy.size.height * lowest - waterlineClearance, alignment: .top)
