@@ -22,6 +22,25 @@ public struct YearComparison: Sendable, Equatable {
     /// The whole year, each week averaged over the 10 years before this one. Weeks without all 10 years are left out.
     public var average: [Point]
 
+    /// The lowest and highest of every earlier year for each week, as a share of that week's capacity (it was revised
+    /// from 148 to 138 hm³) and drawn in today's hm³.
+    public struct RangePoint: Sendable, Equatable, Identifiable {
+        public var date: Date
+        public var lowHm3: Double
+        public var highHm3: Double
+        public var id: Date { date }
+    }
+
+    public struct Record: Sendable, Equatable {
+        public var date: Date
+        public var percent: Double
+    }
+
+    /// Since the series begins (1988), week by week.
+    public var range: [RangePoint]
+    public var lowest: Record?
+    public var highest: Record?
+
     /// Three days, plus half a day so a date across a change of time (an hour longer or shorter) still counts.
     static let tolerance: TimeInterval = 3.5 * 86_400
     static let years = 10
@@ -34,7 +53,7 @@ public struct YearComparison: Sendable, Equatable {
         capacityHm3 = latest.capacityHm3
 
         let weekly = history.weekly
-        func value(near date: Date) -> Double? {
+        func week(near date: Date) -> History.WeeklyPoint? {
             // The series is sorted, so a binary search finds the closest week.
             var low = 0, high = weekly.count - 1
             while low < high {
@@ -44,8 +63,9 @@ public struct YearComparison: Sendable, Equatable {
             let candidates = [low - 1, low].filter { weekly.indices.contains($0) }
             guard let best = candidates.min(by: { abs(weekly[$0].date.timeIntervalSince(date)) < abs(weekly[$1].date.timeIntervalSince(date)) }),
                   abs(weekly[best].date.timeIntervalSince(date)) <= Self.tolerance else { return nil }
-            return weekly[best].volumeHm3
+            return weekly[best]
         }
+        func value(near date: Date) -> Double? { week(near: date)?.volumeHm3 }
         func shifted(_ date: Date, by years: Int) -> Date { calendar.date(byAdding: .year, value: years, to: date) ?? date }
 
         thisYear = weekly.filter { calendar.component(.year, from: $0.date) == year }.map { Point(date: $0.date, volumeHm3: $0.volumeHm3) }
@@ -58,6 +78,19 @@ public struct YearComparison: Sendable, Equatable {
             guard values.count == Self.years else { return nil }
             return Point(date: reference, volumeHm3: values.reduce(0, +) / Double(values.count))
         }
+        let firstYear = weekly.first.map { calendar.component(.year, from: $0.date) } ?? year
+        let capacity = latest.capacityHm3
+        range = last.compactMap { grid in
+            let reference = shifted(grid.date, by: 1)
+            let shares = (1...max(year - firstYear, 1)).compactMap { back in
+                week(near: shifted(reference, by: -back)).map { $0.volumeHm3 / max($0.capacityHm3, 1) }
+            }
+            guard shares.count >= 2, let low = shares.min(), let high = shares.max() else { return nil }
+            return RangePoint(date: reference, lowHm3: low * capacity, highHm3: high * capacity)
+        }
+        let share = { (point: History.WeeklyPoint) in point.volumeHm3 / max(point.capacityHm3, 1) }
+        lowest = weekly.min { share($0) < share($1) }.map { Record(date: $0.date, percent: share($0) * 100) }
+        highest = weekly.max { share($0) < share($1) }.map { Record(date: $0.date, percent: share($0) * 100) }
     }
 
     /// Same week last year, for the latest bulletin.

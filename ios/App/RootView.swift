@@ -1,19 +1,22 @@
 import EmbalseKit
 import SwiftUI
 
-/// The app's three sections (docs/design/DESIGN-2.0.md): Ahora, Este año and El río, in a system tab view whose bar is
-/// Liquid Glass on iOS 27. The ficha, sources, alerts, suggestions and tips are reached from the toolbar.
-enum AppTab: String, Hashable { case now, year, river }
+/// The app's three sections (docs/design/review-2.0/SYNTHESIS.md): Ahora, Histórico and El río, in a system tab view
+/// whose bar is Liquid Glass on iOS 27. On regular widths it adapts into a sidebar, where Burguillo and Picadas are
+/// destinations of their own. The ficha, sources, alerts, suggestions and tips are reached from the toolbar.
+enum AppTab: String, Hashable { case now, year, river, burguillo, picadas }
 
 enum Route: Hashable {
     case about, suggestions, tips, alerts
     case reservoir(ReservoirID)
+    case detail(NowDetail)
 }
 
 struct RootView: View {
     var model: ReservoirModel
     @State private var history = HistoryModel()
     @State private var tab: AppTab = Self.initialTab
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -46,17 +49,32 @@ struct RootView: View {
                     NowView(snapshot: snapshot, origin: origin, history: history, refresh: { await model.refresh(force: true) })
                 }
             }
-            Tab("Este año", systemImage: "calendar", value: AppTab.year) {
+            Tab("Histórico", systemImage: "chart.xyaxis.line", value: AppTab.year) {
                 TabStack(snapshot: snapshot) {
                     YearView(snapshot: snapshot, history: history)
                 }
             }
-            Tab("El río", systemImage: "point.topleft.down.to.point.bottomright.curvepath", value: AppTab.river) {
-                TabStack(snapshot: snapshot) {
-                    RiverView(snapshot: snapshot, history: history)
+            TabSection("El río") {
+                Tab("El río", systemImage: "point.topleft.down.to.point.bottomright.curvepath", value: AppTab.river) {
+                    TabStack(snapshot: snapshot) {
+                        RiverView(snapshot: snapshot, history: history)
+                    }
+                }
+                if horizontalSizeClass == .regular {
+                Tab("Burguillo", systemImage: "drop", value: AppTab.burguillo) {
+                    TabStack(snapshot: snapshot) { ReservoirPage(id: .burguillo, snapshot: snapshot) }
+                }
+                .tabPlacement(.sidebarOnly)
+                .defaultVisibility(.hidden, for: .tabBar)
+                Tab("Picadas", systemImage: "drop", value: AppTab.picadas) {
+                    TabStack(snapshot: snapshot) { ReservoirPage(id: .picadas, snapshot: snapshot) }
+                }
+                .tabPlacement(.sidebarOnly)
+                .defaultVisibility(.hidden, for: .tabBar)
                 }
             }
         }
+        .tabViewStyle(.sidebarAdaptable)
         .environment(history)
     }
 
@@ -86,6 +104,7 @@ private struct TabStack<Content: View>: View {
                     case .tips: TipJarView()
                     case .alerts: AlertsView()
                     case .reservoir(let id): ReservoirPage(id: id, snapshot: snapshot)
+                    case .detail(let detail): NowDetailView(detail: detail, snapshot: snapshot)
                     }
                 }
         }

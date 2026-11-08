@@ -2,8 +2,8 @@ import Charts
 import EmbalseKit
 import SwiftUI
 
-/// "Este año": the MITECO bulletin, this year against last year and the 10-year average, the history, and AEMET's
-/// forecast. SAIH and MITECO are never on one chart.
+/// "Histórico": this year against last year, the 10-year average and the range since 1988 (MITECO), the week's
+/// bulletin, the records and the history. SAIH and MITECO are never on one chart.
 struct YearView: View {
     var snapshot: Snapshot
     var history: HistoryModel
@@ -17,7 +17,7 @@ struct YearView: View {
                 .frame(maxWidth: .infinity)
         }
         .background(Color(uiColor: .systemGroupedBackground))
-        .navigationTitle("Este año")
+        .navigationTitle("Histórico")
         .task { await history.load(.sanJuan) }
     }
 
@@ -26,19 +26,19 @@ struct YearView: View {
         if horizontalSizeClass == .regular {
             HStack(alignment: .top, spacing: 20) {
                 VStack(spacing: 16) {
-                    MitecoPanel(weekly: snapshot.weekly)
                     comparisonPanel(comparison)
+                    MitecoPanel(weekly: snapshot.weekly)
+                    records(comparison)
                 }
                 VStack(spacing: 16) {
                     HistoryPanel(reservoir: .sanJuan, capacity: snapshot.weekly.capacityHm3, today: snapshot.reading(of: .sanJuan), history: history)
-                    if let forecast = snapshot.forecast { ForecastStrip(forecast: forecast).panel() }
                 }
             }
         } else {
             VStack(spacing: 16) {
-                MitecoPanel(weekly: snapshot.weekly)
                 comparisonPanel(comparison)
-                if let forecast = snapshot.forecast { ForecastStrip(forecast: forecast).panel() }
+                MitecoPanel(weekly: snapshot.weekly)
+                records(comparison)
                 HistoryPanel(reservoir: .sanJuan, capacity: snapshot.weekly.capacityHm3, today: snapshot.reading(of: .sanJuan), history: history)
             }
         }
@@ -47,17 +47,31 @@ struct YearView: View {
     @ViewBuilder
     private func comparisonPanel(_ comparison: YearComparison?) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            PanelTitle("Este año, el pasado y la media", source: Format.mitecoWeek(snapshot.weekly.day))
+            PanelTitle("Este año, el anterior y la media", source: Format.mitecoWeek(snapshot.weekly.day))
             if let comparison {
                 YearComparisonChart.Legend()
                 YearComparisonChart(comparison: comparison).frame(height: 240)
-                Text("Cada línea es el dato semanal de MITECO. La media necesita los 10 años anteriores completos.")
+                Text("Cada línea es el dato semanal de MITECO. La media necesita los 10 años anteriores completos. La franja va del mínimo al máximo de cada semana desde 1988.")
                     .font(.caption).foregroundStyle(.secondary)
             } else {
                 LoadingRow(state: history.state(.sanJuan)) { Task { await history.load(.sanJuan) } }
             }
         }
         .panel()
+    }
+}
+
+extension YearView {
+    @ViewBuilder
+    func records(_ comparison: YearComparison?) -> some View {
+        if let comparison, let low = comparison.lowest, let high = comparison.highest {
+            VStack(alignment: .leading, spacing: 10) {
+                PanelTitle("Récords desde 1988", source: "MITECO · Boletín Hidrológico")
+                ValueRow("Mínimo", value: "\(Format.percent(low.percent)), \(Format.monthYear(low.date))")
+                ValueRow("Máximo", value: "\(Format.percent(high.percent)), \(Format.monthYear(high.date))")
+            }
+            .panel()
+        }
     }
 }
 

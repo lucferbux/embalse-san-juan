@@ -64,13 +64,16 @@ public struct FigureBlock: View {
     var trendHm3: Double?
     var onWater: Bool
     var figureSize: CGFloat
+    var compact: Bool
 
-    public init(reading: ReservoirReading, capacityHm3: Double, trendHm3: Double?, onWater: Bool, figureSize: CGFloat = 88) {
+    /// `compact` keeps the figure and the volume only, for the year view, where the surface is the subject.
+    public init(reading: ReservoirReading, capacityHm3: Double, trendHm3: Double?, onWater: Bool, figureSize: CGFloat = 88, compact: Bool = false) {
         self.reading = reading
         self.capacityHm3 = capacityHm3
         self.trendHm3 = trendHm3
         self.onWater = onWater
         self.figureSize = figureSize
+        self.compact = compact
     }
 
     @ScaledMetric(relativeTo: .largeTitle) private var scale = 1.0
@@ -83,14 +86,16 @@ public struct FigureBlock: View {
                 .lineLimit(1)
             Text(Format.volumeOfCapacity(reading.volumeHm3, capacityHm3))
                 .font(.title3.weight(.semibold))
-            if let trendHm3 {
+            if !compact, let trendHm3 {
                 Label(Trend.sentence(trendHm3), systemImage: Trend(change: trendHm3).symbol)
                     .font(.subheadline.weight(.medium))
                     .opacity(0.92)
             }
-            Label(Format.saihSource(reading.observedAt), systemImage: "clock")
-                .font(.footnote.weight(.medium))
-                .opacity(0.8)
+            if !compact {
+                Label(Format.saihSource(reading.observedAt), systemImage: "clock")
+                    .font(.footnote.weight(.medium))
+                    .opacity(0.8)
+            }
         }
         .foregroundStyle(onWater ? AnyShapeStyle(Palette.onWater) : AnyShapeStyle(.primary))
         .accessibilityElement(children: .ignore)
@@ -288,9 +293,15 @@ public struct YearComparisonChart: View {
     public static let thisYearColor = Color(red: 0.08, green: 0.45, blue: 0.92)
     public static let lastYearColor = Color(red: 0.93, green: 0.52, blue: 0.10)
     public static let averageColor = Color.gray
+    public static let rangeColor = Color.blue.opacity(0.1)
 
     public var body: some View {
         Chart {
+            ForEach(comparison.range) { point in
+                AreaMark(x: .value("Fecha", point.date), yStart: .value("Mínimo", point.lowHm3), yEnd: .value("Máximo", point.highHm3),
+                         series: .value("Serie", "range"))
+                    .foregroundStyle(Self.rangeColor)
+            }
             ForEach(comparison.average) { point in
                 LineMark(x: .value("Fecha", point.date), y: .value("hm³", point.volumeHm3), series: .value("Serie", "average"))
                     .foregroundStyle(Self.averageColor)
@@ -347,6 +358,10 @@ public struct YearComparisonChart: View {
             item("Este año", YearComparisonChart.thisYearColor, dashed: false)
             item("Año pasado", YearComparisonChart.lastYearColor, dashed: false)
             item("Media 10 años", YearComparisonChart.averageColor, dashed: true)
+            HStack(spacing: 6) {
+                RoundedRectangle(cornerRadius: 2).fill(YearComparisonChart.rangeColor.opacity(2.5)).frame(width: 14, height: 9)
+                Text("Desde 1988", bundle: .module)
+            }
         }
 
         private func item(_ title: LocalizedStringKey, _ color: Color, dashed: Bool) -> some View {

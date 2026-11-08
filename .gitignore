@@ -32,3 +32,4 @@ fastlane/metadata/ios/review_information/email_address.txt
 # Fastlane
 fastlane/report.xml
 fastlane/README.md
+.build/

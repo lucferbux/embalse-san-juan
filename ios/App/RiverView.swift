@@ -36,7 +36,7 @@ struct RiverView: View {
                         ForEach(snapshot.rainGauges) { gauge in
                             ValueRow(LocalizedStringKey(gauge.name), symbol: "cloud.rain", value: Format.optional(gauge.rain24hMm, unit: "mm"))
                         }
-                        Text("Pluviómetros del SAIH Tajo en la cuenca del Alberche. Es lluvia medida; la previsión está en Este año.")
+                        Text("Pluviómetros del SAIH Tajo en la cuenca del Alberche. Es lluvia medida; la previsión está en Ahora.")
                             .font(.caption).foregroundStyle(.secondary)
                     }
                     .panel()
@@ -56,6 +56,7 @@ struct ReservoirPage: View {
     var id: ReservoirID
     var snapshot: Snapshot
     @Environment(HistoryModel.self) private var history
+    @State private var mode: WaterCard.Mode = .today
 
     var body: some View {
         let reading = snapshot.reading(of: id)
@@ -64,29 +65,13 @@ struct ReservoirPage: View {
         ScrollView {
             VStack(spacing: 16) {
                 if let reading {
-                    WaterScene(percent: reading.percent, animated: false) {
-                        EmptyView()
-                    } figure: { onWater in
-                        FigureBlock(reading: reading, capacityHm3: capacity,
-                                    trendHm3: id == .sanJuan ? snapshot.live.trend24hHm3 : nil,
-                                    onWater: onWater, figureSize: 64)
-                            .padding(.horizontal, 20)
-                    }
-                    .frame(height: 360)
-                    .clipShape(.rect(cornerRadius: 28, style: .continuous))
+                    WaterCard(reading: reading, capacityHm3: capacity,
+                              trendHm3: id == .sanJuan ? snapshot.live.trend24hHm3 : nil,
+                              surface: loaded.flatMap { YearSurface(history: $0, today: reading, capacityHm3: capacity) },
+                              mode: $mode, figureSize: 64)
+                        .frame(height: 420)
                 } else {
                     ContentUnavailableView("Sin dato reciente", systemImage: "drop.triangle", description: Text("El SAIH no ha dado una lectura de \(id.name) en la última hora."))
-                }
-
-                if let loaded, loaded.daily.count > 1 {
-                    VStack(alignment: .leading, spacing: 10) {
-                        PanelTitle("Últimos 90 días", source: "SAIH Tajo")
-                        SurfaceHistory(volumes: Array(loaded.daily.suffix(90).map(\.volumeHm3)) + (reading.map { [$0.volumeHm3] } ?? []),
-                                       capacityHm3: capacity)
-                            .frame(height: 200)
-                            .clipShape(.rect(cornerRadius: 16, style: .continuous))
-                    }
-                    .panel()
                 }
 
                 HistoryPanel(reservoir: id, capacity: capacity, today: reading, history: history)

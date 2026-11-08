@@ -2,9 +2,12 @@ import Charts
 import EmbalseKit
 import SwiftUI
 
-/// "Ahora": the screen is the reservoir. The water stays put at the real level while the details scroll over it.
-/// Compact widths show one column; regular widths (iPad, iPhone Duo open) show the figure as a full-width band with
-/// columns below, the fold always in a gap between them. Layout follows size classes only.
+/// "Ahora" (docs/design/review-2.0/SYNTHESIS.md): the water card, then one-source modules. On compact widths the card
+/// is about two thirds of the screen and the first modules show below it; scrolling past it pins a strip with the
+/// figure. In a regular, tall window (iPad in portrait) it is a wide band with two columns of modules below. In a
+/// regular, wide window (iPad in landscape, iPhone Duo open, a Mac) it becomes a pane the full height of the window,
+/// with the modules scrolling beside it, and on iPhone Duo the fold falls between the two. Layout follows size
+/// classes and the window's size, never the device.
 struct NowView: View {
     var snapshot: Snapshot
     var origin: SnapshotRepository.Origin
@@ -13,35 +16,37 @@ struct NowView: View {
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var typeSize
+    @State private var mode: WaterCard.Mode = Self.initialMode
+    @State private var cardVisible = true
     @State private var fold = FoldGeometry()
-    @State private var blockHeight: CGFloat = 220
     @State private var motion = DeviceTilt()
 
-    private var regular: Bool { horizontalSizeClass == .regular }
-    private var amplitude: CGFloat { regular ? 8 : 6 }
+    /// Always today. `-CardMode year` opens the year view, for the capture scripts.
+    private static var initialMode: WaterCard.Mode {
+        #if DEBUG
+        if UserDefaults.standard.string(forKey: "CardMode") == "year" { return .year }
+        #endif
+        return .today
+    }
+
+    private var reading: ReservoirReading { snapshot.reading(of: .sanJuan)! }
+    private var surface: YearSurface? {
+        history.history(.sanJuan).flatMap { YearSurface(history: $0, today: reading, capacityHm3: snapshot.weekly.capacityHm3) }
+    }
 
     var body: some View {
         GeometryReader { proxy in
-            let viewport = proxy.size.height + proxy.safeAreaInsets.top + proxy.safeAreaInsets.bottom
-            let placement = FigurePlacement.decide(height: viewport, percent: snapshot.live.percent, amplitude: amplitude,
-                                                   block: blockHeight, bottomInset: proxy.safeAreaInsets.bottom + 24)
-            ZStack(alignment: .top) {
-                background
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 0) {
-                        header(placement, topInset: proxy.safeAreaInsets.top)
-                            .frame(height: max(viewport - proxy.safeAreaInsets.top, 0), alignment: .top)
-                        details
-                            .padding(.bottom, 24)
-                    }
-                    .frame(maxWidth: regular ? 1200 : .infinity)
-                    .frame(maxWidth: .infinity)
+            Group {
+                if horizontalSizeClass == .regular && proxy.size.width >= 700 && proxy.size.width >= proxy.size.height * 0.9 {
+                    pane(proxy)
+                } else {
+                    stack(proxy)
                 }
-                .scrollContentBackground(.hidden)
-                .refreshable { await refresh() }
-                .onGeometryChange(for: FoldGeometry.self) { FoldGeometry($0) } action: { fold = $0 }
             }
+            .onGeometryChange(for: FoldGeometry.self) { FoldGeometry($0) } action: { fold = $0 }
         }
+        .background(Color(uiColor: .systemGroupedBackground))
         .navigationTitle("San Juan")
         .toolbarTitleDisplayMode(.inlineLarge)
         .onAppear { if !reduceMotion { motion.start() } }
@@ -49,63 +54,73 @@ struct NowView: View {
         .task { await history.load(.sanJuan) }
     }
 
-    private var background: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30, paused: reduceMotion)) { context in
-            WaterBackground(percent: snapshot.live.percent,
-                            phase: reduceMotion ? 0.6 : WaterScene<EmptyView, EmptyView>.phase(at: context.date),
-                            amplitude: amplitude, tilt: reduceMotion ? 0 : motion.angle)
-        }
-        .ignoresSafeArea()
+    private func card(figure: CGFloat) -> some View {
+        WaterCard(reading: reading, capacityHm3: snapshot.weekly.capacityHm3, trendHm3: snapshot.live.trend24hHm3,
+                  surface: surface, mode: $mode, figureSize: figure, tilt: motion.angle)
     }
 
-    /// The first viewport: the place and the stale or offline notice above the water, the figure where the
-    /// placement rule puts it. Placement is in screen coordinates; the scroll content starts below `topInset`.
-    @ViewBuilder
-    private func header(_ placement: FigurePlacement, topInset: CGFloat) -> some View {
-        let reading = snapshot.reading(of: .sanJuan)!
-        ZStack(alignment: .topLeading) {
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Río Alberche · Madrid").font(.subheadline).foregroundStyle(.secondary)
-                Notice(snapshot: snapshot, origin: origin)
-            }
-            switch placement {
-            case .water(let top):
-                block(reading, onWater: true).padding(.top, top - topInset)
-            case .sky(let bottom):
-                block(reading, onWater: false)
-                    .frame(maxHeight: max(bottom - topInset, 0), alignment: .bottomLeading)
-            }
+    private var place: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Río Alberche · Madrid").font(.subheadline).foregroundStyle(.secondary)
+            Notice(snapshot: snapshot, origin: origin)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .padding(.horizontal, regular ? 40 : 22)
     }
 
-    private func block(_ reading: ReservoirReading, onWater: Bool) -> some View {
-        FigureBlock(reading: reading, capacityHm3: snapshot.weekly.capacityHm3, trendHm3: snapshot.live.trend24hHm3,
-                    onWater: onWater, figureSize: regular ? 128 : 88)
-            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { blockHeight = $0 }
+    /// Compact: the card, then the modules, with the strip once the card has scrolled away.
+    private func stack(_ proxy: GeometryProxy) -> some View {
+        let large = typeSize.isAccessibilitySize
+        let regular = horizontalSizeClass == .regular
+        let height = regular
+            ? max(proxy.size.height * 0.46, large ? 620 : 420)
+            : max(proxy.size.height * (large ? 0.85 : 0.66), large ? 620 : 420)
+        return ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                place.padding(.horizontal, 4)
+                card(figure: regular ? 96 : 64)
+                    .frame(height: height)
+                    .onScrollVisibilityChange(threshold: 0.2) { visible in
+                        withAnimation(.smooth(duration: 0.3)) { cardVisible = visible }
+                    }
+                Modules(snapshot: snapshot, columns: large ? 1 : 2)
+            }
+            .padding(.horizontal, regular ? 24 : 16)
+            .padding(.bottom, 24)
+            .frame(maxWidth: 1100)
+            .frame(maxWidth: .infinity)
+        }
+        .refreshable { await refresh() }
+        .overlay(alignment: .top) {
+            if !cardVisible {
+                WaterStrip(reading: reading, trendHm3: snapshot.live.trend24hHm3)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 4)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
     }
 
-    @ViewBuilder private var details: some View {
-        if regular {
-            DashboardColumns(fold: fold, columns: fold.center == nil && fold.width >= 1000 ? 3 : 2) {
-                RealtimePanel(snapshot: snapshot)
-                OutflowPanel(snapshot: snapshot)
-                WeatherPanel(weather: snapshot.weather)
-            } middle: {
-                YearSummaryPanel(snapshot: snapshot, history: history)
-            } trailing: {
-                RiverSummaryPanel(snapshot: snapshot)
+    /// Regular: the card as a pane the window's height, the modules scrolling beside it.
+    private func pane(_ proxy: GeometryProxy) -> some View {
+        let margin: CGFloat = 20
+        let gap = fold.keepClear.map { max(margin, $0.upperBound - $0.lowerBound) } ?? margin
+        let paneWidth = fold.center.map { $0 - gap / 2 - margin } ?? min(max(proxy.size.width * 0.42, 320), 540)
+        let rest = proxy.size.width - paneWidth - gap - margin * 2
+        return HStack(alignment: .top, spacing: gap) {
+            VStack(alignment: .leading, spacing: 10) {
+                place.padding(.horizontal, 4)
+                card(figure: 96)
             }
-        } else {
-            VStack(spacing: 16) {
-                RealtimePanel(snapshot: snapshot)
-                OutflowPanel(snapshot: snapshot)
-                MitecoPanel(weekly: snapshot.weekly)
-                WeatherPanel(weather: snapshot.weather)
+            .frame(width: paneWidth)
+            .padding(.bottom, margin)
+            ScrollView {
+                Modules(snapshot: snapshot, columns: rest >= 560 && !typeSize.isAccessibilitySize ? 2 : 1)
+                    .padding(.bottom, margin)
             }
-            .padding(.horizontal, 16)
+            .refreshable { await refresh() }
+            .frame(width: max(rest, 0))
         }
+        .padding(.horizontal, margin)
+        .padding(.top, 8)
     }
 }
 
@@ -271,42 +286,3 @@ struct WeatherPanel: View {
     }
 }
 
-/// On regular widths, "Este año" in short: the MITECO panel and a small comparison chart.
-struct YearSummaryPanel: View {
-    var snapshot: Snapshot
-    var history: HistoryModel
-
-    var body: some View {
-        VStack(spacing: 16) {
-            MitecoPanel(weekly: snapshot.weekly)
-            if let comparison = history.history(.sanJuan).flatMap(YearComparison.init) {
-                VStack(alignment: .leading, spacing: 10) {
-                    PanelTitle("Este año", source: Format.mitecoWeek(snapshot.weekly.day))
-                    YearComparisonChart(comparison: comparison, compact: true).frame(height: 170)
-                    YearComparisonChart.Legend()
-                }
-                .panel()
-            }
-        }
-    }
-}
-
-/// On regular widths, "El río" in short: the three tanks side by side.
-struct RiverSummaryPanel: View {
-    var snapshot: Snapshot
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            PanelTitle("El río", source: String(localized: "De aguas arriba a aguas abajo"))
-            HStack(alignment: .top, spacing: 12) {
-                ForEach(snapshot.chain) { reading in
-                    NavigationLink(value: Route.reservoir(reading.reservoir)) {
-                        ReservoirTank(reading: reading, isCurrent: reading.reservoir == .sanJuan, tankHeight: 90)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-        }
-        .panel()
-    }
-}

@@ -116,6 +116,11 @@ public enum Format {
         formatter("EEE", locale).string(from: date).replacingOccurrences(of: ".", with: "")
     }
 
+    /// "ene", "Jan"
+    public static func monthShort(_ date: Date, in locale: Locale = locale) -> String {
+        formatter("MMM", locale).string(from: date).replacingOccurrences(of: ".", with: "")
+    }
+
     /// "oct 2005", "Oct 2005"
     public static func monthYear(_ date: Date, in locale: Locale = locale) -> String {
         formatter("MMM yyyy", locale).string(from: date).replacingOccurrences(of: ".", with: "")
