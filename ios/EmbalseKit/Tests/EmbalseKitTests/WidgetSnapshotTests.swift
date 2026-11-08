@@ -102,6 +102,26 @@ final class WidgetSnapshotTests: XCTestCase {
         }
     }
 
+    private func history() throws -> History {
+        try FirestoreClient.makeDecoder().decode(History.self, from: Data(contentsOf: Fixture.root.appending(path: "contract/fixtures/history.json")))
+    }
+
+    func testHistory() throws {
+        let snapshot = try snapshot()
+        let history = try history()
+        try render("year-medium-light", size: medium) { YearWidgetView(snapshot: snapshot, now: now, history: history) }
+        try render("year-medium-dark", size: medium, scheme: .dark) { YearWidgetView(snapshot: snapshot, now: now, history: history) }
+        try render("year-large", size: large) { YearWidgetView(snapshot: snapshot, now: now, history: history) }
+        try render("comparison-large", size: large) { ComparisonWidgetView(snapshot: snapshot, history: history) }
+        try render("comparison-large-dark", size: large, scheme: .dark) { ComparisonWidgetView(snapshot: snapshot, history: history) }
+    }
+
+    func testRiver() throws {
+        let snapshot = try snapshot()
+        try render("river-small", size: small) { RiverWidgetView(snapshot: snapshot, now: now) }
+        try render("river-medium-dark", size: medium, scheme: .dark) { RiverWidgetView(snapshot: snapshot, now: now) }
+    }
+
     func testLockScreen() throws {
         let snapshot = try snapshot()
         try render("lock-circular", size: CGSize(width: 76, height: 76), scheme: .dark, corner: 38) {

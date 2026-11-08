@@ -12,6 +12,28 @@
         }
       }
     },
+    "Ahora" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Now"
+          }
+        }
+      }
+    },
+    "Burguillo, San Juan y Picadas, de aguas arriba a aguas abajo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Burguillo, San Juan and Picadas, from upstream to downstream."
+          }
+        }
+      }
+    },
     "El nivel del embalse de un vistazo." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -56,6 +78,17 @@
         }
       }
     },
+    "El río" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The river"
+          }
+        }
+      }
+    },
     "Elige qué embalse del Alberche muestra el widget." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -89,6 +122,28 @@
         }
       }
     },
+    "Este año y la media" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This year and the average"
+          }
+        }
+      }
+    },
+    "Los últimos 12 meses del embalse, con el año anterior. SAIH Tajo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The reservoir's last 12 months, with the year before. SAIH Tajo."
+          }
+        }
+      }
+    },
     "San Juan" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -96,6 +151,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "San Juan"
+          }
+        }
+      }
+    },
+    "San Juan este año, el anterior, la media de 10 años y el rango desde 1988. MITECO." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "San Juan this year, last year, the 10-year average and the range since 1988. MITECO."
+          }
+        }
+      }
+    },
+    "Último año" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last year"
           }
         }
       }

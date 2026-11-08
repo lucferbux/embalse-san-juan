@@ -35,11 +35,89 @@ struct ReservoirWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: "ReservoirWidget", intent: SelectReservoirIntent.self, provider: ConfigurableProvider()) { entry in
             HomeScreenView(entry: entry)
-                .containerBackground(for: .widget) { Color(red: 0.07, green: 0.20, blue: 0.40) }
+                .containerBackground(for: .widget) { WidgetSky() }
         }
-        .configurationDisplayName("Embalse de San Juan")
+        .configurationDisplayName("Ahora")
         .description("El nivel del embalse de un vistazo.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
+        .contentMarginsDisabled()
+    }
+}
+
+/// The sky behind the level widgets, removed by the system on tinted and clear screens.
+struct WidgetSky: View {
+    @Environment(\.colorScheme) private var scheme
+    var body: some View { Rectangle().fill(Palette.sky(scheme)) }
+}
+
+/// Like `ConfigurableProvider`, with the reservoir's history for the year's surface.
+struct HistoryProvider: AppIntentTimelineProvider {
+    func placeholder(in context: Context) -> ReservoirEntry { ReservoirTimeline.placeholder() }
+
+    func snapshot(for configuration: SelectReservoirIntent, in context: Context) async -> ReservoirEntry {
+        context.isPreview
+            ? ReservoirTimeline.preview(configuration.reservoir.reservoir, withHistory: true)
+            : await ReservoirTimeline.entry(configuration.reservoir.reservoir, withHistory: true)
+    }
+
+    func timeline(for configuration: SelectReservoirIntent, in context: Context) async -> Timeline<ReservoirEntry> {
+        let entry = await ReservoirTimeline.entry(configuration.reservoir.reservoir, withHistory: true)
+        return Timeline(entries: [entry], policy: .after(ReservoirTimeline.nextRefresh(after: .now)))
+    }
+}
+
+/// San Juan with its history, for the MITECO comparison and the river.
+struct SanJuanHistoryProvider: TimelineProvider {
+    func placeholder(in context: Context) -> ReservoirEntry { ReservoirTimeline.placeholder() }
+
+    func getSnapshot(in context: Context, completion: @escaping @Sendable (ReservoirEntry) -> Void) {
+        if context.isPreview { return completion(ReservoirTimeline.preview(.sanJuan, withHistory: true)) }
+        Task { completion(await ReservoirTimeline.entry(.sanJuan, withHistory: true)) }
+    }
+
+    func getTimeline(in context: Context, completion: @escaping @Sendable (Timeline<ReservoirEntry>) -> Void) {
+        Task {
+            let entry = await ReservoirTimeline.entry(.sanJuan, withHistory: true)
+            completion(Timeline(entries: [entry], policy: .after(ReservoirTimeline.nextRefresh(after: .now))))
+        }
+    }
+}
+
+struct YearWidget: Widget {
+    var body: some WidgetConfiguration {
+        AppIntentConfiguration(kind: "YearWidget", intent: SelectReservoirIntent.self, provider: HistoryProvider()) { entry in
+            YearWidgetView(snapshot: entry.snapshot, now: entry.date, reservoir: entry.reservoir, history: entry.history)
+                .containerBackground(for: .widget) { WidgetSky() }
+        }
+        .configurationDisplayName("Último año")
+        .description("Los últimos 12 meses del embalse, con el año anterior. SAIH Tajo.")
+        .supportedFamilies([.systemMedium, .systemLarge, .systemExtraLarge])
+        .contentMarginsDisabled()
+    }
+}
+
+struct ComparisonWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "ComparisonWidget", provider: SanJuanHistoryProvider()) { entry in
+            ComparisonWidgetView(snapshot: entry.snapshot, history: entry.history)
+                .containerBackground(for: .widget) { Palette.water(entry.snapshot.live.percent) }
+        }
+        .configurationDisplayName("Este año y la media")
+        .description("San Juan este año, el anterior, la media de 10 años y el rango desde 1988. MITECO.")
+        .supportedFamilies([.systemLarge, .systemExtraLarge])
+        .contentMarginsDisabled()
+    }
+}
+
+struct RiverWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "RiverWidget", provider: ReservoirProvider()) { entry in
+            RiverWidgetView(snapshot: entry.snapshot, now: entry.date)
+                .containerBackground(for: .widget) { WidgetSky() }
+        }
+        .configurationDisplayName("El río")
+        .description("Burguillo, San Juan y Picadas, de aguas arriba a aguas abajo.")
+        .supportedFamilies([.systemSmall, .systemMedium])
         .contentMarginsDisabled()
     }
 }
@@ -96,6 +174,9 @@ struct LevelValueProvider: ControlValueProvider {
 struct EmbalseWidgetBundle: WidgetBundle {
     var body: some Widget {
         ReservoirWidget()
+        YearWidget()
+        ComparisonWidget()
+        RiverWidget()
         ReservoirLockWidget()
         LevelControl()
     }

@@ -60,7 +60,7 @@ private struct WatchHeroPage: View {
     var body: some View {
         let live = snapshot.live
         ZStack(alignment: .bottomLeading) {
-            WidgetWaterScene(percent: live.percent).ignoresSafeArea()
+            WaterBackground(percent: live.percent, amplitude: 4).ignoresSafeArea()
             VStack(alignment: .leading, spacing: 2) {
                 Text(Format.percent(live.percent))
                     .font(.system(size: figure, weight: .bold, design: .rounded))

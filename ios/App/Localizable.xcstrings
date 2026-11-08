@@ -1,6 +1,17 @@
 {
   "sourceLanguage" : "es",
   "strings" : {
+    "%@ · %@ en la semana" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · %@ this week"
+          }
+        }
+      }
+    },
     "%lld de %lld caracteres." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -100,6 +111,17 @@
         }
       }
     },
+    "Burguillo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Burguillo"
+          }
+        }
+      }
+    },
     "Cada línea es el dato semanal de MITECO. La media necesita los 10 años anteriores completos." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -107,6 +129,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Each line is MITECO's weekly figure. The average needs all 10 previous years."
+          }
+        }
+      }
+    },
+    "Cada línea es el dato semanal de MITECO. La media necesita los 10 años anteriores completos. La franja va del mínimo al máximo de cada semana desde 1988." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each line is MITECO's weekly figure. The average needs all 10 previous years. The band runs from the lowest to the highest of each week since 1988."
           }
         }
       }
@@ -331,6 +364,17 @@
         }
       }
     },
+    "En la presa" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At the dam"
+          }
+        }
+      }
+    },
     "Enviar" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -393,6 +437,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This year"
+          }
+        }
+      }
+    },
+    "Este año, el anterior y la media" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This year, last year and the average"
           }
         }
       }
@@ -496,6 +551,17 @@
         }
       }
     },
+    "Humedad %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Humidity %@"
+          }
+        }
+      }
+    },
     "La app es gratuita y seguirá siéndolo. Si te resulta útil, una propina ayuda a cubrir los gastos de mantenimiento." : {
       "extractionState" : "manual",
       "localizations" : {
@@ -573,6 +639,17 @@
         }
       }
     },
+    "Lluvia hoy %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rain today %@"
+          }
+        }
+      }
+    },
     "Media" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -580,6 +657,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mean"
+          }
+        }
+      }
+    },
+    "Media de 10 años: %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "10-year average: %@"
           }
         }
       }
@@ -639,6 +727,17 @@
         }
       }
     },
+    "Nivel %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Level %@"
+          }
+        }
+      }
+    },
     "Nivel del embalse" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -690,6 +789,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Period"
+          }
+        }
+      }
+    },
+    "Picadas" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Picadas"
+          }
+        }
+      }
+    },
+    "Pico de %@ a las %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peak of %@ at %@"
+          }
+        }
+      }
+    },
+    "Pluviómetros del SAIH Tajo en la cuenca del Alberche. Es lluvia medida; la previsión está en Ahora." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SAIH Tajo rain gauges in the Alberche basin. This is measured rain; the forecast is in Now."
           }
         }
       }
@@ -767,6 +899,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Check your connection and try again."
+          }
+        }
+      }
+    },
+    "Récords desde 1988" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Records since 1988"
           }
         }
       }
@@ -855,6 +998,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "San Juan, %@"
+          }
+        }
+      }
+    },
+    "Semanal" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekly"
+          }
+        }
+      }
+    },
+    "Semanal · MITECO" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weekly · MITECO"
           }
         }
       }
@@ -954,6 +1119,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dam type"
+          }
+        }
+      }
+    },
+    "Trasvase %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transfer %@"
           }
         }
       }

@@ -8,7 +8,7 @@ Portable summary for coding agents. [CLAUDE.md](CLAUDE.md) has the detail: **upd
 - **Before finishing:** run `make check` (it includes `make check-site`, the website's Playwright tests). After changing sources, `make live-check`. After changing widgets, `make widgets` and look at the images.
 - **Contract:** `contract/snapshot.schema.json`. Changes touch backend, Swift models, Kotlin models and `make fixture`.
 - **Xcode project:** generated from `ios/project.yml`. Never edit the `.xcodeproj`.
-- **Layout:** size classes only on iOS, available width only on Android. On iPhone Duo the fold stays in the gap between columns.
+- **Layout:** size classes and window size on iOS (card, modules; a side pane on wide windows), available width only on Android. On iPhone Duo the fold stays in the gap between the pane and the modules. See docs/design/review-2.0/SYNTHESIS.md.
 - **Android:** `android/`, Compose and Material 3 with dynamic colour. On Google Play's internal testing track. Production needs a closed test first.
 - **Release:** iOS: `scripts/release.sh`, then `fastlane metadata`. Android: `scripts/release-android.sh`, then upload in Play Console. Nothing submits for review.
 - **Screenshots:** export scripts write raw shots to `fastlane/screenshots_raw`; `swift scripts/make-creative-assets.swift` frames them for the stores. Never edit the framed ones by hand.

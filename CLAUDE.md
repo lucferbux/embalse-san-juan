@@ -49,12 +49,21 @@ MITECO (weekly) ────┘                                                 
 
 ## Layout
 
-Layout follows size classes only, never idiom, orientation or screen size:
+Layout follows size classes and the window's size, never the device or its orientation
+(docs/design/review-2.0/SYNTHESIS.md). Three sections everywhere: Ahora, Histórico, El río.
 
-- **Compact** (iPhone, iPhone Duo closed, narrow iPad splits): `List`.
-- **Regular** (iPad, iPhone Duo open): `DashboardColumns`, two columns of cards.
-- **iPhone Duo inner display:** the fold is in the gap between the columns, measured from `reservedRegions` because side bars make the safe area off-centre. Controls that would sit on the fold, like the history picker, stay on one side. iOS 27.1 ships only on iPhone Duo, so the deployment target stays 27.0 and 27.1 APIs need `#available`.
-- **Widgets** are one full-bleed surface with white text, so nothing gets cut at the waterline. Don't go back to splitting them into panels or two-tone text.
+- **The water card** (`WaterCard` in EmbalseKit) is the app's signature. It always opens on today's level with moving
+  water; "Hoy | Año" turns the same surface into the last 12 months of SAIH. The figure block goes wholly in the water
+  (white) or wholly in the sky (label colour), never across the waterline.
+- **Compact** (iPhone, iPhone Duo closed, narrow iPad splits): the card at about two thirds of the screen, one-source
+  modules below, and a strip with the figure once the card scrolls away.
+- **Regular and tall** (iPad in portrait): the card as a wide band, two columns of modules below.
+- **Regular and wide** (iPad in landscape, iPhone Duo open, a future Mac): the card as a pane the window's height, the
+  modules scrolling beside it. The tab bar adapts into a sidebar, with Burguillo and Picadas as their own entries.
+- **iPhone Duo inner display:** the fold is in the gap between the pane and the modules, measured from `reservedRegions` because side bars make the safe area off-centre. iOS 27.1 ships only on iPhone Duo, so the deployment target stays 27.0 and 27.1 APIs need `#available`.
+- **Widgets** follow the card: light sky (dark in dark mode), the real level, and the figure wholly in the water or
+  wholly in the sky. Name and time at the top, always in the sky. History widgets show the last year (SAIH) or this
+  year against the average (MITECO), never both. Don't go back to panels over the water or text split by the waterline.
 
 ## Android
 

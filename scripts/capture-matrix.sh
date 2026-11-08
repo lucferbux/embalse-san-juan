@@ -60,6 +60,7 @@ ios_screens() {
     shoot "$udid" "$dir/$mode-06-ficha.png" "$display" -ScreenshotScene about ${extra[@]+"${extra[@]}"}
     shoot "$udid" "$dir/$mode-07-avisos.png" "$display" -ScreenshotScene alerts ${extra[@]+"${extra[@]}"}
     shoot "$udid" "$dir/$mode-08-propinas.png" "$display" -ScreenshotScene tips -ScreenshotTips YES ${extra[@]+"${extra[@]}"}
+    shoot "$udid" "$dir/$mode-09-ahora-ano.png" "$display" -CardMode year ${extra[@]+"${extra[@]}"}
 }
 
 ios_format() {

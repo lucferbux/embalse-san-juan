@@ -85,7 +85,7 @@ The ficha, sources, privacy, suggestions, tips, alerts settings and sharing are 
   - **Fetching:** standalone REST, no Firebase SDK.
 
 ### Widgets (iOS Home Screen, StandBy and Lock Screen; Android Glance)
-- **One full-bleed surface with white text,** as in 1.0 (`CLAUDE.md`). No light panels.
+- **Superseded (8 Nov 2026):** widgets now use the card's light sky and the in-water-or-in-sky rule. See review-2.0/SYNTHESIS.md.
 - **Every family shows the percentage, volume, trend word and a dated source** (A25, A26):
   - **Small:** the percentage, then "67,0 hm³ · Estable", then "SAIH 16:00".
   - **Medium:** adds the MITECO panel, styled apart.

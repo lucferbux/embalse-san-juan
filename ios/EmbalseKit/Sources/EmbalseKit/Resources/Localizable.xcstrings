@@ -1,6 +1,28 @@
 {
   "sourceLanguage" : "es",
   "strings" : {
+    "%@ menos que hace un año" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ less than a year ago"
+          }
+        }
+      }
+    },
+    "%@ más que hace un año" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ more than a year ago"
+          }
+        }
+      }
+    },
     "Algo no funciona" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8,6 +30,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Something is wrong"
+          }
+        }
+      }
+    },
+    "Año" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Year"
           }
         }
       }
@@ -30,6 +63,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Falling"
+          }
+        }
+      }
+    },
+    "Cambia entre el nivel de hoy y los últimos 12 meses" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switches between today's level and the last 12 months"
+          }
+        }
+      }
+    },
+    "Cota" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elevation"
+          }
+        }
+      }
+    },
+    "Desde 1988" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Since 1988"
+          }
+        }
+      }
+    },
+    "El río" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The river"
           }
         }
       }
@@ -78,6 +155,17 @@
         }
       }
     },
+    "Este año, el anterior y la media" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This year, last year and the average"
+          }
+        }
+      }
+    },
     "Este año, el año pasado y la media de 10 años" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -107,6 +195,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A year ago"
+          }
+        }
+      }
+    },
+    "Hoy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
+          }
+        }
+      }
+    },
+    "Lluvia 24 h" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rain 24 h"
+          }
+        }
+      }
+    },
+    "Media" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Average"
           }
         }
       }
@@ -155,6 +276,17 @@
         }
       }
     },
+    "Salida" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outflow"
+          }
+        }
+      }
+    },
     "Sin dato" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -184,6 +316,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Suggestion"
+          }
+        }
+      }
+    },
+    "Vista del agua" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Water view"
           }
         }
       }
@@ -221,6 +364,17 @@
         }
       }
     },
+    "hace un año" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "a year ago"
+          }
+        }
+      }
+    },
     "hace un año %@" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -254,6 +408,17 @@
         }
       }
     },
+    "rango 5 años" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "5-year range"
+          }
+        }
+      }
+    },
     "semana del %@" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -283,6 +448,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Last %lld days, from %@ to %@"
+          }
+        }
+      }
+    },
+    "Últimos 12 meses · SAIH Tajo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last 12 months · SAIH Tajo"
           }
         }
       }
