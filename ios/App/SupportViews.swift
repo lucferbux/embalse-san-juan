@@ -169,8 +169,14 @@ private struct TipRow: View {
                     Text(price)
                         .fontWeight(.semibold)
                         .monospacedDigit()
+                        .foregroundStyle(.tint)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Capsule().strokeBorder(.tint, lineWidth: 1.5))
                 }
             }
+            .contentShape(.rect)
         }
+        .buttonStyle(.plain)
     }
 }

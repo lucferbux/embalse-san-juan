@@ -66,7 +66,7 @@ public struct FigureBlock: View {
     var figureSize: CGFloat
     var compact: Bool
 
-    /// `compact` keeps the figure and the volume only, for the year view, where the surface is the subject.
+    /// `compact` leaves out the trend, for the year view, where the surface is the subject.
     public init(reading: ReservoirReading, capacityHm3: Double, trendHm3: Double?, onWater: Bool, figureSize: CGFloat = 88, compact: Bool = false) {
         self.reading = reading
         self.capacityHm3 = capacityHm3
@@ -81,7 +81,7 @@ public struct FigureBlock: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(Format.percent(reading.percent))
-                .figureFont(.largeTitle, size: figureSize * scale)
+                .figureFont(.largeTitle, size: figureSize * min(scale, 1.6))
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
             Text(Format.volumeOfCapacity(reading.volumeHm3, capacityHm3))
@@ -91,11 +91,9 @@ public struct FigureBlock: View {
                     .font(.subheadline.weight(.medium))
                     .opacity(0.92)
             }
-            if !compact {
-                Label(Format.saihSource(reading.observedAt), systemImage: "clock")
-                    .font(.footnote.weight(.medium))
-                    .opacity(0.8)
-            }
+            Label(Format.saihSource(reading.observedAt), systemImage: "clock")
+                .font(.footnote.weight(.medium))
+                .opacity(0.8)
         }
         .foregroundStyle(onWater ? AnyShapeStyle(Palette.onWater) : AnyShapeStyle(.primary))
         .accessibilityElement(children: .ignore)
@@ -340,6 +338,7 @@ public struct YearComparisonChart: View {
             }
         }
         .chartLegend(.hidden)
+        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         .accessibilityChartDescriptor(YearComparisonDescriptor(comparison: comparison))
     }
 

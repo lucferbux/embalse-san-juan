@@ -43,46 +43,83 @@ public struct WaterCard: View {
     private var level: Double { min(max(reading.percent / 100, 0), 1) }
 
     public var body: some View {
-        GeometryReader { proxy in
-            let size = proxy.size
-            ZStack(alignment: .topLeading) {
-                Rectangle().fill(Palette.sky(scheme))
-                if showsYear, let surface { YearExtras(surface: surface, topPad: Self.topPad).transition(.opacity) }
-                water(size: size)
-                if showsYear, let surface {
-                    YearMarks(surface: surface, topPad: Self.topPad, avoidWidth: blockSize.width + 24)
-                        .transition(.opacity)
+        Group {
+            if typeSize.isAccessibilitySize {
+                accessibleLayout
+            } else {
+                GeometryReader { proxy in
+                    let size = proxy.size
+                    ZStack(alignment: .topLeading) {
+                        surfaceLayer(size: size)
+                        figure(size: size)
+                        controls(width: size.width)
+                    }
                 }
-                figure(size: size)
-                controls
             }
         }
         .clipShape(.rect(cornerRadius: cornerRadius, style: .continuous))
         .accessibilityElement(children: .contain)
     }
 
+    /// At accessibility sizes the block can't fit in or above the water, so the water keeps the card's top and the
+    /// block goes in full below it, in the label colour. The card then takes the height it needs.
+    private var accessibleLayout: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            controls(width: .infinity)
+            GeometryReader { proxy in surfaceLayer(size: proxy.size) }
+                .frame(minHeight: 200, maxHeight: .infinity)
+                .clipShape(.rect(cornerRadius: cornerRadius - 10, style: .continuous))
+                .padding(.horizontal, 10)
+            FigureBlock(reading: reading, capacityHm3: capacityHm3, trendHm3: trendHm3, onWater: false,
+                        figureSize: figureSize, compact: showsYear)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 18)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .background(Palette.sky(scheme))
+    }
+
+    private func surfaceLayer(size: CGSize) -> some View {
+        ZStack(alignment: .topLeading) {
+            Rectangle().fill(Palette.sky(scheme))
+            if showsYear, let surface { YearExtras(surface: surface, topPad: topPad).transition(.opacity) }
+            water(size: size)
+            if showsYear, let surface {
+                YearMarks(surface: surface, topPad: topPad)
+                    .dynamicTypeSize(...DynamicTypeSize.xLarge)
+                    .transition(.opacity)
+            }
+        }
+    }
+
+    /// At accessibility sizes the controls sit above the water, so the water starts near the top.
+    private var topPad: CGFloat { typeSize.isAccessibilitySize ? 16 : Self.topPad }
+    /// The crest's real height above the mean waterline (two waves), plus the tilt's lift at the card's edge.
+    private var crest: CGFloat { Self.amplitude * 1.45 + (tilt == 0 || reduceMotion ? 0 : 7) }
+
     // MARK: Water
 
     @ViewBuilder
     private func water(size: CGSize) -> some View {
-        let crest = surface?.levels ?? []
+        let crestLevels = surface?.levels ?? []
         let still = !animated || reduceMotion
         TimelineView(.animation(minimumInterval: 1.0 / 30, paused: still)) { context in
             let phase = still ? 0.6 : WaterScene<EmptyView, EmptyView>.phase(at: context.date)
             ZStack {
-                CardWater(level: level, crest: crest, progress: showsYear ? 1 : 0, phase: phase + 2.1,
-                          amplitude: Self.amplitude * 0.8, topPad: Self.topPad, offset: -3)
+                CardWater(level: level, crest: crestLevels, progress: showsYear ? 1 : 0, phase: phase + 2.1,
+                          amplitude: Self.amplitude * 0.8, topPad: topPad, offset: -3)
                     .fill(Palette.waterCrest)
                     .opacity(showsYear ? 0 : 1)
-                CardWater(level: level, crest: crest, progress: showsYear ? 1 : 0, phase: phase,
-                          amplitude: Self.amplitude, topPad: Self.topPad)
+                CardWater(level: level, crest: crestLevels, progress: showsYear ? 1 : 0, phase: phase,
+                          amplitude: Self.amplitude, topPad: topPad)
                     .fill(Palette.water(reading.percent))
-                CardWater(level: level, crest: crest, progress: showsYear ? 1 : 0, phase: phase,
-                          amplitude: Self.amplitude, topPad: Self.topPad, strokeOnly: true)
+                CardWater(level: level, crest: crestLevels, progress: showsYear ? 1 : 0, phase: phase,
+                          amplitude: Self.amplitude, topPad: topPad, strokeOnly: true)
                     .stroke(Palette.crestLine, style: StrokeStyle(lineWidth: 2, lineJoin: .round))
             }
-            .rotationEffect(.radians(showsYear || reduceMotion ? 0 : tilt))
-            .scaleEffect(showsYear || tilt == 0 ? 1 : 1.12)
+            // About the waterline, so the level stays where it is and only the surface leans.
+            .rotationEffect(.radians(showsYear || reduceMotion ? 0 : tilt),
+                            anchor: UnitPoint(x: 0.5, y: Double((topPad + (size.height - topPad) * (1 - level)) / max(size.height, 1))))
         }
         .accessibilityHidden(true)
     }
@@ -100,22 +137,24 @@ public struct WaterCard: View {
 
     @ViewBuilder
     private func figure(size: CGSize) -> some View {
-        let usable = size.height - Self.topPad
+        let usable = size.height - topPad
+        // In the year view the months take a strip at the bottom of the water.
         let placement = FigurePlacement.decide(height: usable, percent: waterUnderBlock(width: size.width) * 100,
-                                               amplitude: Self.amplitude, block: blockSize.height, bottomInset: 14)
+                                               amplitude: crest, block: blockSize.height, bottomInset: showsYear ? 30 : 14)
         let block = FigureBlock(reading: reading, capacityHm3: capacityHm3, trendHm3: trendHm3,
                                 onWater: placement.isOnWater, figureSize: showsYear ? figureSize * 0.7 : figureSize,
                                 compact: showsYear)
             .padding(.horizontal, 20)
-            .fixedSize()
+            .fixedSize(horizontal: false, vertical: true)
             .onGeometryChange(for: CGSize.self) { $0.size } action: { blockSize = $0 }
-            .frame(maxWidth: size.width, alignment: .leading)
+            .frame(width: size.width, alignment: .leading)
         Group {
             switch placement {
             case .water(let top):
-                block.padding(.top, Self.topPad + top)
+                block.padding(.top, topPad + top)
             case .sky(let bottom):
-                block.frame(height: Self.topPad + bottom, alignment: .bottomLeading)
+                // Never above the switch's band, even when the sky is short.
+                block.frame(height: max(topPad + bottom, topPad + blockSize.height), alignment: .bottomLeading)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -124,12 +163,16 @@ public struct WaterCard: View {
 
     // MARK: Switch and legend
 
-    @ViewBuilder private var controls: some View {
-        HStack(alignment: .top, spacing: 12) {
-            if showsYear {
+    @ViewBuilder private func controls(width: CGFloat) -> some View {
+        let stacked = typeSize.isAccessibilitySize
+        let layout = stacked ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8)) : AnyLayout(HStackLayout(alignment: .top, spacing: 12))
+        layout {
+            if showsYear && !stacked {
                 YearLegend().transition(.opacity)
+                Spacer(minLength: 0)
+            } else if !stacked {
+                Spacer(minLength: 0)
             }
-            Spacer(minLength: 0)
             #if os(iOS)
             if surface != nil {
                 Picker(selection: Binding(get: { mode }, set: { new in withAnimation(.smooth(duration: 0.9)) { mode = new } })) {
@@ -139,11 +182,13 @@ public struct WaterCard: View {
                     Text("Vista del agua", bundle: .module)
                 }
                 .pickerStyle(.segmented)
-                .frame(width: typeSize.isAccessibilitySize ? 170 : 128)
+                .frame(width: typeSize.isAccessibilitySize ? 220 : 128)
                 .accessibilityHint(Text("Cambia entre el nivel de hoy y los últimos 12 meses", bundle: .module))
             }
             #endif
+            if showsYear && stacked { YearLegend().dynamicTypeSize(...DynamicTypeSize.xxxLarge).transition(.opacity) }
         }
+        .frame(maxWidth: width, alignment: .leading)
         .padding(.horizontal, 14)
         .padding(.top, 12)
     }
@@ -200,8 +245,10 @@ struct CardWater: Shape {
         var path = Path()
         path.addLines(points)
         if !strokeOnly {
-            path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-            path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+            path.addLine(to: CGPoint(x: rect.maxX + 20, y: points.last?.y ?? rect.maxY))
+            path.addLine(to: CGPoint(x: rect.maxX + 20, y: rect.maxY + 40))
+            path.addLine(to: CGPoint(x: rect.minX - 20, y: rect.maxY + 40))
+            path.addLine(to: CGPoint(x: rect.minX - 20, y: points.first?.y ?? rect.maxY))
             path.closeSubpath()
         }
         return path
@@ -242,7 +289,6 @@ private struct YearExtras: View {
 private struct YearMarks: View {
     var surface: YearSurface
     var topPad: CGFloat
-    var avoidWidth: CGFloat
 
     var body: some View {
         GeometryReader { proxy in
@@ -271,10 +317,11 @@ private struct YearMarks: View {
                 }
                 Text(String(localized: "Hoy", bundle: .module).lowercased(with: Format.locale))
                     .font(.caption.weight(.semibold))
-                    .position(x: x(count - 1) - 24, y: y(surface.levels.last ?? 0) - 16)
+                    .foregroundStyle(.secondary)
+                    .position(x: x(count - 1) - 24, y: y(surface.levels.last ?? 0) - 18)
                 ForEach(monthStarts, id: \.index) { month in
                     let mx = x(month.index)
-                    if mx > avoidWidth, mx < size.width - 30 {
+                    if mx > 8, mx < size.width - 30 {
                         Text(month.label)
                             .font(.caption2.weight(.medium))
                             .foregroundStyle(.white.opacity(0.65))
@@ -319,7 +366,8 @@ private struct YearLegend: View {
             .font(.caption2)
         }
         .foregroundStyle(.secondary)
-        .fixedSize()
+        .lineLimit(2)
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 

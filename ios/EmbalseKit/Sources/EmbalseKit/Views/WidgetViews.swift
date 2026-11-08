@@ -74,32 +74,37 @@ struct WidgetLevelBackground: View {
 }
 
 /// Places a block over `WidgetLevelBackground`: at the bottom, in white, when the water is deep enough for it, or
-/// just above the waterline in the label colour.
+/// just above the waterline in the label colour. When neither fits, the block drops its second line (`compact`), and
+/// if that still doesn't fit it goes wherever there is more room, never over the header.
 struct WidgetLevelLayout<Header: View, Block: View>: View {
     var percent: Double
     /// The block's height, estimated: widgets can't measure and re-lay out.
     var block: CGFloat
+    var compactBlock: CGFloat
+    /// A stale header has a second line with the date.
+    var stale: Bool
     @ViewBuilder var header: Header
-    var content: (_ onWater: Bool) -> Block
+    var content: (_ onWater: Bool, _ compact: Bool) -> Block
     @Environment(\.widgetRenderingMode) private var renderingMode
+
+    static var amplitude: CGFloat { 3 * 1.45 }
 
     var body: some View {
         GeometryReader { proxy in
-            let top = WidgetStyle.top(proxy.size)
-            let placement = FigurePlacement.decide(height: proxy.size.height - top, percent: percent, amplitude: 3,
-                                                   block: block, bottomInset: WidgetStyle.margin - 4)
+            let top = WidgetStyle.top(proxy.size) + (stale ? 16 : 0)
+            let (placement, compact) = place(usable: proxy.size.height - top)
             let onWater = placement.isOnWater && renderingMode == .fullColor
             ZStack(alignment: .topLeading) {
-                WidgetLevelBackground(percent: percent, top: top)
+                WidgetLevelBackground(percent: percent, top: WidgetStyle.top(proxy.size))
                 header
                     .padding(.horizontal, WidgetStyle.margin)
                     .padding(.top, WidgetStyle.margin - 2)
                 Group {
                     switch placement {
                     case .water:
-                        content(onWater).frame(maxHeight: .infinity, alignment: .bottomLeading).padding(.bottom, WidgetStyle.margin - 2)
+                        content(onWater, compact).frame(maxHeight: .infinity, alignment: .bottomLeading).padding(.bottom, WidgetStyle.margin - 2)
                     case .sky(let bottom):
-                        content(onWater).frame(height: top + bottom, alignment: .bottomLeading)
+                        content(onWater, compact).frame(height: max(bottom, 0), alignment: .bottomLeading).padding(.top, top)
                     }
                 }
                 .foregroundStyle(onWater ? AnyShapeStyle(Palette.onWater) : AnyShapeStyle(.primary))
@@ -107,6 +112,21 @@ struct WidgetLevelLayout<Header: View, Block: View>: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
+    }
+
+    private func place(usable: CGFloat) -> (FigurePlacement, Bool) {
+        let inset = WidgetStyle.margin - 4
+        func fit(_ height: CGFloat) -> FigurePlacement? {
+            let placement = FigurePlacement.decide(height: usable, percent: percent, amplitude: Self.amplitude, block: height, bottomInset: inset)
+            if case .sky(let bottom) = placement, bottom < height { return nil }
+            return placement
+        }
+        if let placement = fit(block) { return (placement, false) }
+        if let placement = fit(compactBlock) { return (placement, true) }
+        let level = usable * min(max(percent / 100, 0), 1)
+        let depth = level - Self.amplitude - waterlineClearance - inset
+        let sky = usable - level - Self.amplitude - waterlineClearance
+        return depth >= sky ? (.water(top: usable - level), true) : (.sky(bottom: max(sky, 0)), true)
     }
 }
 
@@ -167,13 +187,15 @@ public struct SmallWidgetView: View {
     }
 
     public var body: some View {
-        WidgetLevelLayout(percent: data.reading.percent, block: 54) {
+        WidgetLevelLayout(percent: data.reading.percent, block: 56, compactBlock: 38, stale: data.isStale(at: now)) {
             WidgetHeader(data: data, now: now)
-        } content: { onWater in
+        } content: { onWater, compact in
             VStack(alignment: .leading, spacing: 1) {
-                figure(data, size: 32)
-                (trendLine(data, sentence: false) ?? Text(Format.hm3(data.reading.volumeHm3)))
-                    .font(.caption.weight(.semibold)).secondary(onWater).lineLimit(1)
+                figure(data, size: compact ? 28 : 32)
+                if !compact {
+                    (trendLine(data, sentence: false) ?? Text(Format.hm3(data.reading.volumeHm3)))
+                        .font(.caption.weight(.semibold)).secondary(onWater).lineLimit(1)
+                }
             }
         }
         .accessibilityElement(children: .combine)
@@ -190,23 +212,20 @@ public struct MediumWidgetView: View {
     }
 
     public var body: some View {
-        WidgetLevelLayout(percent: data.reading.percent, block: 62) {
+        WidgetLevelLayout(percent: data.reading.percent, block: 64, compactBlock: 44, stale: data.isStale(at: now)) {
             WidgetHeader(data: data, now: now, source: "SAIH Tajo · " + Format.hour(data.reading.observedAt))
-        } content: { onWater in
+        } content: { onWater, compact in
             HStack(alignment: .bottom, spacing: 10) {
                 VStack(alignment: .leading, spacing: 1) {
-                    figure(data, size: 38)
-                    (trendLine(data, sentence: true) ?? Text(Format.hm3(data.reading.volumeHm3)))
-                        .font(.caption.weight(.medium)).secondary(onWater).lineLimit(1).minimumScaleFactor(0.8)
-                }
-                Spacer(minLength: 0)
-                VStack(alignment: .trailing, spacing: 3) {
-                    Text(Format.volumeOfCapacity(data.reading.volumeHm3, data.capacityHm3)).font(.caption.weight(.semibold))
-                    if data.reading.reservoir == .sanJuan, let weekly = data.weekly {
-                        Text(verbatim: "MITECO \(Format.percent(weekly.percent))").font(.caption2).secondary(onWater)
+                    figure(data, size: compact ? 32 : 38)
+                    if !compact {
+                        (trendLine(data, sentence: true) ?? Text(Format.hm3(data.reading.volumeHm3)))
+                            .font(.caption.weight(.medium)).secondary(onWater).lineLimit(1).minimumScaleFactor(0.8)
                     }
                 }
-                .monospacedDigit().lineLimit(1)
+                Spacer(minLength: 0)
+                Text(Format.volumeOfCapacity(data.reading.volumeHm3, data.capacityHm3))
+                    .font(.caption.weight(.semibold)).monospacedDigit().lineLimit(1).minimumScaleFactor(0.8)
             }
         }
     }
@@ -224,15 +243,15 @@ public struct LargeWidgetView: View {
     }
 
     public var body: some View {
-        WidgetLevelLayout(percent: data.reading.percent, block: 112) {
+        WidgetLevelLayout(percent: data.reading.percent, block: 116, compactBlock: 84, stale: data.isStale(at: now)) {
             WidgetHeader(data: data, now: now, subtitle: data.reading.reservoir == .sanJuan ? "Río Alberche" : nil,
                          source: "SAIH Tajo · " + Format.hour(data.reading.observedAt))
-        } content: { onWater in
+        } content: { onWater, compact in
             HStack(alignment: .bottom, spacing: 12) {
                 VStack(alignment: .leading, spacing: 3) {
-                    figure(data, size: 56)
+                    figure(data, size: compact ? 44 : 56)
                     Text(Format.volumeOfCapacity(data.reading.volumeHm3, data.capacityHm3)).font(.subheadline.weight(.semibold))
-                    trendLine(data, sentence: true)?.font(.caption.weight(.medium)).secondary(onWater)
+                    if !compact { trendLine(data, sentence: true)?.font(.caption.weight(.medium)).secondary(onWater) }
                 }
                 .lineLimit(1).minimumScaleFactor(0.8)
                 Spacer(minLength: 0)
@@ -291,8 +310,9 @@ public struct YearWidgetView: View {
                 } else {
                     WidgetLevelBackground(percent: data.reading.percent, top: top)
                 }
-                WidgetHeader(data: data, now: now, source: "SAIH Tajo")
+                WidgetHeader(data: data, now: now, source: "SAIH Tajo · " + Format.hour(data.reading.observedAt))
                     .padding(.horizontal, WidgetStyle.margin).padding(.top, WidgetStyle.margin - 2)
+                let onWater = renderingMode == .fullColor && blockFitsInWater(size: size, top: top)
                 VStack(alignment: .leading, spacing: 1) {
                     figure(data, size: size.height > 300 ? 48 : 30)
                     if let change = data.surface?.changeFromLastYearHm3 {
@@ -300,16 +320,25 @@ public struct YearWidgetView: View {
                             .font(.caption.weight(.medium)).opacity(0.88).lineLimit(1).minimumScaleFactor(0.8)
                     }
                 }
-                .foregroundStyle(renderingMode == .fullColor ? AnyShapeStyle(Palette.onWater) : AnyShapeStyle(.primary))
+                .foregroundStyle(onWater ? AnyShapeStyle(Palette.onWater) : AnyShapeStyle(.primary))
                 .padding(WidgetStyle.margin)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: onWater ? .bottomLeading : .topLeading)
+                .padding(.top, onWater ? 0 : top - 6)
             }
         }
         .accessibilityElement(children: .combine)
     }
 
+    /// The chart stands on a strip of water that holds the figure: its 0 is the strip's top, so the figure is always
+    /// in the water and never over the curve.
+    private func floor(_ size: CGSize) -> CGFloat { (size.height > 300 ? 86 : 56) + WidgetStyle.margin }
+
+    private func blockFitsInWater(size: CGSize, top: CGFloat) -> Bool {
+        data.surface.map { $0.levels.count > 1 } ?? (data.reading.percent > 45)
+    }
+
     private func surfaceDrawing(_ surface: YearSurface, size: CGSize, top: CGFloat) -> some View {
-        let usable = size.height - top
+        let usable = size.height - top - floor(size)
         let y = { (fraction: Double) in top + usable * (1 - min(max(fraction, 0), 1.02)) }
         let x = { (index: Int, count: Int) in size.width * CGFloat(index) / CGFloat(max(count - 1, 1)) }
         let line = { (values: [Double]) -> Path in
@@ -351,6 +380,7 @@ public struct YearWidgetView: View {
 public struct ComparisonWidgetView: View {
     var data: WidgetReading
     @Environment(\.widgetRenderingMode) private var renderingMode
+    @Environment(\.colorScheme) private var scheme
 
     public init(snapshot: Snapshot, history: History?) {
         data = WidgetReading(snapshot: snapshot, reservoir: .sanJuan, history: history)
@@ -358,7 +388,7 @@ public struct ComparisonWidgetView: View {
 
     public var body: some View {
         ZStack(alignment: .topLeading) {
-            if renderingMode == .fullColor { Rectangle().fill(Palette.water(data.reading.percent)) }
+            if renderingMode == .fullColor { Rectangle().fill(Palette.sky(scheme)) }
             VStack(alignment: .leading, spacing: 10) {
                 VStack(alignment: .leading, spacing: 1) {
                     Text("Este año, el anterior y la media", bundle: .module).font(.subheadline.weight(.bold))
@@ -381,7 +411,7 @@ public struct ComparisonWidgetView: View {
             }
             .padding(WidgetStyle.margin + 2)
         }
-        .foregroundStyle(renderingMode == .fullColor ? AnyShapeStyle(Palette.onWater) : AnyShapeStyle(.primary))
+        .foregroundStyle(.primary)
     }
 
     private func stat(_ title: LocalizedStringKey, _ value: String) -> some View {
@@ -395,19 +425,19 @@ public struct ComparisonWidgetView: View {
         Chart {
             ForEach(comparison.range) { point in
                 AreaMark(x: .value("Fecha", point.date), yStart: .value("Mínimo", point.lowHm3), yEnd: .value("Máximo", point.highHm3), series: .value("Serie", "range"))
-                    .foregroundStyle(.white.opacity(0.12))
+                    .foregroundStyle(Palette.band(scheme))
             }
             ForEach(comparison.average) { point in
                 LineMark(x: .value("Fecha", point.date), y: .value("hm³", point.volumeHm3), series: .value("Serie", "average"))
-                    .foregroundStyle(.white.opacity(0.6)).lineStyle(StrokeStyle(lineWidth: 1.2, dash: [2, 3]))
+                    .foregroundStyle(YearComparisonChart.averageColor).lineStyle(StrokeStyle(lineWidth: 1.2, dash: [2, 3]))
             }
             ForEach(comparison.lastYear) { point in
                 LineMark(x: .value("Fecha", point.date), y: .value("hm³", point.volumeHm3), series: .value("Serie", "lastYear"))
-                    .foregroundStyle(Palette.lastYear).lineStyle(StrokeStyle(lineWidth: 1.6))
+                    .foregroundStyle(YearComparisonChart.lastYearColor).lineStyle(StrokeStyle(lineWidth: 1.6))
             }
             ForEach(comparison.thisYear) { point in
                 LineMark(x: .value("Fecha", point.date), y: .value("hm³", point.volumeHm3), series: .value("Serie", "thisYear"))
-                    .foregroundStyle(.white).lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
+                    .foregroundStyle(YearComparisonChart.thisYearColor).lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
             }
         }
         .chartYScale(domain: 0...comparison.capacityHm3)
@@ -418,15 +448,15 @@ public struct ComparisonWidgetView: View {
 
     private var legend: some View {
         HStack(spacing: 10) {
-            item("Este año", .white, dashed: false)
-            item("Año pasado", Palette.lastYear, dashed: false)
-            item("Media", .white.opacity(0.6), dashed: true)
+            item("Este año", YearComparisonChart.thisYearColor, dashed: false)
+            item("Año pasado", YearComparisonChart.lastYearColor, dashed: false)
+            item("Media", YearComparisonChart.averageColor, dashed: true)
             HStack(spacing: 4) {
-                RoundedRectangle(cornerRadius: 2).fill(.white.opacity(0.2)).frame(width: 12, height: 8)
+                RoundedRectangle(cornerRadius: 2).fill(Palette.band(scheme)).frame(width: 12, height: 8)
                 Text("Desde 1988", bundle: .module)
             }
         }
-        .font(.caption2).opacity(0.85).lineLimit(1).minimumScaleFactor(0.7)
+        .font(.caption2).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.7)
     }
 
     private func item(_ title: LocalizedStringKey, _ color: Color, dashed: Bool) -> some View {
@@ -463,15 +493,19 @@ public struct RiverWidgetView: View {
             HStack(spacing: 7) {
                 ForEach(snapshot.chain) { reading in
                     VStack(spacing: 4) {
-                        ZStack(alignment: .bottom) {
-                            RoundedRectangle(cornerRadius: 10, style: .continuous).fill(renderingMode == .fullColor ? AnyShapeStyle(Palette.sky(scheme)) : AnyShapeStyle(.white.opacity(0.08)))
-                            WaveShape(level: reading.percent / 100, phase: 0.6, amplitude: 2)
-                                .fill(renderingMode == .fullColor ? AnyShapeStyle(Palette.water(reading.percent)) : AnyShapeStyle(.white.opacity(0.3)))
-                                .widgetAccentable()
-                            Text(Format.number(reading.percent, decimals: 0) + Format.space + "%")
-                                .font(.caption.weight(.bold)).monospacedDigit()
-                                .foregroundStyle(renderingMode == .fullColor ? AnyShapeStyle(Palette.onWater) : AnyShapeStyle(.primary))
-                                .padding(.bottom, 6)
+                        GeometryReader { tank in
+                            let level = min(max(reading.percent / 100, 0), 1)
+                            let inWater = tank.size.height * level >= 22
+                            ZStack(alignment: .bottom) {
+                                RoundedRectangle(cornerRadius: 10, style: .continuous).fill(renderingMode == .fullColor ? AnyShapeStyle(Palette.sky(scheme)) : AnyShapeStyle(.white.opacity(0.08)))
+                                WaveShape(level: level, phase: 0.6, amplitude: 2)
+                                    .fill(renderingMode == .fullColor ? AnyShapeStyle(Palette.water(reading.percent)) : AnyShapeStyle(.white.opacity(0.3)))
+                                    .widgetAccentable()
+                                Text(Format.number(reading.percent, decimals: 0) + Format.space + "%")
+                                    .font(.caption.weight(.bold)).monospacedDigit()
+                                    .foregroundStyle(inWater && renderingMode == .fullColor ? AnyShapeStyle(Palette.onWater) : AnyShapeStyle(.primary))
+                                    .padding(.bottom, inWater ? 5 : tank.size.height * level + 6)
+                            }
                         }
                         .clipShape(.rect(cornerRadius: 10, style: .continuous))
                         .overlay {
@@ -479,9 +513,8 @@ public struct RiverWidgetView: View {
                                 RoundedRectangle(cornerRadius: 10, style: .continuous).strokeBorder(.primary.opacity(0.35), lineWidth: 1.5)
                             }
                         }
-                        if showsNames {
-                            Text(reading.reservoir.name).font(.caption2.weight(.semibold)).lineLimit(1).minimumScaleFactor(0.8)
-                        }
+                        Text(reading.reservoir.name)
+                            .font(.caption2.weight(.semibold)).lineLimit(1).minimumScaleFactor(0.55)
                     }
                 }
             }

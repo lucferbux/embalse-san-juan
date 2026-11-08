@@ -100,7 +100,7 @@ struct ComparisonWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "ComparisonWidget", provider: SanJuanHistoryProvider()) { entry in
             ComparisonWidgetView(snapshot: entry.snapshot, history: entry.history)
-                .containerBackground(for: .widget) { Palette.water(entry.snapshot.live.percent) }
+                .containerBackground(for: .widget) { WidgetSky() }
         }
         .configurationDisplayName("Este año y la media")
         .description("San Juan este año, el anterior, la media de 10 años y el rango desde 1988. MITECO.")

@@ -77,7 +77,7 @@ struct NowView: View {
             VStack(alignment: .leading, spacing: 16) {
                 place.padding(.horizontal, 4)
                 card(figure: regular ? 96 : 64)
-                    .frame(height: height)
+                    .frame(height: large ? nil : height)
                     .onScrollVisibilityChange(threshold: 0.2) { visible in
                         withAnimation(.smooth(duration: 0.3)) { cardVisible = visible }
                     }

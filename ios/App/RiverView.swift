@@ -57,6 +57,7 @@ struct ReservoirPage: View {
     var snapshot: Snapshot
     @Environment(HistoryModel.self) private var history
     @State private var mode: WaterCard.Mode = .today
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         let reading = snapshot.reading(of: id)
@@ -69,12 +70,12 @@ struct ReservoirPage: View {
                               trendHm3: id == .sanJuan ? snapshot.live.trend24hHm3 : nil,
                               surface: loaded.flatMap { YearSurface(history: $0, today: reading, capacityHm3: capacity) },
                               mode: $mode, figureSize: 64)
-                        .frame(height: 420)
+                        .frame(height: typeSize.isAccessibilitySize ? nil : 420)
                 } else {
                     ContentUnavailableView("Sin dato reciente", systemImage: "drop.triangle", description: Text("El SAIH no ha dado una lectura de \(id.name) en la última hora."))
                 }
 
-                HistoryPanel(reservoir: id, capacity: capacity, today: reading, history: history)
+                HistoryPanel(reservoir: id, capacity: capacity, today: reading, history: history, initialRange: .fiveYears)
             }
             .padding(16)
             .frame(maxWidth: 900)

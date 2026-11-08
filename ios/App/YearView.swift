@@ -103,13 +103,19 @@ struct HistoryPanel: View {
         var id: Date { date }
     }
 
-    @State private var range: Range = Self.initialRange
+    @State private var range: Range
 
-    private static var initialRange: Range {
+    /// Reservoir pages start on 5 years: their water card already shows the last year.
+    init(reservoir: ReservoirID, capacity: Double, today: ReservoirReading?, history: HistoryModel, initialRange: Range = .oneYear) {
+        self.reservoir = reservoir
+        self.capacity = capacity
+        self.today = today
+        self.history = history
+        var range = initialRange
         #if DEBUG
-        if UserDefaults.standard.string(forKey: "HistoryRange") == "all" { return .all }
+        if UserDefaults.standard.string(forKey: "HistoryRange") == "all" { range = .all }
         #endif
-        return .oneYear
+        _range = State(initialValue: range)
     }
 
     var body: some View {
@@ -160,6 +166,7 @@ struct HistoryPanel: View {
         }
         .chartYScale(domain: 0...(max(points.compactMap(\.capacity).max() ?? capacity, points.map(\.volume).max() ?? 0) * 1.1))
         .chartYAxisLabel("hm³")
+        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         .frame(height: 260)
         .accessibilityLabel(Text("Evolución del volumen"))
     }
