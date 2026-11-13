@@ -29,7 +29,7 @@ Check `git rev-parse --show-toplevel` before committing. Commits: Conventional C
 | `scripts/store-widgets.sh` | Renders the widgets with today's real data, in Spanish, for the store's widget image. Run before `make-creative-assets`. |
 | `swift scripts/make-creative-assets.swift` | Frames the raw screenshots on the icon's water with a headline, into the folders `fastlane` and Play use, and draws the header, search results and feature graphic. Upload the header, search results and Duo shots in App Store Connect: `fastlane` doesn't handle them. Headlines are in `captions`. |
 | `scripts/release.sh` | Archives and uploads to App Store Connect. Bump `CURRENT_PROJECT_VERSION` first. |
-| `fastlane metadata` | Pushes the listing and screenshots as a draft. Never submits for review. |
+| `fastlane metadata` | Pushes the listing and screenshots as a draft. Never submits for review. It replaces every screenshot in App Store Connect, the iPhone Duo ones too, so upload those by hand afterwards. Run it with `LC_ALL=en_US.UTF-8`, or the Spanish text fails to encode. |
 | `scripts/release-android.sh` | Builds the signed bundle for Google Play. Bump `versionCode` first. Doesn't upload. |
 | `scripts/export-android-screenshots.sh` | Raw Google Play screenshots from a debug build on the running emulator, into `fastlane/screenshots_raw/android`. The widget shot is taken by hand. |
 
