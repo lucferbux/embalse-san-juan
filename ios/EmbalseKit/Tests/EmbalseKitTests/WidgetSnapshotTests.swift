@@ -106,6 +106,27 @@ final class WidgetSnapshotTests: XCTestCase {
         try FirestoreClient.makeDecoder().decode(History.self, from: Data(contentsOf: Fixture.root.appending(path: "contract/fixtures/history.json")))
     }
 
+    /// For the store's widget image: today's real data, when scripts/store-widgets.sh has saved it to build/store-data.
+    /// Rendered in the test run's language, so it matches the screenshots.
+    func testStoreWidgets() throws {
+        let folder = Fixture.root.appending(path: "build/store-data")
+        guard let snapshotData = try? Data(contentsOf: folder.appending(path: "snapshot.json")),
+              let historyData = try? Data(contentsOf: folder.appending(path: "history.json")) else {
+            throw XCTSkip("No build/store-data")
+        }
+        let decoder = FirestoreClient.makeDecoder()
+        let snapshot = try decoder.decode(Snapshot.self, from: snapshotData)
+        let history = try decoder.decode(History.self, from: historyData)
+        let now = snapshot.live.observedAt.addingTimeInterval(600)
+        try render("store-small", size: small) { SmallWidgetView(snapshot: snapshot, now: now) }
+        try render("store-medium", size: medium) { MediumWidgetView(snapshot: snapshot, now: now) }
+        try render("store-year", size: medium) { YearWidgetView(snapshot: snapshot, now: now, history: history) }
+        try render("store-large", size: large) { LargeWidgetView(snapshot: snapshot, now: now) }
+        try render("store-river", size: small) { RiverWidgetView(snapshot: snapshot, now: now) }
+        try render("store-comparison", size: large) { ComparisonWidgetView(snapshot: snapshot, history: history) }
+        try render("store-small-dark", size: small, scheme: .dark) { SmallWidgetView(snapshot: snapshot, now: now) }
+    }
+
     func testHistory() throws {
         let snapshot = try snapshot()
         let history = try history()

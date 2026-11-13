@@ -40,9 +40,10 @@ wait_for_app() {
     return 1
 }
 
+# open [screen] [card]: a screen (history, river, about, suggestions) and the water card's view (year).
 open() {
     adb shell am force-stop "$APP"
-    adb shell am start -n "$APP/.MainActivity" ${1:+--es screen "$1"} >/dev/null
+    adb shell am start -n "$APP/.MainActivity" ${1:+--es screen "$1"} ${2:+--es card "$2"} >/dev/null
     wait_for_app
 }
 

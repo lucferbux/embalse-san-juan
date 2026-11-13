@@ -22,20 +22,21 @@ source scripts/lib/android-emu.sh
 demo_start
 trap reset EXIT
 
+# The same story as the App Store set: today's water, the year, how this year compares, and the river.
 shoot_set() {
-    local dir="$OUT/$1" width="$2" height="$3" density="$4" swipes="$5"
+    local dir="$OUT/$1" width="$2" height="$3" density="$4"
     echo "==> $1"
+    rm -rf "$dir"
     mkdir -p "$dir"
     adb shell wm size "${width}x${height}"
     adb shell wm density "$density"
     /bin/sleep 4
     open; shoot "$dir/01-ahora.png"
-    scroll "$height" "$swipes"; shoot "$dir/02-boletin.png"
-    # On tablets, two columns fit the whole screen in one swipe, so a second one would repeat the shot.
-    if [ "$1" = phoneScreenshots ]; then scroll "$height" "$swipes"; shoot "$dir/03-alberche.png"; fi
-    open history; shoot "$dir/04-historico.png"
+    open now year; shoot "$dir/02-ano.png"
+    open history; shoot "$dir/03-historico.png"
+    open river; shoot "$dir/04-el-rio.png"
 }
 
-shoot_set phoneScreenshots 1080 1920 420 2
-shoot_set sevenInchScreenshots 1200 1920 240 1
-shoot_set tenInchScreenshots 1600 2560 320 1
+shoot_set phoneScreenshots 1080 1920 420
+shoot_set sevenInchScreenshots 1200 1920 240
+shoot_set tenInchScreenshots 1600 2560 320

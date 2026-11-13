@@ -5,7 +5,9 @@ import Foundation
 /// It follows the app's language, Spanish or English, with the device's region when it speaks the same language.
 public enum Format {
     /// The language the app is showing, with the device's region when that region speaks it.
-    public static let locale: Locale = resolveLocale(language: Bundle.main.preferredLocalizations.first ?? "es", current: .current)
+    // EmbalseKit's own bundle has Spanish and English, like every app target, so it picks the same language as the app
+    // and also works where the main bundle has only one (the test runner).
+    public static let locale: Locale = resolveLocale(language: Bundle.module.preferredLocalizations.first ?? "es", current: .current)
 
     static func resolveLocale(language: String, current: Locale) -> Locale {
         let language = language.hasPrefix("en") ? "en" : "es"

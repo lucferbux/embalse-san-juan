@@ -26,6 +26,7 @@ Check `git rev-parse --show-toplevel` before committing. Commits: Conventional C
 | `make generate` | Regenerates the Xcode project from `ios/project.yml`. Never edit the `.xcodeproj`. |
 | `make firestore-check` | Checks the published data and the access rules from outside, with no credentials. |
 | `scripts/export-screenshots.sh` | Raw App Store screenshots from a Debug build, into `fastlane/screenshots_raw/ios`. Also `--watch`, `--duo-outer` and `--duo-inner`, which needs iPhone Duo open in Device Hub. |
+| `scripts/store-widgets.sh` | Renders the widgets with today's real data, in Spanish, for the store's widget image. Run before `make-creative-assets`. |
 | `swift scripts/make-creative-assets.swift` | Frames the raw screenshots on the icon's water with a headline, into the folders `fastlane` and Play use, and draws the header, search results and feature graphic. Upload the header, search results and Duo shots in App Store Connect: `fastlane` doesn't handle them. Headlines are in `captions`. |
 | `scripts/release.sh` | Archives and uploads to App Store Connect. Bump `CURRENT_PROJECT_VERSION` first. |
 | `fastlane metadata` | Pushes the listing and screenshots as a draft. Never submits for review. |

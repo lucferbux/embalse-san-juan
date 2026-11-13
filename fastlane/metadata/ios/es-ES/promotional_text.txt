@@ -1,1 +1,1 @@
-Consulta de un vistazo cómo está el embalse de San Juan, con datos oficiales que se actualizan cada hora.
+Nueva versión 2.0: el agua del embalse a su altura real, el último año de un vistazo y todo el río Alberche, con datos oficiales cada hora.

@@ -1,1 +1,10 @@
-Primera versión.
+Versión 2.0, rediseñada de arriba abajo.
+
+• El agua, en una tarjeta que se mueve a la altura real del embalse. Con «Año», la misma agua se convierte en los últimos 12 meses.
+• Histórico: este año frente al anterior, la media de 10 años y el rango desde 1988.
+• El río: Burguillo y Picadas con su propia página e histórico.
+• Previsión de lluvia de AEMET.
+• Widgets nuevos: el último año, este año frente a la media y el río.
+• Avisos opcionales, Siri y control para el Centro de Control.
+• En iPad, barra lateral y el agua fija a un lado.
+• Ahora también en inglés.

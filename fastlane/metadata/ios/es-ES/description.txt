@@ -1,29 +1,35 @@
-¿Cómo está hoy el embalse de San Juan? Ábrela o míralo en un widget: el agua sube y baja con el nivel real del pantano.
+¿Cómo está hoy el embalse de San Juan? Ábrela y mira el agua moviéndose a su altura real, o míralo en un widget sin abrir la app.
 
 AHORA MISMO
-• Porcentaje de llenado, volumen en hm³ y tendencia de las últimas 24 horas.
-• Cota y nivel del agua, con la evolución hora a hora.
-• Caudal de salida al río y trasvase a Valmayor.
+• Porcentaje de llenado, volumen en hm³ y tendencia de las últimas 24 horas, con datos del SAIH Tajo cada hora.
+• Salida al río, trasvase a Valmayor, cota y tiempo en la presa.
+• Previsión de lluvia de AEMET para los próximos días, separada de la lluvia medida.
 
-COMPARA CON OTROS AÑOS
-• Boletín semanal: agua embalsada, variación, misma semana del año pasado y media de 10 años.
-• Histórico de 1 año, 5 años y desde 1988, con mínimos y máximos.
+UN AÑO DE UN VISTAZO
+• Con un toque, la misma agua se convierte en los últimos 12 meses, con el año pasado y el rango de los años anteriores detrás.
 
-ALREDEDOR DEL EMBALSE
-• Tiempo en la presa: temperatura, viento, humedad, presión, radiación solar y lluvia.
-• Río Alberche: Burguillo, San Juan y Picadas, de un vistazo.
-• Lluvia recogida en los pluviómetros de la cuenca.
+¿MÁS O MENOS QUE OTROS AÑOS?
+• Este año, el anterior y la media de 10 años del boletín semanal de MITECO, con el rango de cada semana desde 1988.
+• Histórico de 1 año, 5 años y desde 1988, con récords y mínimos.
 
-WIDGETS PARA TODO
-• Pequeño, mediano y grande en iPhone, y también extragrande en iPad.
-• Pantalla de bloqueo y StandBy.
-• Complicaciones y app propia en el Apple Watch, que funciona sin el iPhone cerca.
+TODO EL RÍO
+• Burguillo, San Juan y Picadas, de aguas arriba a aguas abajo, cada uno con su página e histórico.
+• Lluvia recogida en los pluviómetros de la cuenca del Alberche.
+
+WIDGETS
+• El nivel de hoy en pequeño, mediano, grande y extragrande, y uno por embalse.
+• El último año como superficie, y este año frente a la media.
+• Pantalla de bloqueo, StandBy, Centro de Control y Siri: «¿Cuánta agua hay en San Juan?».
+• App propia y complicaciones en el Apple Watch.
 
 HECHA PARA TUS DISPOSITIVOS
-Se adapta a iPhone, iPad y iPhone Duo, abierto o cerrado, con modo oscuro y texto grande.
+iPhone, iPad con barra lateral y iPhone Duo abierto o cerrado. Modo oscuro, texto grande y VoiceOver con gráficos de audio. En español e inglés.
+
+AVISOS
+Opcionales y locales: cuando el embalse cruce el porcentaje que elijas o haya un desembalse grande.
 
 SIN CUENTAS NI SEGUIMIENTO
 No hace falta registrarse y no hay publicidad. Si quieres, puedes enviar sugerencias anónimas o dejar una propina voluntaria para ayudar con los gastos de mantenimiento.
 
 FUENTES
-Los datos proceden del SAIH Tajo (Confederación Hidrográfica del Tajo) y del Boletín Hidrológico del Ministerio para la Transición Ecológica y el Reto Demográfico. Son datos provisionales y pueden no coincidir entre sí. Esta app es un proyecto personal, sin relación con estos organismos ni respaldada por ellos.
+Los datos proceden del SAIH Tajo (Confederación Hidrográfica del Tajo), del Boletín Hidrológico del Ministerio para la Transición Ecológica y el Reto Demográfico y de AEMET. Son datos provisionales y pueden no coincidir entre sí. Esta app es un proyecto personal, sin relación con estos organismos ni respaldada por ellos.

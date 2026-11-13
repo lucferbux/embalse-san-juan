@@ -29,12 +29,13 @@ mkdir -p "$OUT"
 # shellcheck source=lib/ios-sim.sh
 source scripts/lib/ios-sim.sh
 
+# The 2.0 story: today's water, the same water as a year, how this year compares, and the river.
 shoot_set() {
     local udid="$1" prefix="$2" display="${3:-}"
     shoot "$udid" "$OUT/$prefix-01-ahora.png" "$display"
-    shoot "$udid" "$OUT/$prefix-02-este-ano.png" "$display" -ScreenshotTab year
-    shoot "$udid" "$OUT/$prefix-03-el-rio.png" "$display" -ScreenshotTab river
-    shoot "$udid" "$OUT/$prefix-04-historico.png" "$display" -ScreenshotTab year -HistoryRange all
+    shoot "$udid" "$OUT/$prefix-02-ano.png" "$display" -CardMode year
+    shoot "$udid" "$OUT/$prefix-03-historico.png" "$display" -ScreenshotTab year
+    shoot "$udid" "$OUT/$prefix-04-el-rio.png" "$display" -ScreenshotTab river
 }
 
 shoot_watch() {
@@ -78,7 +79,7 @@ if [ "${1:-}" = "--duo-inner" ]; then
     mkdir -p "$OUT"
     echo "==> iPhone Duo inner"
     shoot "$udid" "$OUT/duo-inner-01-ahora.png" ""
-    shoot "$udid" "$OUT/duo-inner-02-este-ano.png" "" -ScreenshotTab year
+    shoot "$udid" "$OUT/duo-inner-03-historico.png" "" -ScreenshotTab year
     exit 0
 fi
 
@@ -93,8 +94,9 @@ echo "==> iPad 13\""
 udid="$(ensure_device "iPad Pro 13-inch (M5)" com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5-12GB com.apple.CoreSimulator.SimRuntime.iOS-27-0)"
 prepare_ios "$udid"
 shoot "$udid" "$OUT/ipad-13-01-ahora.png" ""
-shoot "$udid" "$OUT/ipad-13-02-este-ano.png" "" -ScreenshotTab year
-shoot "$udid" "$OUT/ipad-13-05-ficha.png" "" -ScreenshotScene about
+shoot "$udid" "$OUT/ipad-13-02-ano.png" "" -CardMode year
+shoot "$udid" "$OUT/ipad-13-03-historico.png" "" -ScreenshotTab year
+shoot "$udid" "$OUT/ipad-13-04-el-rio.png" "" -ScreenshotTab river
 
 echo "==> Apple Watch"
 shoot_watch
