@@ -1,6 +1,28 @@
 {
   "sourceLanguage" : "es",
   "strings" : {
+    "%@ menos que hace un año" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ less than a year ago"
+          }
+        }
+      }
+    },
+    "%@ más que hace un año" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ more than a year ago"
+          }
+        }
+      }
+    },
     "Cota" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8,6 +30,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Elevation"
+          }
+        }
+      }
+    },
+    "El río" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The river"
           }
         }
       }
@@ -96,6 +129,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No data"
+          }
+        }
+      }
+    },
+    "Último año" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last year"
           }
         }
       }

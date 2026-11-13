@@ -43,9 +43,11 @@ shoot_watch() {
     local udid
     udid="$(ensure_device "Apple Watch Ultra 4 (49mm)" com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Ultra-4-49mm com.apple.CoreSimulator.SimRuntime.watchOS-27-0)"
     xcrun simctl install "$udid" "$DERIVED/Build/Products/Debug-watchsimulator/EmbalseWatch.app"
+    rm -f "$OUT"/watch-*.png
     BUNDLE="$BUNDLE.watchkitapp" shoot "$udid" "$OUT/watch-01-ahora.png" ""
-    BUNDLE="$BUNDLE.watchkitapp" shoot "$udid" "$OUT/watch-02-curva.png" "" -ScreenshotPage 1
-    BUNDLE="$BUNDLE.watchkitapp" shoot "$udid" "$OUT/watch-03-datos.png" "" -ScreenshotPage 2
+    BUNDLE="$BUNDLE.watchkitapp" shoot "$udid" "$OUT/watch-02-ano.png" "" -ScreenshotPage 1
+    BUNDLE="$BUNDLE.watchkitapp" shoot "$udid" "$OUT/watch-03-el-rio.png" "" -ScreenshotPage 2
+    BUNDLE="$BUNDLE.watchkitapp" shoot "$udid" "$OUT/watch-04-datos.png" "" -ScreenshotPage 3
 }
 
 if [ "${1:-}" = "--watch" ]; then

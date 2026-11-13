@@ -34,8 +34,9 @@ struct WatchContentView: View {
             case .loaded(let snapshot, _):
                 TabView(selection: $page) {
                     WatchHeroPage(snapshot: snapshot).tag(0)
-                    WatchChartPage(snapshot: snapshot).tag(1)
-                    WatchDetailsPage(snapshot: snapshot).tag(2)
+                    WatchYearPage(snapshot: snapshot).tag(1)
+                    WatchRiverPage(snapshot: snapshot).tag(2)
+                    WatchDetailsPage(snapshot: snapshot).tag(3)
                 }
                 .tabViewStyle(.verticalPage)
                 #if DEBUG
@@ -73,6 +74,11 @@ private struct WatchHeroPage: View {
         let layout = layout(percent: live.percent)
         ZStack(alignment: .bottomLeading) {
             WaterBackground(percent: live.percent, amplitude: 4).ignoresSafeArea()
+            Text("San Juan")
+                .font(.headline)
+                .foregroundStyle(.white.opacity(0.9))
+                .padding(.horizontal, 8)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             block(live, showsTrend: layout.showsTrend)
                 .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { blockHeight = $0 }
                 .padding(.bottom, layout.bottomPadding)
@@ -125,39 +131,155 @@ private struct WatchHeroPage: View {
     }
 }
 
-/// Direction C on the watch: the last 90 days drawn as the water's surface, 0 to capacity, labelled at both ends.
-private struct WatchChartPage: View {
+/// "Último año": the last 12 months of SAIH as the water's surface, with last year's line and the range of the years
+/// before, standing on a strip of water that holds the figure, as in the widget.
+private struct WatchYearPage: View {
     var snapshot: Snapshot
+    @State private var history: History?
 
     var body: some View {
+        let reading = snapshot.reading(of: .sanJuan)
+        let surface = history.flatMap { YearSurface(history: $0, today: reading, capacityHm3: snapshot.weekly.capacityHm3) }
         ZStack(alignment: .topLeading) {
-            Color.black.ignoresSafeArea()
-            SurfaceHistory(volumes: snapshot.daily.map(\.volumeHm3), capacityHm3: snapshot.weekly.capacityHm3)
-                .ignoresSafeArea(edges: .bottom)
-            Text("Últimos 90 días").font(.footnote.weight(.semibold)).padding(.horizontal, 8)
+            Palette.sky(.dark).ignoresSafeArea()
+            if let surface {
+                WatchYearSurface(surface: surface, percent: snapshot.live.percent).ignoresSafeArea(edges: .bottom)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(Format.percent(snapshot.live.percent))
+                        .font(.system(size: 30, weight: .bold, design: .rounded)).monospacedDigit()
+                    if let change = surface.changeFromLastYearHm3 {
+                        Text(change < 0 ? "\(Format.hm3(-change)) menos que hace un año" : "\(Format.hm3(change)) más que hace un año")
+                            .font(.caption2.weight(.medium)).opacity(0.9).lineLimit(2).minimumScaleFactor(0.8)
+                    }
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 8)
+                .padding(.bottom, 4)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+            } else {
+                ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Último año").font(.headline)
+                Text(verbatim: "SAIH Tajo").font(.caption2).foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 8)
         }
+        .task { history = try? await HistoryRepository().load(.sanJuan) }
     }
 }
 
-/// The main figures, each with its source: SAIH now, MITECO for the week.
+private struct WatchYearSurface: View {
+    var surface: YearSurface
+    var percent: Double
+
+    var body: some View {
+        Canvas { context, size in
+            let top: CGFloat = 52
+            // The figure and its line sit in this strip, always under the surface.
+            let floor: CGFloat = 92
+            let usable = size.height - top - floor
+            let y = { (fraction: Double) in top + usable * (1 - min(max(fraction, 0), 1.02)) }
+            let x = { (index: Int, count: Int) in size.width * CGFloat(index) / CGFloat(max(count - 1, 1)) }
+            if let band = surface.band, band.count > 1 {
+                var path = Path()
+                path.move(to: CGPoint(x: 0, y: y(band[0].upperBound)))
+                for (index, range) in band.enumerated() { path.addLine(to: CGPoint(x: x(index, band.count), y: y(range.upperBound))) }
+                for (index, range) in band.enumerated().reversed() { path.addLine(to: CGPoint(x: x(index, band.count), y: y(range.lowerBound))) }
+                path.closeSubpath()
+                context.fill(path, with: .color(Palette.band(.dark)))
+            }
+            var line = Path()
+            for (index, level) in surface.levels.enumerated() {
+                let point = CGPoint(x: x(index, surface.levels.count), y: y(level))
+                index == 0 ? line.move(to: point) : line.addLine(to: point)
+            }
+            var area = line
+            area.addLine(to: CGPoint(x: size.width, y: size.height))
+            area.addLine(to: CGPoint(x: 0, y: size.height))
+            area.closeSubpath()
+            context.fill(area, with: .linearGradient(Gradient(colors: [Color(red: 0.05, green: 0.42, blue: 0.70), Color(red: 0.01, green: 0.15, blue: 0.38)]),
+                                                     startPoint: CGPoint(x: 0, y: top), endPoint: CGPoint(x: 0, y: size.height)))
+            context.stroke(line, with: .color(Palette.crestLine), lineWidth: 2)
+            if let lastYear = surface.lastYear, lastYear.count > 1 {
+                var path = Path()
+                for (index, value) in lastYear.enumerated() {
+                    let point = CGPoint(x: x(index, lastYear.count), y: y(value))
+                    index == 0 ? path.move(to: point) : path.addLine(to: point)
+                }
+                context.stroke(path, with: .color(Palette.lastYear), style: StrokeStyle(lineWidth: 1.4, dash: [4, 3]))
+            }
+            let today = CGPoint(x: size.width - 6, y: y(surface.levels.last ?? 0))
+            context.fill(Path(ellipseIn: CGRect(x: today.x - 4, y: today.y - 4, width: 8, height: 8)), with: .color(.white))
+        }
+        .accessibilityHidden(true)
+    }
+}
+
+/// "El río": Burguillo, San Juan and Picadas in river order, each as a tank at its own level.
+private struct WatchRiverPage: View {
+    var snapshot: Snapshot
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("El río").font(.headline)
+            HStack(alignment: .bottom, spacing: 5) {
+                ForEach(snapshot.chain) { reading in
+                    VStack(spacing: 3) {
+                        ZStack(alignment: .bottom) {
+                            RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Palette.sky(.dark))
+                            WaveShape(level: reading.percent / 100, phase: 0.6, amplitude: 2)
+                                .fill(Palette.water(reading.percent))
+                            Text(Format.number(reading.percent, decimals: 0) + Format.space + "%")
+                                .font(.system(.footnote, design: .rounded).weight(.bold)).monospacedDigit()
+                                .foregroundStyle(.white)
+                                .padding(.bottom, 6)
+                        }
+                        .clipShape(.rect(cornerRadius: 12, style: .continuous))
+                        .overlay {
+                            if reading.reservoir == .sanJuan {
+                                RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(.white.opacity(0.5), lineWidth: 1.5)
+                            }
+                        }
+                        Text(reading.reservoir.name).font(.system(size: 11, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.6)
+                    }
+                }
+            }
+            Text(verbatim: Format.saihSource(snapshot.live.observedAt)).font(.caption2).foregroundStyle(.secondary)
+        }
+        .padding(.horizontal, 6)
+    }
+}
+
+/// The main figures, each with its symbol and source: SAIH now, MITECO for the week.
 private struct WatchDetailsPage: View {
     var snapshot: Snapshot
 
     var body: some View {
         List {
             Section {
-                LabeledContent("Salida al río", value: Format.optional(snapshot.live.outflowM3s, decimals: 2, unit: "m³/s"))
-                LabeledContent("Cota", value: Format.optional(snapshot.live.elevationM, decimals: 2, unit: "m"))
-                LabeledContent("Lluvia 24 h", value: Format.optional(snapshot.weather.rain24hMm, unit: "mm"))
+                row("Salida al río", "arrow.down.right.circle.fill", .cyan, Format.optional(snapshot.live.outflowM3s, decimals: 2, unit: "m³/s"))
+                row("Cota", "ruler.fill", .blue, Format.optional(snapshot.live.elevationM, decimals: 2, unit: "m"))
+                row("Lluvia 24 h", "cloud.rain.fill", .teal, Format.optional(snapshot.weather.rain24hMm, unit: "mm"))
             } header: {
                 Text(verbatim: Format.saihSource(snapshot.live.observedAt))
             }
             Section {
-                LabeledContent("Esta semana", value: Format.hm3(snapshot.weekly.volumeHm3, .mitecoVolume))
-                LabeledContent("Hace un año", value: snapshot.weekly.lastYearHm3.map { Format.hm3($0, .mitecoVolume) } ?? Format.optional(nil, unit: ""))
-                LabeledContent("Media 10 años", value: snapshot.weekly.tenYearAvgHm3.map { Format.hm3($0, .mitecoVolume) } ?? Format.optional(nil, unit: ""))
+                row("Esta semana", "calendar", .indigo, Format.hm3(snapshot.weekly.volumeHm3, .mitecoVolume))
+                row("Hace un año", "clock.arrow.circlepath", .orange, snapshot.weekly.lastYearHm3.map { Format.hm3($0, .mitecoVolume) } ?? Format.optional(nil, unit: ""))
+                row("Media 10 años", "chart.line.flattrend.xyaxis", .gray, snapshot.weekly.tenYearAvgHm3.map { Format.hm3($0, .mitecoVolume) } ?? Format.optional(nil, unit: ""))
             } header: {
                 Text(verbatim: Format.mitecoWeek(snapshot.weekly.day))
+            }
+        }
+    }
+
+    private func row(_ title: LocalizedStringKey, _ symbol: String, _ tint: Color, _ value: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: symbol).foregroundStyle(tint).font(.body)
+            VStack(alignment: .leading, spacing: 0) {
+                Text(title).font(.caption2).foregroundStyle(.secondary)
+                Text(value).font(.system(.body, design: .rounded).weight(.semibold)).monospacedDigit()
             }
         }
     }
