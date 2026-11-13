@@ -53,38 +53,75 @@ struct WatchContentView: View {
 }
 
 /// The water fills the whole screen at the real level, with the figure, its volume, the trend word and the source.
+/// The block goes wholly in the water or wholly above it, never across the waterline, as on the iPhone. The sky is
+/// dark here, so the text stays white either way.
 private struct WatchHeroPage: View {
     var snapshot: Snapshot
-    @ScaledMetric(relativeTo: .largeTitle) private var figure = 40.0
+    @ScaledMetric(relativeTo: .largeTitle) private var figure = 34.0
+    @State private var blockHeight: CGFloat = 100
+    @State private var size: CGSize = .zero
+    @State private var insets = EdgeInsets()
+
+    /// Where the block goes, from the real waterline: the water is drawn under the safe areas too.
+    private struct Layout {
+        var bottomPadding: CGFloat
+        var showsTrend: Bool
+    }
 
     var body: some View {
         let live = snapshot.live
+        let layout = layout(percent: live.percent)
         ZStack(alignment: .bottomLeading) {
             WaterBackground(percent: live.percent, amplitude: 4).ignoresSafeArea()
-            VStack(alignment: .leading, spacing: 2) {
-                Text(Format.percent(live.percent))
-                    .font(.system(size: figure, weight: .bold, design: .rounded))
-                    .monospacedDigit()
-                    .minimumScaleFactor(0.6)
-                    .lineLimit(1)
-                Text(Format.hm3(live.volumeHm3)).font(.headline)
+            block(live, showsTrend: layout.showsTrend)
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { blockHeight = $0 }
+                .padding(.bottom, layout.bottomPadding)
+        }
+        .onGeometryChange(for: CGSize.self) { $0.size } action: { size = $0 }
+        .onGeometryChange(for: EdgeInsets.self) { $0.safeAreaInsets } action: { insets = $0 }
+        .navigationTitle("San Juan")
+    }
+
+    private func layout(percent: Double) -> Layout {
+        let full = size.height + insets.top + insets.bottom
+        // Water above the safe area's bottom edge, which is where the block's bottom sits.
+        let depth = full * min(max(percent / 100, 0), 1) - insets.bottom
+        let crest: CGFloat = 4 * 1.45 + waterlineClearance
+        let sky = size.height - depth - crest
+        // The trend line is about 20 pt; it is also on the details page.
+        for showsTrend in [true, false] {
+            let block = blockHeight - (showsTrend ? 0 : 20)
+            if depth >= block + crest + 4 { return Layout(bottomPadding: 4, showsTrend: showsTrend) }
+            if sky >= block { return Layout(bottomPadding: depth + crest, showsTrend: showsTrend) }
+        }
+        return Layout(bottomPadding: 4, showsTrend: false)
+    }
+
+    private func block(_ live: Snapshot.Live, showsTrend: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(Format.percent(live.percent))
+                .font(.system(size: figure, weight: .bold, design: .rounded))
+                .monospacedDigit()
+                .minimumScaleFactor(0.6)
+                .lineLimit(1)
+            Text(Format.hm3(live.volumeHm3)).font(.headline)
+            if showsTrend {
                 Label(Trend(change: live.trend24hHm3).label, systemImage: Trend(change: live.trend24hHm3).symbol)
                     .font(.footnote.weight(.semibold))
-                Group {
-                    if snapshot.isStale() {
-                        Label(Format.dayMonthHour(live.observedAt), systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange)
-                    } else {
-                        Text(verbatim: "SAIH · \(Format.hour(live.observedAt))").foregroundStyle(.white.opacity(0.8))
-                    }
-                }
-                .font(.caption2.weight(.medium))
             }
-            .foregroundStyle(.white)
-            .padding(.horizontal, 8)
-            .padding(.bottom, 4)
-            .accessibilityElement(children: .combine)
+            Group {
+                if snapshot.isStale() {
+                    Label(Format.dayMonthHour(live.observedAt), systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                } else {
+                    Text(verbatim: "SAIH · \(Format.hour(live.observedAt))").foregroundStyle(.white.opacity(0.8))
+                }
+            }
+            .font(.caption2.weight(.medium))
         }
-        .navigationTitle("San Juan")
+        .foregroundStyle(.white)
+        .padding(.horizontal, 8)
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityElement(children: .combine)
     }
 }
 
