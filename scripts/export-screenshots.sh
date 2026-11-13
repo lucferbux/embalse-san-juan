@@ -79,7 +79,9 @@ if [ "${1:-}" = "--duo-inner" ]; then
     mkdir -p "$OUT"
     echo "==> iPhone Duo inner"
     shoot "$udid" "$OUT/duo-inner-01-ahora.png" ""
+    shoot "$udid" "$OUT/duo-inner-02-ano.png" "" -CardMode year
     shoot "$udid" "$OUT/duo-inner-03-historico.png" "" -ScreenshotTab year
+    shoot "$udid" "$OUT/duo-inner-04-el-rio.png" "" -ScreenshotTab river
     exit 0
 fi
 
