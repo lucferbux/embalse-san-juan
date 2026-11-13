@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -100,13 +101,14 @@ fun NowScreen(
         BoxWithConstraints(Modifier.fillMaxSize()) {
             if (isWide(maxWidth, maxHeight)) {
                 val paneWidth = (maxWidth * 0.42f).coerceIn(320.dp, 560.dp)
-                Row(Modifier.fillMaxSize().padding(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                    Column(Modifier.width(paneWidth).padding(bottom = 20.dp)) {
-                        Place(snapshot, origin)
-                        card(Modifier.fillMaxWidth().weight(1f), 88)
-                    }
-                    Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(bottom = 20.dp)) {
-                        Modules(snapshot, if (large) 1 else 2, onOpenDetail, onOpenReservoir)
+                // The place spans both columns, so the card and the first modules start on the same line.
+                Column(Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
+                    Place(snapshot, origin)
+                    Row(Modifier.fillMaxWidth().weight(1f), horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+                        card(Modifier.width(paneWidth).fillMaxHeight().padding(bottom = 20.dp), 88)
+                        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(bottom = 20.dp)) {
+                            Modules(snapshot, if (large) 1 else 2, onOpenDetail, onOpenReservoir)
+                        }
                     }
                 }
             } else {

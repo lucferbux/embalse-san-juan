@@ -22,6 +22,15 @@ struct NowView: View {
     @State private var fold = FoldGeometry()
     @State private var motion = DeviceTilt()
 
+    /// `-ForcePane YES` shows the wide layout in a tall window, to check it where the simulator can't rotate.
+    private static var forcesPane: Bool {
+        #if DEBUG
+        UserDefaults.standard.bool(forKey: "ForcePane")
+        #else
+        false
+        #endif
+    }
+
     /// Always today. `-CardMode year` opens the year view, for the capture scripts.
     private static var initialMode: WaterCard.Mode {
         #if DEBUG
@@ -38,7 +47,7 @@ struct NowView: View {
     var body: some View {
         GeometryReader { proxy in
             Group {
-                if horizontalSizeClass == .regular && proxy.size.width >= 700 && proxy.size.width >= proxy.size.height * 0.9 {
+                if horizontalSizeClass == .regular && proxy.size.width >= 700 && (proxy.size.width >= proxy.size.height * 0.9 || Self.forcesPane) {
                     pane(proxy)
                 } else {
                     stack(proxy)
@@ -105,19 +114,21 @@ struct NowView: View {
         let gap = fold.keepClear.map { max(margin, $0.upperBound - $0.lowerBound) } ?? margin
         let paneWidth = fold.center.map { $0 - gap / 2 - margin } ?? min(max(proxy.size.width * 0.42, 320), 540)
         let rest = proxy.size.width - paneWidth - gap - margin * 2
-        return HStack(alignment: .top, spacing: gap) {
-            VStack(alignment: .leading, spacing: 10) {
-                place.padding(.horizontal, 4)
+        // The place spans both columns, so the card and the first modules start on the same line.
+        return VStack(alignment: .leading, spacing: 12) {
+            place.padding(.horizontal, 4)
+            HStack(alignment: .top, spacing: gap) {
                 card(figure: 96)
-            }
-            .frame(width: paneWidth)
-            .padding(.bottom, margin)
-            ScrollView {
-                Modules(snapshot: snapshot, columns: rest >= 560 && !typeSize.isAccessibilitySize ? 2 : 1)
+                    .frame(width: paneWidth)
                     .padding(.bottom, margin)
+                ScrollView {
+                    Modules(snapshot: snapshot, columns: rest >= 560 && !typeSize.isAccessibilitySize ? 2 : 1)
+                        .padding(.bottom, margin)
+                }
+                .scrollClipDisabled()
+                .refreshable { await refresh() }
+                .frame(width: max(rest, 0))
             }
-            .refreshable { await refresh() }
-            .frame(width: max(rest, 0))
         }
         .padding(.horizontal, margin)
         .padding(.top, 8)
